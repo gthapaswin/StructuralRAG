@@ -8,7 +8,17 @@ from functools import lru_cache
 
 from fastapi import FastAPI, HTTPException
 
-from structuralrag.api.schemas import DocumentSummary, RetrieveRequest, RetrieveResponse, SectionNode
+from structuralrag.api.schemas import (
+    AnswerRequest,
+    AnswerResponse,
+    CitedSentence,
+    DocumentSummary,
+    RetrieveRequest,
+    RetrieveResponse,
+    SectionNode,
+)
+from structuralrag.generation.answerer import Answerer
+from structuralrag.generation.context import build_context
 from structuralrag.llm.ollama_client import OllamaClient, OllamaError
 from structuralrag.retrieval.corpus import SectionCorpus
 from structuralrag.retrieval.factory import RetrieverSuite
@@ -82,6 +92,45 @@ def retrieve(req: RetrieveRequest) -> RetrieveResponse:
     results = retriever.search(req.query, top_k=req.top_k, document_id=req.document_id)
     return RetrieveResponse(
         query=req.query, method=req.method, latency_ms=(time.perf_counter() - t0) * 1000, results=results
+    )
+
+
+@lru_cache(maxsize=1)
+def get_answerer() -> Answerer:
+    cfg = load_config()
+    llm, cache = cfg["llm"], CACHE_DIR / "ollama_cache.sqlite"
+    gen = OllamaClient(llm["model"], llm["host"], cache_path=cache)
+    gen.check()
+    checker = OllamaClient(cfg["answers"]["checker_model"], llm["host"], cache_path=cache)
+    checker.check()
+    return Answerer(gen, checker)
+
+
+@app.post("/answer", response_model=AnswerResponse)
+def answer(req: AnswerRequest) -> AnswerResponse:
+    """Cited answer from structure-aware retrieval + hierarchical context, with claim checking."""
+    suite = get_suite()
+    if req.document_id not in suite.corpus.docs:
+        raise HTTPException(404, f"Unknown document {req.document_id}")
+    try:
+        answerer = get_answerer()
+    except OllamaError as e:
+        raise HTTPException(503, str(e)) from e
+    a_cfg = load_config()["answers"]
+    t0 = time.perf_counter()
+    sa = suite.structure_aware()
+    idx = [i for i, _ in sa.rank(sa.score(req.query), a_cfg["top_k"], req.document_id)]
+    ctx = build_context(suite.corpus, idx, "hierarchical", a_cfg["context_words"])
+    ans = answerer.answer(req.query, ctx, check=req.check_claims)
+    return AnswerResponse(
+        query=req.query,
+        answer=ans.text,
+        abstained=ans.abstained,
+        abstain_reason=ans.abstain_reason,
+        sentences=[CitedSentence(text=s.text, citations=s.citations) for s in ans.sentences],
+        removed_claims=[CitedSentence(text=s.text, citations=s.citations) for s in ans.removed],
+        evidence_sections=ctx.citable_ids,
+        latency_ms=(time.perf_counter() - t0) * 1000,
     )
 
 

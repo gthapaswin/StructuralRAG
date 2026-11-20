@@ -35,3 +35,25 @@ class SectionNode(BaseModel):
     title: str
     level: int
     text: str
+
+
+class AnswerRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=2000)
+    document_id: str = Field(description="Answers are grounded in one report")
+    check_claims: bool = True
+
+
+class CitedSentence(BaseModel):
+    text: str
+    citations: list[str]
+
+
+class AnswerResponse(BaseModel):
+    query: str
+    answer: str
+    abstained: bool
+    abstain_reason: str | None
+    sentences: list[CitedSentence]
+    removed_claims: list[CitedSentence]
+    evidence_sections: list[str]
+    latency_ms: float

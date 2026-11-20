@@ -30,3 +30,10 @@ llm:  # local model served by Ollama (generative retrieval + question generation
   questions_per_document: 2
   generative_ict_sample: 300  # ICT queries evaluated with the LLM (fixed random subset)
   max_ids: 5
+
+answers:  # grounded answer generation (scripts/run_answer_eval.py)
+  checker_model: llama3.1  # different model family from the generator, so it doesn't grade itself
+  questions: 150  # sampled from the validated LLM-written questions
+  unanswerable: 100  # questions asked against a different report (should abstain)
+  top_k: 3
+  context_words: 900  # same budget for plain and hierarchical context

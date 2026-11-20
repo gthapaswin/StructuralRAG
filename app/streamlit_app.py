@@ -10,6 +10,8 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+from structuralrag.generation.answerer import Answerer
+from structuralrag.generation.context import build_context
 from structuralrag.ingestion.pdf_parser import parse_pdf
 from structuralrag.llm.ollama_client import OllamaClient, OllamaError
 from structuralrag.retrieval.corpus import SectionCorpus
@@ -76,7 +78,40 @@ def generative_retrievers(_suite: RetrieverSuite, key: str) -> dict | None:
     except OllamaError:
         return None
     gen = GenerativeRetriever(_suite.corpus, client, llm["max_ids"], snippets=True)
-    return {"generative": gen, "generative+structure": GenerativeFusionRetriever(gen, _suite.structure_aware())}
+    out = {"generative": gen, "generative+structure": GenerativeFusionRetriever(gen, _suite.structure_aware())}
+    checker = OllamaClient(CFG["answers"]["checker_model"], llm["host"], cache_path=CACHE_DIR / "ollama_cache.sqlite")
+    try:
+        checker.check()
+    except OllamaError:
+        checker = None
+    out["answerer"] = Answerer(client, checker)
+    return out
+
+
+def show_answer(question: str, doc_id: str) -> None:
+    """Grounded answer from structure-aware top sections + hierarchical context, with claim check."""
+    a_cfg = CFG["answers"]
+    sa = suite.structure_aware()
+    idx = [i for i, _ in sa.rank(sa.score(question), a_cfg["top_k"], doc_id)]
+    ctx = build_context(suite.corpus, idx, "hierarchical", a_cfg["context_words"])
+    answerer = gen_retrievers["answerer"]
+    with st.spinner("Writing answer and checking each claim..."):
+        ans = answerer.answer(question, ctx, check=answerer.checker is not None)
+    with st.container(border=True):
+        st.markdown("**Answer**")
+        if ans.abstained:
+            st.warning(ans.text)
+        else:
+            for sent in ans.sentences:
+                st.markdown(f"{sent.text} `{'` `'.join(sent.citations)}`")
+        if ans.removed:
+            with st.expander(f"{len(ans.removed)} claim(s) removed by the checker (not supported by cited text)"):
+                for sent in ans.removed:
+                    st.markdown(f"~~{sent.text}~~ `{'` `'.join(sent.citations)}`")
+        with st.expander(f"Evidence given to the model ({ctx.n_words} words, sections {', '.join(ctx.citable_ids)})"):
+            st.text(ctx.text)
+        if answerer.checker is None:
+            st.caption(f"Claim check off: `{a_cfg['checker_model']}` not found in Ollama.")
 
 
 GENERIC_HEADINGS = {
@@ -147,9 +182,14 @@ if suite:
             "Question", placeholder="e.g. What did agencies say about cybersecurity workforce shortages?"
         )
         compare = st.checkbox("Compare all methods")
+        want_answer = bool(gen_retrievers) and st.checkbox(
+            "Generate a cited answer", disabled=not doc_id, help="Pick a single report to enable."
+        )
         if method in GEN_METHODS and not doc_id:
             st.info("LLM methods read one report's table of contents: pick a document above.")
         elif query:
+            if want_answer and doc_id:
+                show_answer(query, doc_id)
             run = [m for m in available if compare or m == method]
             run = [m for m in run if m not in GEN_METHODS or doc_id]  # LLM methods need a document
             hits = {}
