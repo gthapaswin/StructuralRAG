@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 
 HF_DATASET = "launch/gov_report"
 HF_CONFIG = "structure"
+PARQUET_BASE = f"hf://datasets/{HF_DATASET}@refs%2Fconvert%2Fparquet/{HF_CONFIG}"
 
 
 def row_to_document(row: dict) -> Document:
@@ -42,7 +43,9 @@ def load_govreport(split: str, limit: int | None = None, seed: int = 13) -> Iter
     """Yield GovReport documents for an HF split ('train' | 'validation' | 'test')."""
     from datasets import load_dataset
 
-    ds = load_dataset(HF_DATASET, HF_CONFIG, split=split)
+    # The original repo uses a loading script, which recent `datasets` versions refuse to
+    # execute; Hugging Face's auto-converted Parquet branch has identical content.
+    ds = load_dataset("parquet", data_files={split: f"{PARQUET_BASE}/{split}/*.parquet"}, split=split)
     if limit is not None and limit < len(ds):
         ds = ds.shuffle(seed=seed).select(range(limit))
     for row in ds:

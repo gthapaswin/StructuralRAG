@@ -16,6 +16,12 @@ LONG = (
     "The department agreed with our recommendations and described planned corrective actions. "
     "Funding levels varied substantially between fiscal years because of supplemental appropriations."
 )
+OTHER = (
+    "Inspectors visited nine facilities in three states between January and June. "
+    "Several facilities could not produce maintenance records for critical equipment. "
+    "Staff turnover at two sites exceeded forty percent during the review period. "
+    "Managers said new software would improve record keeping by next spring."
+)
 
 
 @pytest.fixture
@@ -27,13 +33,19 @@ def report() -> Document:
         [
             FlatHeading("Background", 1, LONG),
             FlatHeading("Findings", 1, ""),
-            FlatHeading("Details", 2, LONG.replace("agency", "office")),
+            FlatHeading("Details", 2, OTHER),
         ],
     )
 
 
 def test_sentence_split_keeps_abbreviations():
     assert split_sentences("The U.S. Army acted. It was fast.") == ["The U.S. Army acted.", "It was fast."]
+
+
+def test_ict_skips_boilerplate_sentences():
+    doc = build_document("toy", "r2", "R", [FlatHeading("A", 1, LONG), FlatHeading("B", 1, LONG)])
+    _, queries = generate_ict_queries([doc], split="test", queries_per_doc=5, seed=1)
+    assert queries == [], "sentences shared across sections give ambiguous labels"
 
 
 def test_ict_removes_query_from_index(report):

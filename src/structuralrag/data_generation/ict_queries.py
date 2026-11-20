@@ -39,11 +39,19 @@ def generate_ict_queries(
         doc = doc.model_copy(deep=True)
         candidates = [s for s in doc.sections if eligible_sentences(s.text)]
         rng.shuffle(candidates)
-        for sec in candidates[:queries_per_doc]:
+        made = 0
+        for sec in candidates:
+            if made >= queries_per_doc:
+                break
             sents = split_sentences(sec.text)
             idx = rng.choice(eligible_sentences(sec.text))
             question = sents[idx]
-            sec.text = " ".join(s for i, s in enumerate(sents) if i != idx)
+            remaining = " ".join(s for s in sents if s != question)  # drop every copy
+            # Skip boilerplate sentences: they would leak, or make the gold label ambiguous.
+            if question in remaining or any(question in o.text for o in doc.sections if o is not sec):
+                continue
+            sec.text = remaining
+            made += 1
             queries.append(
                 Query(
                     query_id=f"{doc.document_id}::q{len(queries)}",
