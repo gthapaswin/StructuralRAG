@@ -9,3 +9,4 @@ artifacts/
 .DS_Store
 .ipynb_checkpoints/
 Details.md
+reports/per_query.csv

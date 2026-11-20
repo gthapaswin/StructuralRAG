@@ -6,8 +6,44 @@ Most RAG pipelines split a document into flat chunks and forget where each chunk
 StructuralRAG keeps the document tree (document → chapter → section → subsection) and
 uses it during retrieval: given a question, find the section of a long report that answers it.
 
-> **Status:** work in progress. The pipeline, retrievers, evaluation framework, API and dashboard
-> are implemented; benchmark results will be added to this README once the full evaluation has run.
+## Results
+
+GovReport test split: **200 reports, 4,533 sections, 1,179 queries**, tuned on 60 separate dev
+reports. Embeddings: `BAAI/bge-small-en-v1.5`, Apple M5 (MPS). Full tables: [`reports/results.md`](reports/results.md).
+
+**Document scope** (find the right section inside a known report):
+
+| Method | Recall@1 | Recall@5 | Recall@10 | MRR@10 (95% CI) | nDCG@10 | P50 latency |
+|---|---|---|---|---|---|---|
+| BM25 | 0.546 | 0.880 | 0.956 | 0.687 (0.667–0.708) | 0.753 | 4.4 ms |
+| Dense | 0.511 | 0.872 | 0.950 | 0.661 (0.639–0.681) | 0.731 | 5.3 ms |
+| Hybrid (RRF) | 0.545 | **0.908** | 0.967 | 0.695 (0.673–0.715) | 0.761 | 12.4 ms |
+| **Structure-aware** | **0.563** | 0.892 | **0.975** | **0.703** (0.683–0.722) | **0.769** | 12.7 ms |
+
+**Corpus scope** (search all 4,533 sections): structure-aware MRR@10 0.573 vs BM25 0.575,
+hybrid 0.565, dense 0.520.
+
+### What the numbers say
+
+- **Structure-aware retrieval scores highest on most metrics, but its lead over strong baselines is small.**
+  Paired tests on MRR@10: vs dense +0.042 (p < 0.001, significant); vs BM25 +0.015 (permutation p = 0.06,
+  Wilcoxon p = 0.003, borderline); vs hybrid +0.008 (p = 0.14, **not significant**).
+- **Structure helps most for deep sections.** MRR@10 for targets at depth 3/4/5 is 0.700/0.704/0.699 for
+  structure-aware vs 0.633/0.673/0.560 for BM25 and 0.672/0.676/0.653 for hybrid. At depth 1 it is
+  slightly worse (0.686 vs 0.708). Depth-5 has only 25 queries, so treat that bucket with care.
+- **The hierarchy-path signal helps a little; parent propagation did not help.** Tuning on dev picked
+  α = 0.2 (path) and β = 0 (parent). Most of the gain over dense comes from fusing with BM25 over
+  structure-enriched text.
+- **Naively prepending metadata hurts dense retrieval.** Dense MRR@10 falls from 0.661 (text only) to
+  0.632 (all metadata) as titles, paths and parent text are added to the embedded passage. BM25 barely
+  changes. Keeping structure as a *separate field* works better than concatenating it.
+
+### Limitations
+
+- ICT queries are sentences taken from the section itself, which favours lexical matching (BM25 is a
+  strong baseline here). Human-written or LLM-generated questions that refer to sections indirectly
+  may show different results; that is the next experiment.
+- Single dataset (government reports) and a single small embedding model.
 
 ## What it does
 
@@ -74,6 +110,8 @@ scripts/                 prepare_data.py, run_evaluation.py
 app/                     Streamlit dashboard
 tests/                   unit + integration tests (no model download needed)
 ```
+
+Runs on a laptop: on an Apple M5, building all test indexes took ~30 s and peak memory was ~0.9 GB.
 
 ## Roadmap
 
