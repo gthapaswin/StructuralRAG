@@ -4,7 +4,8 @@
 
 Most RAG pipelines split a document into flat chunks and forget where each chunk lived.
 StructuralRAG keeps the document tree (document → chapter → section → subsection) and
-uses it during retrieval: given a question, find the section of a long report that answers it.
+uses it during retrieval: given a question, find the section of a long report that answers it, then write an answer in which every sentence
+cites the section it came from, or say the report does not cover the question.
 
 ## Results
 
@@ -68,12 +69,43 @@ section answers them; 602 generated, 34% rejected). Full tables: [`reports/gener
   Structure-aware is best on both sets: significantly better than BM25 on LLM questions (+0.062,
   p < 0.001), but **not significantly** better than dense or hybrid.
 
+### Grounded answers with citations
+
+On top of retrieval, the pipeline writes an answer in which **every sentence cites a section id**.
+Citations are constrained by a JSON schema to the sections actually shown to the model. A second
+model from a different family (`llama3.1`) checks each sentence against the text of the sections it
+cites, and sentences that fail are removed and reported. If the evidence does not cover the
+question, the system answers "not covered" instead of guessing. Faithfulness is scored by an NLI
+model (`nli-deberta-v3-small`) that plays no part in producing the answers. The test set is 150
+LLM-written questions, with the top-3 sections and the same 900-word evidence budget for every setup.
+
+| Setup (claim check on) | Abstained | Faithfulness (NLI) | Cites gold section | Citation precision |
+|---|---|---|---|---|
+| A: BM25 + plain chunks | 10.7% | 0.603 | 0.821 | 0.789 |
+| B: structure-aware + plain chunks | 6.7% | 0.582 | **0.893** | 0.831 |
+| C: structure-aware + hierarchical context | 6.7% | **0.611** | **0.893** | **0.845** |
+
+- **Better retrieval means better-cited answers.** Structure-aware retrieval puts the gold section in
+  the evidence 91% of the time vs 81% for BM25, and answers cite it more often (+7.5 points,
+  permutation p = 0.04).
+- **Abstention works.** On 100 questions asked against the *wrong* report, the system said "not
+  covered" **96%** of the time, while abstaining on only 6.7% of answerable questions.
+- **Hierarchical context (breadcrumb path, parent intro, children of heading-only sections) and the
+  claim check give small gains that are not significant** (faithfulness +0.025, p = 0.40; +0.014,
+  p = 0.06). The checker removes about 1 sentence in 20. These are honest null results at n = 150.
+
+Full tables and example answers: [`reports/answer_results.md`](reports/answer_results.md). Try it
+in the dashboard: choose a report, tick *Generate a cited answer*, and ask a question.
+
 ### Limitations
 
 - ICT queries are sentences taken from the section itself, which favours lexical matching.
 - The LLM question writer saw each section's title, so its questions may echo title words; this can
   favour methods that use titles and paths (structure-aware). The same model family also powers
   generative retrieval. Human-written questions (e.g. PDFTriage) are the next step.
+- The answer evaluation uses the same LLM-written questions. The small NLI judge is strict with
+  paraphrase, so absolute faithfulness scores are low; compare setups rather than read the scores
+  in isolation. Faithfulness was not checked against human judgments.
 - Single dataset (government reports), one small embedding model, one zero-shot LLM.
 
 ## What it does
@@ -99,8 +131,8 @@ section answers them; 602 generated, 34% rejected). Full tables: [`reports/gener
 - **Ablations**: A1 text only → A2 + title → A3 + hierarchy path → A4 + parent context → A5 all
   metadata, plus a component ablation of the structure-aware score. This separates the effect of
   *structure* from the effect of *simply adding more text*.
-- **FastAPI** service (`/retrieve`, `/documents`, `/experiments`) and a **Streamlit** dashboard
-  (retrieval playground, document explorer, benchmarks, analytics, PDF upload).
+- **FastAPI** service (`/retrieve`, `/answer`, `/documents`, `/experiments`) and a **Streamlit** dashboard
+  (retrieval playground with cited answers, document explorer, benchmarks, analytics, PDF upload).
 
 ## Evaluation protocol
 
@@ -126,6 +158,7 @@ uv run pytest -q                          # tests
 # Optional, needs Ollama with qwen3:8b (`ollama pull qwen3:8b`):
 uv run python scripts/generate_questions.py   # LLM-written questions (~30 min, cached)
 uv run python scripts/run_generative_eval.py  # generative retrieval on both question sets
+uv run python scripts/run_answer_eval.py      # cited answers (+ `ollama pull llama3.1`, ~1.5 h)
 uv run streamlit run app/streamlit_app.py # dashboard
 uv run uvicorn structuralrag.api.routes:app --reload  # API at http://127.0.0.1:8000/docs
 ```
@@ -142,9 +175,11 @@ src/structuralrag/
   data_generation/       ICT queries, validated LLM-written questions
   llm/                   Ollama client (schema-constrained output, response cache)
   retrieval/             corpus views, BM25, dense, hybrid, structure-aware, generative
-  evaluation/            metrics, structural metrics, significance tests, evaluator
+  generation/            evidence context (plain / hierarchical), cited answers, claim check
+  evaluation/            retrieval + answer metrics (NLI faithfulness), significance tests
   api/                   FastAPI app and schemas
-scripts/                 prepare_data, run_evaluation, generate_questions, run_generative_eval
+scripts/                 prepare_data, run_evaluation, generate_questions, run_generative_eval,
+                         run_answer_eval
 app/                     Streamlit dashboard
 tests/                   unit + integration tests (no model download needed)
 ```

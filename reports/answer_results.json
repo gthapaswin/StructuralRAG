@@ -1,0 +1,620 @@
+{
+  "generator": "qwen3:8b",
+  "checker": "llama3.1",
+  "faithfulness_judge": "cross-encoder/nli-deberta-v3-small",
+  "settings": {
+    "checker_model": "llama3.1",
+    "questions": 150,
+    "unanswerable": 100,
+    "top_k": 3,
+    "context_words": 900
+  },
+  "results": [
+    {
+      "config": "A",
+      "variant": "no_check",
+      "n": 150,
+      "abstained": 0.1,
+      "abstained_ci": [
+        0.05333333333333334,
+        0.15333333333333332
+      ],
+      "abstained_n": 150,
+      "faithfulness": 0.5888888888888889,
+      "faithfulness_ci": [
+        0.5327160493827161,
+        0.6475308641975308
+      ],
+      "faithfulness_n": 135,
+      "citation_hit": 0.8148148148148148,
+      "citation_hit_ci": [
+        0.7481481481481481,
+        0.8742592592592583
+      ],
+      "citation_hit_n": 135,
+      "citation_hit_branch": 0.8592592592592593,
+      "citation_hit_branch_ci": [
+        0.8,
+        0.9111111111111111
+      ],
+      "citation_hit_branch_n": 135,
+      "citation_precision": 0.7790123456790122,
+      "citation_precision_ci": [
+        0.7160493827160495,
+        0.839537037037037
+      ],
+      "citation_precision_n": 135,
+      "gold_in_context": 0.8066666666666666,
+      "gold_in_context_ci": [
+        0.7466666666666667,
+        0.8666666666666667
+      ],
+      "gold_in_context_n": 150,
+      "mean_sentences": 2.696296296296296,
+      "removed_per_answer": 0.0
+    },
+    {
+      "config": "A",
+      "variant": "checked",
+      "n": 150,
+      "abstained": 0.10666666666666667,
+      "abstained_ci": [
+        0.06,
+        0.16
+      ],
+      "abstained_n": 150,
+      "faithfulness": 0.6032338308457711,
+      "faithfulness_ci": [
+        0.5472481343283582,
+        0.6604633084577113
+      ],
+      "faithfulness_n": 134,
+      "citation_hit": 0.8208955223880597,
+      "citation_hit_ci": [
+        0.753731343283582,
+        0.8805970149253731
+      ],
+      "citation_hit_n": 134,
+      "citation_hit_branch": 0.8656716417910447,
+      "citation_hit_branch_ci": [
+        0.8059701492537313,
+        0.917910447761194
+      ],
+      "citation_hit_branch_n": 134,
+      "citation_precision": 0.7885572139303482,
+      "citation_precision_ci": [
+        0.7251243781094526,
+        0.8482898009950247
+      ],
+      "citation_precision_n": 134,
+      "gold_in_context": 0.8066666666666666,
+      "gold_in_context_ci": [
+        0.7466666666666667,
+        0.8666666666666667
+      ],
+      "gold_in_context_n": 150,
+      "mean_sentences": 2.6044776119402986,
+      "removed_per_answer": 0.1
+    },
+    {
+      "config": "B",
+      "variant": "no_check",
+      "n": 150,
+      "abstained": 0.06666666666666667,
+      "abstained_ci": [
+        0.02666666666666667,
+        0.10666666666666667
+      ],
+      "abstained_n": 150,
+      "faithfulness": 0.575,
+      "faithfulness_ci": [
+        0.5166666666666666,
+        0.6285863095238095
+      ],
+      "faithfulness_n": 140,
+      "citation_hit": 0.8928571428571429,
+      "citation_hit_ci": [
+        0.8428571428571429,
+        0.9428571428571428
+      ],
+      "citation_hit_n": 140,
+      "citation_hit_branch": 0.9,
+      "citation_hit_branch_ci": [
+        0.85,
+        0.95
+      ],
+      "citation_hit_branch_n": 140,
+      "citation_precision": 0.8285714285714286,
+      "citation_precision_ci": [
+        0.7714285714285715,
+        0.8821428571428571
+      ],
+      "citation_precision_n": 140,
+      "gold_in_context": 0.9066666666666666,
+      "gold_in_context_ci": [
+        0.8533333333333334,
+        0.9533333333333334
+      ],
+      "gold_in_context_n": 150,
+      "mean_sentences": 2.7214285714285715,
+      "removed_per_answer": 0.0
+    },
+    {
+      "config": "B",
+      "variant": "checked",
+      "n": 150,
+      "abstained": 0.06666666666666667,
+      "abstained_ci": [
+        0.02666666666666667,
+        0.10666666666666667
+      ],
+      "abstained_n": 150,
+      "faithfulness": 0.5821428571428572,
+      "faithfulness_ci": [
+        0.5220089285714286,
+        0.6357142857142857
+      ],
+      "faithfulness_n": 140,
+      "citation_hit": 0.8928571428571429,
+      "citation_hit_ci": [
+        0.8428571428571429,
+        0.9428571428571428
+      ],
+      "citation_hit_n": 140,
+      "citation_hit_branch": 0.9,
+      "citation_hit_branch_ci": [
+        0.85,
+        0.95
+      ],
+      "citation_hit_branch_n": 140,
+      "citation_precision": 0.8309523809523809,
+      "citation_precision_ci": [
+        0.7738095238095237,
+        0.8833333333333334
+      ],
+      "citation_precision_n": 140,
+      "gold_in_context": 0.9066666666666666,
+      "gold_in_context_ci": [
+        0.8533333333333334,
+        0.9533333333333334
+      ],
+      "gold_in_context_n": 150,
+      "mean_sentences": 2.657142857142857,
+      "removed_per_answer": 0.06
+    },
+    {
+      "config": "C",
+      "variant": "no_check",
+      "n": 150,
+      "abstained": 0.06666666666666667,
+      "abstained_ci": [
+        0.02666666666666667,
+        0.10666666666666667
+      ],
+      "abstained_n": 150,
+      "faithfulness": 0.5976190476190476,
+      "faithfulness_ci": [
+        0.5410714285714285,
+        0.6553571428571429
+      ],
+      "faithfulness_n": 140,
+      "citation_hit": 0.8928571428571429,
+      "citation_hit_ci": [
+        0.8357142857142857,
+        0.9428571428571428
+      ],
+      "citation_hit_n": 140,
+      "citation_hit_branch": 0.9,
+      "citation_hit_branch_ci": [
+        0.85,
+        0.95
+      ],
+      "citation_hit_branch_n": 140,
+      "citation_precision": 0.8416666666666668,
+      "citation_precision_ci": [
+        0.7856845238095238,
+        0.8928571428571429
+      ],
+      "citation_precision_n": 140,
+      "gold_in_context": 0.9066666666666666,
+      "gold_in_context_ci": [
+        0.8533333333333334,
+        0.9533333333333334
+      ],
+      "gold_in_context_n": 150,
+      "mean_sentences": 2.6285714285714286,
+      "removed_per_answer": 0.0
+    },
+    {
+      "config": "C",
+      "variant": "checked",
+      "n": 150,
+      "abstained": 0.06666666666666667,
+      "abstained_ci": [
+        0.02666666666666667,
+        0.10666666666666667
+      ],
+      "abstained_n": 150,
+      "faithfulness": 0.6113095238095239,
+      "faithfulness_ci": [
+        0.5547619047619048,
+        0.6690625
+      ],
+      "faithfulness_n": 140,
+      "citation_hit": 0.8928571428571429,
+      "citation_hit_ci": [
+        0.8357142857142857,
+        0.9428571428571428
+      ],
+      "citation_hit_n": 140,
+      "citation_hit_branch": 0.9,
+      "citation_hit_branch_ci": [
+        0.85,
+        0.95
+      ],
+      "citation_hit_branch_n": 140,
+      "citation_precision": 0.8452380952380953,
+      "citation_precision_ci": [
+        0.7880654761904763,
+        0.8964583333333332
+      ],
+      "citation_precision_n": 140,
+      "gold_in_context": 0.9066666666666666,
+      "gold_in_context_ci": [
+        0.8533333333333334,
+        0.9533333333333334
+      ],
+      "gold_in_context_n": 150,
+      "mean_sentences": 2.5785714285714287,
+      "removed_per_answer": 0.04666666666666667
+    },
+    {
+      "config": "C_unanswerable",
+      "variant": "no_check",
+      "n": 100,
+      "abstained": 0.96,
+      "abstained_ci": [
+        0.92,
+        0.99
+      ],
+      "abstained_n": 100,
+      "faithfulness": 0.875,
+      "faithfulness_ci": [
+        0.625,
+        1.0
+      ],
+      "faithfulness_n": 4,
+      "citation_hit": NaN,
+      "citation_hit_ci": null,
+      "citation_hit_n": 0,
+      "citation_hit_branch": NaN,
+      "citation_hit_branch_ci": null,
+      "citation_hit_branch_n": 0,
+      "citation_precision": NaN,
+      "citation_precision_ci": null,
+      "citation_precision_n": 0,
+      "gold_in_context": NaN,
+      "gold_in_context_ci": null,
+      "gold_in_context_n": 0,
+      "mean_sentences": 1.5,
+      "removed_per_answer": 0.0
+    },
+    {
+      "config": "C_unanswerable",
+      "variant": "checked",
+      "n": 100,
+      "abstained": 0.96,
+      "abstained_ci": [
+        0.92,
+        0.99
+      ],
+      "abstained_n": 100,
+      "faithfulness": 0.875,
+      "faithfulness_ci": [
+        0.625,
+        1.0
+      ],
+      "faithfulness_n": 4,
+      "citation_hit": NaN,
+      "citation_hit_ci": null,
+      "citation_hit_n": 0,
+      "citation_hit_branch": NaN,
+      "citation_hit_branch_ci": null,
+      "citation_hit_branch_n": 0,
+      "citation_precision": NaN,
+      "citation_precision_ci": null,
+      "citation_precision_n": 0,
+      "gold_in_context": NaN,
+      "gold_in_context_ci": null,
+      "gold_in_context_n": 0,
+      "mean_sentences": 1.5,
+      "removed_per_answer": 0.0
+    }
+  ],
+  "comparisons": [
+    {
+      "comparison": "structure-aware vs BM25 retrieval (plain ctx)",
+      "metric": "faithfulness",
+      "n_pairs": 133,
+      "mean_diff": -0.010651629072681709,
+      "p_permutation": 0.6738326167383262,
+      "p_wilcoxon": 0.6982966987827379
+    },
+    {
+      "comparison": "structure-aware vs BM25 retrieval (plain ctx)",
+      "metric": "citation_hit",
+      "n_pairs": 133,
+      "mean_diff": 0.07518796992481203,
+      "p_permutation": 0.0397960203979602,
+      "p_wilcoxon": 0.13197946117060583
+    },
+    {
+      "comparison": "structure-aware vs BM25 retrieval (plain ctx)",
+      "metric": "abstained",
+      "n_pairs": 150,
+      "mean_diff": -0.03333333333333333,
+      "p_permutation": 0.17468253174682533,
+      "p_wilcoxon": 0.4422686790651932
+    },
+    {
+      "comparison": "hierarchical vs plain context",
+      "metric": "faithfulness",
+      "n_pairs": 135,
+      "mean_diff": 0.024691358024691357,
+      "p_permutation": 0.398960103989601,
+      "p_wilcoxon": 0.3578711654469253
+    },
+    {
+      "comparison": "hierarchical vs plain context",
+      "metric": "citation_hit",
+      "n_pairs": 135,
+      "mean_diff": -0.007407407407407408,
+      "p_permutation": 1.0,
+      "p_wilcoxon": 0.8667293796807051
+    },
+    {
+      "comparison": "hierarchical vs plain context",
+      "metric": "abstained",
+      "n_pairs": 150,
+      "mean_diff": 0.0,
+      "p_permutation": 1.0,
+      "p_wilcoxon": 1.0
+    },
+    {
+      "comparison": "claim check vs none (config C)",
+      "metric": "faithfulness",
+      "n_pairs": 140,
+      "mean_diff": 0.01369047619047619,
+      "p_permutation": 0.062193780621937804,
+      "p_wilcoxon": 0.4159466984840159
+    },
+    {
+      "comparison": "claim check vs none (config C)",
+      "metric": "citation_hit",
+      "n_pairs": 140,
+      "mean_diff": 0.0,
+      "p_permutation": 1.0,
+      "p_wilcoxon": 1.0
+    },
+    {
+      "comparison": "claim check vs none (config C)",
+      "metric": "abstained",
+      "n_pairs": 150,
+      "mean_diff": 0.0,
+      "p_permutation": 1.0,
+      "p_wilcoxon": 1.0
+    },
+    {
+      "comparison": "full pipeline vs BM25 baseline",
+      "metric": "faithfulness",
+      "n_pairs": 131,
+      "mean_diff": 0.02989821882951654,
+      "p_permutation": 0.3227677232276772,
+      "p_wilcoxon": 0.1986602274575422
+    },
+    {
+      "comparison": "full pipeline vs BM25 baseline",
+      "metric": "citation_hit",
+      "n_pairs": 131,
+      "mean_diff": 0.07633587786259542,
+      "p_permutation": 0.0420957904209579,
+      "p_wilcoxon": 0.12982273657821916
+    },
+    {
+      "comparison": "full pipeline vs BM25 baseline",
+      "metric": "abstained",
+      "n_pairs": 150,
+      "mean_diff": -0.03333333333333333,
+      "p_permutation": 0.27277272272772723,
+      "p_wilcoxon": 0.45330983646239564
+    }
+  ],
+  "examples": [
+    {
+      "question": "How does the VA address challenges in providing timely in-person care to veterans?",
+      "gold": "1.1",
+      "answer": {
+        "question": "How does the VA address challenges in providing timely in-person care to veterans?",
+        "sentences": [
+          {
+            "text": "Telehealth allows veterans to access health care services through information and communication technology without needing to visit a service provider in person.",
+            "citations": [
+              "1.1.1"
+            ],
+            "supported": true
+          }
+        ],
+        "removed": [
+          {
+            "text": "The VA addresses challenges in providing timely in-person care to veterans by expanding the use of telehealth services.",
+            "citations": [
+              "1.6.1"
+            ],
+            "supported": false
+          }
+        ],
+        "abstained": false,
+        "abstain_reason": null,
+        "context_mode": "hierarchical",
+        "text": "Telehealth allows veterans to access health care services through information and communication technology without needing to visit a service provider in person. [1.1.1]"
+      }
+    },
+    {
+      "question": "How do states typically handle best interest determinations and data sharing for foster care youth in school enrollment?",
+      "gold": "8.1",
+      "answer": {
+        "question": "How do states typically handle best interest determinations and data sharing for foster care youth in school enrollment?",
+        "sentences": [
+          {
+            "text": "States typically handle best interest determinations by considering all factors relating to the child\u2019s best interest, including the appropriateness of the current educational setting and proximity to the school in which the child is enrolled at the time of placement.",
+            "citations": [
+              "1.1"
+            ],
+            "supported": true
+          },
+          {
+            "text": "Data sharing for foster care youth in school enrollment is facilitated through sample memoranda of understanding or agreements between school districts and local child welfare agencies.",
+            "citations": [
+              "8.1"
+            ],
+            "supported": true
+          }
+        ],
+        "removed": [],
+        "abstained": false,
+        "abstain_reason": null,
+        "context_mode": "hierarchical",
+        "text": "States typically handle best interest determinations by considering all factors relating to the child\u2019s best interest, including the appropriateness of the current educational setting and proximity to the school in which the child is enrolled at the time of placement. [1.1] Data sharing for foster care youth in school enrollment is facilitated through sample memoranda of understanding or agreements between school districts and local child welfare agencies. [8.1]"
+      }
+    },
+    {
+      "question": "What historical context led to the U.S. establishing nuclear security programs for Russia and former Soviet states?",
+      "gold": "1",
+      "answer": {
+        "question": "What historical context led to the U.S. establishing nuclear security programs for Russia and former Soviet states?",
+        "sentences": [
+          {
+            "text": "The U.S. established nuclear security programs for Russia and former Soviet states following the collapse of the Soviet Union in 1991, due to significant concerns about Russia's ability to maintain adequate security over its nuclear weapons and weapons-usable nuclear materials.",
+            "citations": [
+              "1"
+            ],
+            "supported": true
+          },
+          {
+            "text": "In 1995, the Department of Energy (DOE) established the Material Protection, Control, and Accounting (MPC&A) program to equip Russia and other countries with modern nuclear material security systems and promote effective nuclear material security practices.",
+            "citations": [
+              "1"
+            ],
+            "supported": true
+          }
+        ],
+        "removed": [],
+        "abstained": false,
+        "abstain_reason": null,
+        "context_mode": "hierarchical",
+        "text": "The U.S. established nuclear security programs for Russia and former Soviet states following the collapse of the Soviet Union in 1991, due to significant concerns about Russia's ability to maintain adequate security over its nuclear weapons and weapons-usable nuclear materials. [1] In 1995, the Department of Energy (DOE) established the Material Protection, Control, and Accounting (MPC&A) program to equip Russia and other countries with modern nuclear material security systems and promote effective nuclear material security practices. [1]"
+      }
+    },
+    {
+      "question": "Who were the key individuals involved in the development of this report beyond the primary contact?",
+      "gold": "10.2",
+      "answer": {
+        "question": "Who were the key individuals involved in the development of this report beyond the primary contact?",
+        "sentences": [
+          {
+            "text": "The key individuals involved in the development of this report beyond the primary contact include Scott Spicer, Amy Moran Lowe, Grace Cho, and Michael Walton.",
+            "citations": [
+              "3.2"
+            ],
+            "supported": true
+          }
+        ],
+        "removed": [
+          {
+            "text": "Other contributors to the report were Joel Aldape, Aditi Archer, Susan Aschoff, James E. Bennett, Deirdre Gleeson Brown, Alicia Cackley, Sarah Cornetto, Elizabeth Curda, Chris Currie, Kelly DeMots, Erin Guinn-Villareal, Camille Henley, Denton Herring, Sara Schibanoff Kelly, James Lawson, Matthew T. Lowney, Sheila R. McCoy, Jean McSween, Amanda R. Parker, Sara Pelton, Brenda Rabinowitz, Michelle Sager, Brian Schwartz, Almeta Spencer, Manuel Valverde, Jr., and Su Jin Yon.",
+            "citations": [
+              "3.2"
+            ],
+            "supported": false
+          }
+        ],
+        "abstained": false,
+        "abstain_reason": null,
+        "context_mode": "hierarchical",
+        "text": "The key individuals involved in the development of this report beyond the primary contact include Scott Spicer, Amy Moran Lowe, Grace Cho, and Michael Walton. [3.2]"
+      }
+    },
+    {
+      "question": "How do federal agencies and sector stakeholders collaborate to enhance the resilience of water and wastewater infrastructure against natural disasters and climate change?",
+      "gold": "1.2",
+      "answer": {
+        "question": "How do federal agencies and sector stakeholders collaborate to enhance the resilience of water and wastewater infrastructure against natural disasters and climate change?",
+        "sentences": [
+          {
+            "text": "For example, utilities use HUD Community Development Block Grant-Disaster Recovery funding and FEMA\u2019s Public Assistance grant program to increase resilience to floods.",
+            "citations": [
+              "4.1"
+            ],
+            "supported": true
+          },
+          {
+            "text": "Similarly, utilities like Houston Water and San Diego Public Utilities Department use FEMA and EPA programs to enhance resilience against floods and droughts.",
+            "citations": [
+              "4.1"
+            ],
+            "supported": true
+          },
+          {
+            "text": "Representatives of several utilities reported using selected federal financial assistance programs to help fund projects that enhance climate resilience.",
+            "citations": [
+              "4.1"
+            ],
+            "supported": true
+          }
+        ],
+        "removed": [
+          {
+            "text": "Federal agencies and sector stakeholders collaborate by using financial assistance programs to fund projects that enhance climate resilience.",
+            "citations": [
+              "4.1"
+            ],
+            "supported": false
+          }
+        ],
+        "abstained": false,
+        "abstain_reason": null,
+        "context_mode": "hierarchical",
+        "text": "For example, utilities use HUD Community Development Block Grant-Disaster Recovery funding and FEMA\u2019s Public Assistance grant program to increase resilience to floods. [4.1] Similarly, utilities like Houston Water and San Diego Public Utilities Department use FEMA and EPA programs to enhance resilience against floods and droughts. [4.1] Representatives of several utilities reported using selected federal financial assistance programs to help fund projects that enhance climate resilience. [4.1]"
+      }
+    },
+    {
+      "question": "How does NASA handle cost and schedule changes when a program exceeds its baseline estimates?",
+      "gold": "1.1",
+      "answer": {
+        "question": "How does NASA handle cost and schedule changes when a program exceeds its baseline estimates?",
+        "sentences": [
+          {
+            "text": "NASA handles cost and schedule changes by initiating a replan process when development cost growth reaches 15 percent or more of the estimate in the baseline report or a major milestone is delayed by 6 months or more from the baseline date.",
+            "citations": [
+              "1.1"
+            ],
+            "supported": true
+          }
+        ],
+        "removed": [
+          {
+            "text": "If development costs are expected to increase by more than 30 percent, NASA must submit a report to the Committee on Science, Space, and Technology of the House of Representatives and rebase the program.",
+            "citations": [
+              "1.1"
+            ],
+            "supported": false
+          }
+        ],
+        "abstained": false,
+        "abstain_reason": null,
+        "context_mode": "hierarchical",
+        "text": "NASA handles cost and schedule changes by initiating a replan process when development cost growth reaches 15 percent or more of the estimate in the baseline report or a major milestone is delayed by 6 months or more from the baseline date. [1.1]"
+      }
+    }
+  ]
+}
