@@ -53,10 +53,16 @@ def evaluate(
     if scope not in {"document", "corpus"}:
         raise ValueError(f"Unknown scope {scope!r}")
     corpus = retriever.corpus
+    per_doc = getattr(retriever, "requires_document", False)
+    if per_doc and scope != "document":
+        raise ValueError(f"{retriever.name} only supports scope='document'")
     res = RunResult(method=retriever.name, scope=scope)
     for start in range(0, len(queries), batch_size):
         batch = queries[start : start + batch_size]
-        scores = retriever.score_batch([q.question for q in batch])
+        if per_doc:
+            scores = [retriever.score_for_document(q.question, q.document_id) for q in batch]
+        else:
+            scores = retriever.score_batch([q.question for q in batch])
         for q, sc in zip(batch, scores, strict=True):
             ranked_idx = retriever.rank(sc, TOP_K, q.document_id if scope == "document" else None)
             ranked = [corpus.sections[i].uid for i, _ in ranked_idx]
@@ -64,13 +70,14 @@ def evaluate(
             row = {"query_id": q.query_id, "document_id": q.document_id, "top1": ranked[0]}
             row.update(per_query_metrics(ranked, gold))
             row.update(structural_metrics(ranked[0], gold, corpus))
+            row["n_returned"] = len(ranked)
             row["target_level"] = q.metadata.get("target_level")
             res.per_query.append(row)
 
     # Latency: end-to-end single-query search (encode + score + rank), as a user would experience.
     sample = queries[:latency_sample]
     if sample:
-        retriever.search(sample[0].question)  # warm-up
+        retriever.search(sample[0].question, document_id=sample[0].document_id)  # warm-up
         times = []
         for q in sample:
             t0 = time.perf_counter()

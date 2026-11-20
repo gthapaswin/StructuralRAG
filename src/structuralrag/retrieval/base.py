@@ -26,13 +26,19 @@ class Retriever(ABC):
     def rank(self, scores: np.ndarray, top_k: int, document_id: str | None = None) -> list[tuple[int, float]]:
         idx = self.corpus.doc_indices(document_id) if document_id else np.arange(len(self.corpus))
         sub = scores[idx]
+        keep = np.isfinite(sub)  # -inf marks "not predicted" (generative retrieval)
+        idx, sub = idx[keep], sub[keep]
         k = min(top_k, len(idx))
+        if k == 0:
+            return []
         top = np.argpartition(-sub, k - 1)[:k]
         top = top[np.argsort(-sub[top], kind="stable")]
         return [(int(idx[t]), float(sub[t])) for t in top]
 
     def search(self, query: str, top_k: int = 5, document_id: str | None = None) -> list[RetrievedSection]:
-        ranked = self.rank(self.score(query), top_k, document_id)
+        return self._to_results(self.rank(self.score(query), top_k, document_id))
+
+    def _to_results(self, ranked: list[tuple[int, float]]) -> list[RetrievedSection]:
         out = []
         for i, sc in ranked:
             s = self.corpus.sections[i]

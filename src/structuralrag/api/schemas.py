@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from structuralrag.schema import RetrievedSection
 
-Method = Literal["bm25", "dense", "hybrid", "structure_aware"]
+Method = Literal["bm25", "dense", "hybrid", "structure_aware", "generative", "generative+structure"]
 
 
 class RetrieveRequest(BaseModel):

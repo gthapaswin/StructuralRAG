@@ -9,8 +9,10 @@ from functools import lru_cache
 from fastapi import FastAPI, HTTPException
 
 from structuralrag.api.schemas import DocumentSummary, RetrieveRequest, RetrieveResponse, SectionNode
+from structuralrag.llm.ollama_client import OllamaClient, OllamaError
 from structuralrag.retrieval.corpus import SectionCorpus
 from structuralrag.retrieval.factory import RetrieverSuite
+from structuralrag.retrieval.generative import GenerativeFusionRetriever, GenerativeRetriever
 from structuralrag.retrieval.structure_aware import StructureParams
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, REPORTS_DIR, load_config
 from structuralrag.utils.io import load_documents
@@ -29,6 +31,16 @@ def get_suite() -> RetrieverSuite:
         params = StructureParams(**json.loads(results.read_text())["tuned_structure_params"])
     cfg = load_config()
     return RetrieverSuite(SectionCorpus(load_documents(path)), cfg["retrieval"]["embedding_model"], CACHE_DIR, params)
+
+
+@lru_cache(maxsize=1)
+def get_generative() -> dict:
+    """LLM retrievers backed by Ollama; raises 503 if Ollama or the model is unavailable."""
+    llm = load_config()["llm"]
+    client = OllamaClient(llm["model"], llm["host"], cache_path=CACHE_DIR / "ollama_cache.sqlite")
+    client.check()
+    gen = GenerativeRetriever(get_suite().corpus, client, llm["max_ids"], snippets=True)
+    return {"generative": gen, "generative+structure": GenerativeFusionRetriever(gen, get_suite().structure_aware())}
 
 
 @app.get("/health")
@@ -57,7 +69,15 @@ def retrieve(req: RetrieveRequest) -> RetrieveResponse:
     suite = get_suite()
     if req.document_id and req.document_id not in suite.corpus.docs:
         raise HTTPException(404, f"Unknown document {req.document_id}")
-    retriever = suite.get(req.method)
+    if req.method.startswith("generative"):
+        if not req.document_id:
+            raise HTTPException(422, "LLM methods need document_id: they read that document's table of contents.")
+        try:
+            retriever = get_generative()[req.method]
+        except OllamaError as e:
+            raise HTTPException(503, str(e)) from e
+    else:
+        retriever = suite.get(req.method)
     t0 = time.perf_counter()
     results = retriever.search(req.query, top_k=req.top_k, document_id=req.document_id)
     return RetrieveResponse(

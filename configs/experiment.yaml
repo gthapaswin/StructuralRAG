@@ -23,3 +23,10 @@ tuning:  # grid searched on dev, best by MRR@10 (document scope)
 evaluation:
   scopes: [document, corpus]
   ablation_views: [text, title, path, parent, full]
+
+llm:  # local model served by Ollama (generative retrieval + question generation)
+  model: qwen3:8b
+  host: http://localhost:11434
+  questions_per_document: 2
+  generative_ict_sample: 300  # ICT queries evaluated with the LLM (fixed random subset)
+  max_ids: 5

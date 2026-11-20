@@ -4,14 +4,17 @@ from __future__ import annotations
 
 import json
 import tempfile
+from contextlib import nullcontext
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 
 from structuralrag.ingestion.pdf_parser import parse_pdf
+from structuralrag.llm.ollama_client import OllamaClient, OllamaError
 from structuralrag.retrieval.corpus import SectionCorpus
 from structuralrag.retrieval.factory import METHODS, RetrieverSuite
+from structuralrag.retrieval.generative import GenerativeFusionRetriever, GenerativeRetriever
 from structuralrag.retrieval.structure_aware import StructureParams
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, REPORTS_DIR, load_config
 from structuralrag.utils.io import load_documents
@@ -19,6 +22,16 @@ from structuralrag.utils.io import load_documents
 st.set_page_config(page_title="StructuralRAG", layout="wide")
 CFG = load_config()
 RESULTS = REPORTS_DIR / "results.json"
+GEN_RESULTS = REPORTS_DIR / "generative_results.json"
+GEN_METHODS = ("generative", "generative+structure")
+SHORT = {
+    "bm25": "BM25",
+    "dense": "Dense",
+    "hybrid": "Hybrid",
+    "structure_aware": "Structure",
+    "generative": "LLM",
+    "generative+structure": "LLM+Struct",
+}
 
 
 @st.cache_data
@@ -53,6 +66,19 @@ def pdf_suite(pdf_bytes: bytes, name: str) -> RetrieverSuite:
     return _warm(RetrieverSuite(SectionCorpus([doc]), CFG["retrieval"]["embedding_model"], None, tuned_params()))
 
 
+@st.cache_resource(show_spinner=False)
+def generative_retrievers(_suite: RetrieverSuite, key: str) -> dict | None:
+    """LLM retrievers if Ollama is running with the configured model, else None."""
+    llm = CFG["llm"]
+    client = OllamaClient(llm["model"], llm["host"], cache_path=CACHE_DIR / "ollama_cache.sqlite", seed=CFG["seed"])
+    try:
+        client.check()
+    except OllamaError:
+        return None
+    gen = GenerativeRetriever(_suite.corpus, client, llm["max_ids"], snippets=True)
+    return {"generative": gen, "generative+structure": GenerativeFusionRetriever(gen, _suite.structure_aware())}
+
+
 GENERIC_HEADINGS = {
     "background",
     "introduction",
@@ -85,17 +111,25 @@ st.caption("Beyond chunking: structure-aware retrieval over long, hierarchical d
 with st.sidebar:
     source = st.radio("Corpus", ["GovReport benchmark", "Upload a PDF"])
     suite: RetrieverSuite | None = None
+    suite_key = source
     if source == "Upload a PDF":
         up = st.file_uploader("PDF", type="pdf")
         if up:
             suite = pdf_suite(up.getvalue(), up.name)
+            suite_key = f"pdf:{up.name}:{up.size}"
     elif (DATA_DIR / "test_documents.jsonl").exists():
         suite = benchmark_suite()
     else:
         st.error("Run `uv run python scripts/prepare_data.py` first.")
+    gen_retrievers = generative_retrievers(suite, suite_key) if suite else None
+    if suite:
+        if gen_retrievers:
+            st.success(f"LLM methods on: `{CFG['llm']['model']}` via Ollama")
+        else:
+            st.caption(f"LLM methods off — start Ollama with `{CFG['llm']['model']}` to enable them.")
 
-tab_retrieve, tab_explore, tab_bench, tab_analytics = st.tabs(
-    ["Retrieval playground", "Document explorer", "Benchmarks", "Analytics"]
+tab_retrieve, tab_explore, tab_bench, tab_gen, tab_analytics = st.tabs(
+    ["Retrieval playground", "Document explorer", "Benchmarks", "Generative", "Analytics"]
 )
 
 if suite:
@@ -104,29 +138,42 @@ if suite:
 
     with tab_retrieve:
         doc_label = st.selectbox("Document", ["All documents", *labels])
+        doc_id = labels.get(doc_label)
+        available = list(METHODS) + (list(GEN_METHODS) if gen_retrievers else [])
         c1, c2 = st.columns([2, 1])
-        method = c1.selectbox("Method", METHODS, index=METHODS.index("structure_aware"))
+        method = c1.selectbox("Method", available, index=available.index("structure_aware"))
         top_k = c2.slider("Top K", 1, 20, 5)
         query = st.text_input(
             "Question", placeholder="e.g. What did agencies say about cybersecurity workforce shortages?"
         )
         compare = st.checkbox("Compare all methods")
-        if query:
-            doc_id = labels.get(doc_label)
-            hits = {m: suite.get(m).search(query, top_k=top_k, document_id=doc_id) for m in METHODS}
+        if method in GEN_METHODS and not doc_id:
+            st.info("LLM methods read one report's table of contents: pick a document above.")
+        elif query:
+            run = [m for m in available if compare or m == method]
+            run = [m for m in run if m not in GEN_METHODS or doc_id]  # LLM methods need a document
+            hits = {}
+            for m in run:
+                retriever = gen_retrievers[m] if m in GEN_METHODS else suite.get(m)
+                ctx = st.spinner(f"Asking {CFG['llm']['model']}...") if m in GEN_METHODS else nullcontext()
+                with ctx:
+                    hits[m] = retriever.search(query, top_k=top_k, document_id=doc_id)
             if compare:
                 st.markdown("**Top results per method** — the same section in several columns means the methods agree")
-                short = {"bm25": "BM25", "dense": "Dense", "hybrid": "Hybrid", "structure_aware": "Structure"}
                 table = pd.DataFrame(
-                    {short[m]: [f"{r.section_id} {r.title[:22]}…" for r in rs] for m, rs in hits.items()},
-                    index=pd.RangeIndex(1, top_k + 1, name="#"),
-                )
+                    {SHORT[m]: pd.Series([f"{r.section_id} {r.title[:22]}…" for r in rs]) for m, rs in hits.items()}
+                ).fillna("")
+                table.index = pd.RangeIndex(1, len(table) + 1, name="#")
                 st.dataframe(table, width="stretch")
-                for tab, m in zip(st.tabs([short[m] for m in METHODS]), METHODS, strict=True):
+                if gen_retrievers and not doc_id:
+                    st.caption("LLM methods are skipped across all documents; pick one report to include them.")
+                for tab, m in zip(st.tabs([SHORT[m] for m in hits]), hits, strict=True):
                     with tab:
                         for r in hits[m]:
                             show_hit(r)
             else:
+                if method == "generative" and len(hits[method]) < top_k:
+                    st.caption("The LLM lists at most a few sections; it does not rank the rest.")
                 for r in hits[method]:
                     show_hit(r)
 
@@ -195,3 +242,32 @@ with tab_analytics:
         st.table(depth.rename(columns=lambda c: f"depth {c}").round(3))
         st.subheader("Efficiency")
         st.json(res["efficiency"])
+
+with tab_gen:
+    if not GEN_RESULTS.exists():
+        st.info(
+            "Run `uv run python scripts/generate_questions.py` and `scripts/run_generative_eval.py` (needs Ollama)."
+        )
+    else:
+        g = json.loads(GEN_RESULTS.read_text())
+        st.markdown(
+            f"Zero-shot generative retrieval with `{g['model']}`: the model reads only the table of contents "
+            "and returns section ids. Output is constrained to the report's real ids, so every prediction is valid."
+        )
+        names = {"ict": "Sentence-from-section (ICT)", "llm": "LLM-written questions"}
+        qset = st.radio("Question set", list(g["query_sets"]), horizontal=True, format_func=names.get)
+        data = g["query_sets"][qset]
+        st.caption(f"{data['n_queries']} questions, document scope.")
+        tbl = pd.DataFrame(data["results"]).set_index("method")
+        st.table(tbl[["recall@1", "recall@5", "mrr@10", "ndcg@10", "mean_returned"]].round(3))
+        st.bar_chart(tbl[["recall@1", "mrr@10"]], stack=False)
+        st.subheader("Paired significance tests")
+        sig = pd.DataFrame(data["significance"])
+        sig["significant (p<0.05, both tests)"] = (sig.p_permutation < 0.05) & (sig.p_wilcoxon < 0.05)
+        st.table(sig.round(4).set_index(["method", "vs", "metric"]))
+        st.subheader("MRR@10 by depth of the correct section")
+        st.table(pd.DataFrame(data["mrr_by_target_level"]).set_index("method").rename(columns=lambda c: f"depth {c}"))
+        if "llm_question_stats" in g:
+            st.subheader("How the LLM questions were filtered")
+            st.json(g["llm_question_stats"])
+        st.caption(f"LLM latency per query (uncached): {g['generative_latency_ms']}")
