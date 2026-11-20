@@ -38,12 +38,43 @@ hybrid 0.565, dense 0.520.
   0.632 (all metadata) as titles, paths and parent text are added to the embedded passage. BM25 barely
   changes. Keeping structure as a *separate field* works better than concatenating it.
 
+### Generative retrieval and LLM-written questions
+
+A local LLM (`qwen3:8b` via Ollama, zero-shot, temperature 0) reads only the report's **table of
+contents** and generates a ranked list of section ids. Its output is constrained to the report's real
+ids, so **100% of predictions are valid sections**. Evaluated on two question sets (document scope):
+300 ICT queries (fixed random sample) and **398 LLM-written paraphrased questions** (2 per test report,
+kept only if they share no 5-word span with the section and an independent LLM check confirms the
+section answers them; 602 generated, 34% rejected). Full tables: [`reports/generative_results.md`](reports/generative_results.md).
+
+| Method | ICT MRR@10 | LLM-question MRR@10 | LLM-question Recall@1 | P50 latency |
+|---|---|---|---|---|
+| BM25 | 0.685 | 0.815 | 0.724 | ~4 ms |
+| Dense | 0.668 | 0.871 | 0.791 | ~5 ms |
+| Hybrid | 0.701 | 0.862 | 0.776 | ~12 ms |
+| **Structure-aware** | **0.706** | **0.877** | **0.799** | ~13 ms |
+| Generative (ToC titles only) | 0.445 | 0.644 | 0.545 | — |
+| Generative (ToC + 20-word snippets) | 0.510 | 0.732 | 0.641 | ~1.9 s |
+| Generative + structure-aware (fusion) | 0.641 | 0.826 | 0.751 | ~1.9 s |
+
+- **Zero-shot generative retrieval is far behind** (MRR@10 −0.15 to −0.20 vs structure-aware,
+  p < 0.001) and ~150× slower. Titles alone are not enough to route a question; adding short section
+  snippets to the ToC helps substantially (+0.065 to +0.088 MRR). STAIR fine-tunes its model; this
+  zero-shot result is a baseline for that, not a reproduction.
+- **Fusing the LLM's picks into structure-aware ranking also hurts** (−0.05 MRR, p ≤ 0.003). It only
+  helped for the deepest sections (depth 5), where the buckets are too small (7–25 queries) to rely on.
+- **Paraphrased questions flip the BM25-vs-dense result.** On ICT queries BM25 beats dense; on
+  LLM-written questions dense is clearly better (0.871 vs 0.815), as expected when wording differs.
+  Structure-aware is best on both sets: significantly better than BM25 on LLM questions (+0.062,
+  p < 0.001), but **not significantly** better than dense or hybrid.
+
 ### Limitations
 
-- ICT queries are sentences taken from the section itself, which favours lexical matching (BM25 is a
-  strong baseline here). Human-written or LLM-generated questions that refer to sections indirectly
-  may show different results; that is the next experiment.
-- Single dataset (government reports) and a single small embedding model.
+- ICT queries are sentences taken from the section itself, which favours lexical matching.
+- The LLM question writer saw each section's title, so its questions may echo title words; this can
+  favour methods that use titles and paths (structure-aware). The same model family also powers
+  generative retrieval. Human-written questions (e.g. PDFTriage) are the next step.
+- Single dataset (government reports), one small embedding model, one zero-shot LLM.
 
 ## What it does
 
@@ -60,6 +91,8 @@ hybrid 0.565, dense 0.520.
   | Dense | `BAAI/bge-small-en-v1.5` embeddings, cosine similarity |
   | Hybrid | Reciprocal Rank Fusion of BM25 + dense |
   | **Structure-aware** | `cos(q, content) + α·cos(q, hierarchy path) + β·cos(q, parent content)`, fused with BM25 over structurally enriched text. α, β and the BM25 weight are tuned on a separate dev split. |
+  | Generative | Local LLM (Ollama) reads the table of contents and generates section ids; JSON-schema constrained decoding guarantees valid ids. Optional fusion with structure-aware. |
+- **Question sets**: ICT (sentence removed from its section) and validated LLM-written paraphrases.
 - **Evaluation**: Recall@{1,3,5,10}, MRR@10, nDCG@10, bootstrap 95% CIs, paired permutation +
   Wilcoxon tests, structural diagnostics (correct document, same chapter, tree distance to the gold
   section), latency P50/P95, index build time and memory.
@@ -89,6 +122,10 @@ uv sync                                   # install
 uv run python scripts/prepare_data.py     # download GovReport, build trees, generate queries
 uv run python scripts/run_evaluation.py   # tune on dev, evaluate on test -> reports/
 uv run pytest -q                          # tests
+
+# Optional, needs Ollama with qwen3:8b (`ollama pull qwen3:8b`):
+uv run python scripts/generate_questions.py   # LLM-written questions (~30 min, cached)
+uv run python scripts/run_generative_eval.py  # generative retrieval on both question sets
 uv run streamlit run app/streamlit_app.py # dashboard
 uv run uvicorn structuralrag.api.routes:app --reload  # API at http://127.0.0.1:8000/docs
 ```
@@ -102,11 +139,12 @@ src/structuralrag/
   schema.py              unified Document / Section / Query models
   ingestion/             GovReport adapter, PDF parser
   preprocessing/         text cleaning, hierarchy builder + validation
-  data_generation/       ICT query generation
-  retrieval/             corpus views, BM25, dense, hybrid, structure-aware
+  data_generation/       ICT queries, validated LLM-written questions
+  llm/                   Ollama client (schema-constrained output, response cache)
+  retrieval/             corpus views, BM25, dense, hybrid, structure-aware, generative
   evaluation/            metrics, structural metrics, significance tests, evaluator
   api/                   FastAPI app and schemas
-scripts/                 prepare_data.py, run_evaluation.py
+scripts/                 prepare_data, run_evaluation, generate_questions, run_generative_eval
 app/                     Streamlit dashboard
 tests/                   unit + integration tests (no model download needed)
 ```
@@ -115,9 +153,9 @@ Runs on a laptop: on an Apple M5, building all test indexes took ~30 s and peak 
 
 ## Roadmap
 
-- Generative retrieval: predict a valid section id from the question + table of contents with a
-  small local instruction model and constrained decoding.
-- LLM-generated questions alongside ICT queries; human-written questions from PDFTriage.
+- Fine-tune a small model (LoRA) on GovReport train-split questions for generative retrieval, the
+  STAIR setting, and compare with the zero-shot baseline above.
+- Human-written questions from PDFTriage.
 - Cross-domain evaluation (financial, academic documents).
 
 ## Acknowledgements

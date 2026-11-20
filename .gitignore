@@ -11,3 +11,4 @@ artifacts/
 Details.md
 reports/per_query.csv
 .claude/
+reports/generative_per_query.csv

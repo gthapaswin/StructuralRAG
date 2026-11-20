@@ -94,8 +94,8 @@ GENERIC_HEADINGS = {
 
 def doc_label_for(doc) -> str:
     """GovReport has no report titles; label by id plus the first informative top-level heading."""
-    tops = [s.title for s in doc.sections if s.level == 1]
-    hint = next((t for t in tops if t.lower() not in GENERIC_HEADINGS), tops[0] if tops else "")
+    tops = [s.title for s in doc.sections if s.level == 1 and not s.title.startswith("Untitled")]
+    hint = next((t for t in tops if t.lower() not in GENERIC_HEADINGS), tops[0] if tops else "(no headings)")
     return f"{doc.document_id.removeprefix('GAO_')} — {hint[:70]}"
 
 
