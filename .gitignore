@@ -10,3 +10,4 @@ artifacts/
 .ipynb_checkpoints/
 Details.md
 reports/per_query.csv
+.claude/

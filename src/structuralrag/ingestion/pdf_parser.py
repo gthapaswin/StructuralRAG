@@ -10,7 +10,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-import fitz  # PyMuPDF
+import pymupdf as fitz
 
 from structuralrag.preprocessing.hierarchy_builder import FlatHeading, build_document
 from structuralrag.schema import Document

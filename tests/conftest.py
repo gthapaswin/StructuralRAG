@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import zlib
+
 import numpy as np
 import pytest
 
@@ -44,7 +46,7 @@ class FakeEncoder:
         out = np.zeros((len(texts), 256), dtype=np.float32)
         for i, t in enumerate(texts):
             for tok in tokenize(t):
-                out[i, hash(tok) % 256] += 1
+                out[i, zlib.crc32(tok.encode()) % 256] += 1
         n = np.linalg.norm(out, axis=1, keepdims=True)
         return out / np.where(n == 0, 1, n)
 
