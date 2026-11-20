@@ -4,7 +4,7 @@ from structuralrag.llm.mlx_client import ids_in_text, parse_json
 from structuralrag.retrieval.base import Retriever
 from structuralrag.retrieval.dense import query_prefix
 from structuralrag.retrieval.generative import GenerativeRetriever
-from structuralrag.retrieval.reranker import RerankRetriever, passage
+from structuralrag.retrieval.reranker import RerankRetriever, passage, windows
 from structuralrag.schema import Query
 from structuralrag.training.hard_negatives import mine_hard_negatives, related
 
@@ -99,3 +99,50 @@ def test_evaluator_scores_empty_output_as_miss(corpus):
     r = evaluate(GenerativeRetriever(corpus, EmptyClient()), [q("3.1")], latency_sample=0)
     row = r.per_query[0]
     assert row["top1"] is None and row["mrr@10"] == 0.0 and row["n_returned"] == 0
+
+
+def test_windows_keep_path_and_cover_the_end(corpus):
+    sec = corpus.sections[corpus.uid_to_idx["ml_handbook::3.1"]].model_copy()
+    sec.text = " ".join(f"w{i}" for i in range(25))
+    w = windows(sec, size=10, stride=5)
+    assert all(x.startswith("Model Evaluation > Accuracy\n") for x in w)
+    assert w[-1].endswith("w24") and len(w) == 4
+    assert windows(corpus.sections[0], size=100, stride=50) == [passage(corpus.sections[0])]
+
+
+class EndOnlyCrossEncoder:
+    """Only recognises evidence that appears late in a long section."""
+
+    def predict(self, pairs, batch_size=32, show_progress_bar=False):
+        return [1.0 if "needle" in p else 0.0 for _, p in pairs]
+
+
+def test_maxp_finds_evidence_beyond_the_first_window(corpus, monkeypatch):
+    sec = corpus.sections[corpus.uid_to_idx["ml_handbook::3.1"]]
+    sec.text = " ".join(["filler"] * 300 + ["needle"])
+    monkeypatch.setattr(RerankRetriever, "model", property(lambda self: EndOnlyCrossEncoder()))
+    maxp = RerankRetriever(FixedRetriever(corpus), "fake", top_n=10, window_words=100)
+    # The real model truncates a single long passage before "needle"; a window ending the section holds it.
+    assert maxp.search("q", top_k=1, document_id="ml_handbook")[0].section_id == "3.1"
+    assert len(windows(sec, 100, 50)) > 1
+
+
+def test_ollama_host_env_overrides_config(monkeypatch):
+    from structuralrag.utils.config import load_config
+
+    monkeypatch.setenv("OLLAMA_HOST", "http://host.docker.internal:11434")
+    assert load_config()["llm"]["host"] == "http://host.docker.internal:11434"
+
+
+def test_training_queries_mixed_repeats_llm_questions(tmp_path, monkeypatch):
+    from structuralrag.training import data
+    from structuralrag.utils.io import write_jsonl
+
+    ict = [q(f"{i}", f"ict {i}") for i in range(10)]
+    llm = [q("1", "llm a"), q("2", "llm b")]
+    write_jsonl(tmp_path / "train_queries.jsonl", ict)
+    write_jsonl(tmp_path / "train_queries_llm.jsonl", llm)
+    monkeypatch.setattr(data, "DATA_DIR", tmp_path)
+    mixed = data.training_queries("mixed", seed=1, total=8, llm_repeat=3)
+    assert len(mixed) == 8 and sum(x.question.startswith("llm") for x in mixed) == 6
+    assert len(data.training_queries("ict", seed=1)) == 10

@@ -13,7 +13,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import random
 import time
 
 from datasets import Dataset
@@ -21,9 +20,10 @@ from datasets import Dataset
 from structuralrag.retrieval.corpus import SectionCorpus, View
 from structuralrag.retrieval.dense import DenseRetriever, Encoder
 from structuralrag.retrieval.reranker import passage
+from structuralrag.training.data import MODES, training_queries
 from structuralrag.training.hard_negatives import mine_hard_negatives
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, load_config
-from structuralrag.utils.io import PROJECT_ROOT, load_documents, load_queries
+from structuralrag.utils.io import PROJECT_ROOT, load_documents
 from structuralrag.utils.reproducibility import set_seed
 
 log = logging.getLogger("finetune_reranker")
@@ -36,15 +36,17 @@ def main() -> None:
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default=None)
+    ap.add_argument("--questions", choices=MODES, default="ict", help="ict, or ict + LLM paraphrases")
     args = ap.parse_args()
     cfg = load_config(args.config)
     set_seed(cfg["seed"])
     ft, rr = cfg["finetune"], cfg["finetune"]["reranker"]
-    out_dir = PROJECT_ROOT / rr["output"]
+    out_dir = PROJECT_ROOT / rr["output" if args.questions == "ict" else "output_mixed"]
 
     corpus = SectionCorpus(load_documents(DATA_DIR / "train_documents.jsonl"))
-    queries = load_queries(DATA_DIR / "train_queries.jsonl")
-    queries = random.Random(cfg["seed"]).sample(queries, min(rr["train_queries"], len(queries)))
+    queries = training_queries(
+        args.questions, cfg["seed"], total=rr["train_queries"], llm_repeat=ft["llm_question_repeat"]
+    )
     dense = DenseRetriever(corpus, Encoder(cfg["retrieval"]["embedding_model"], CACHE_DIR), View.TEXT)
     negs = mine_hard_negatives(corpus, queries, dense.score_batch([q.question for q in queries]), ft["hard_negatives"])
 
@@ -78,6 +80,7 @@ def main() -> None:
     trainer.train()
     meta = {
         "base_model": rr["base_model"],
+        "questions": args.questions,
         "train_queries": len(queries),
         "train_pairs": len(train),
         "train_seconds": time.perf_counter() - t0,

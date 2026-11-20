@@ -18,9 +18,10 @@ from datasets import Dataset
 
 from structuralrag.retrieval.corpus import SectionCorpus, View
 from structuralrag.retrieval.dense import DenseRetriever, Encoder, query_prefix
+from structuralrag.training.data import MODES, training_queries
 from structuralrag.training.hard_negatives import mine_hard_negatives
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, load_config
-from structuralrag.utils.io import PROJECT_ROOT, load_documents, load_queries
+from structuralrag.utils.io import PROJECT_ROOT, load_documents
 from structuralrag.utils.reproducibility import set_seed
 
 log = logging.getLogger("finetune_embeddings")
@@ -37,15 +38,16 @@ def main() -> None:
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default=None)
+    ap.add_argument("--questions", choices=MODES, default="ict", help="ict, or ict + LLM paraphrases")
     args = ap.parse_args()
     cfg = load_config(args.config)
     set_seed(cfg["seed"])
     ft, emb_cfg = cfg["finetune"], cfg["finetune"]["embedding"]
     base_name = cfg["retrieval"]["embedding_model"]
-    out_dir = PROJECT_ROOT / emb_cfg["output"]
+    out_dir = PROJECT_ROOT / emb_cfg["output" if args.questions == "ict" else "output_mixed"]
 
     corpus = SectionCorpus(load_documents(DATA_DIR / "train_documents.jsonl"))
-    queries = load_queries(DATA_DIR / "train_queries.jsonl")
+    queries = training_queries(args.questions, cfg["seed"], llm_repeat=ft["llm_question_repeat"])
     t0 = time.perf_counter()
     base = DenseRetriever(corpus, Encoder(base_name, CACHE_DIR), View.TEXT)
     negs = mine_hard_negatives(corpus, queries, base.score_batch([q.question for q in queries]), ft["hard_negatives"])
@@ -90,7 +92,13 @@ def main() -> None:
     # so base and fine-tuned encoders see exactly the same text.
     model.max_seq_length = 512
     model.save(str(out_dir))
-    meta = {"base_model": base_name, "train_rows": len(train), "train_seconds": train_s, **emb_cfg}
+    meta = {
+        "base_model": base_name,
+        "questions": args.questions,
+        "train_rows": len(train),
+        "train_seconds": train_s,
+        **emb_cfg,
+    }
     (out_dir / "training_info.json").write_text(json.dumps(meta, indent=2))
     print(meta)
 

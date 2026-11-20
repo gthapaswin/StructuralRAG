@@ -43,8 +43,10 @@ finetune:  # all training data comes from the HF train split (no overlap with de
   train_documents: 1500
   queries_per_document: 8
   hard_negatives: 3  # other sections of the same report, nearest by the base model
+  llm_question_repeat: 3  # --questions mixed: each LLM-written train question appears 3 times
   embedding:
     output: artifacts/models/bge-small-govreport
+    output_mixed: artifacts/models/bge-small-govreport-mixed
     epochs: 1
     batch_size: 32
     learning_rate: 2.0e-5
@@ -52,12 +54,15 @@ finetune:  # all training data comes from the HF train split (no overlap with de
   reranker:
     base_model: BAAI/bge-reranker-base
     output: artifacts/models/bge-reranker-govreport
+    output_mixed: artifacts/models/bge-reranker-govreport-mixed
     train_queries: 6000
     epochs: 1
     batch_size: 16
     learning_rate: 2.0e-5
     max_length: 384  # training (memory)
     inference_max_length: 512  # evaluation: the most the model accepts, for both rerankers
+    window_words: 200  # MaxP: score overlapping windows, keep the best (long sections)
+    window_stride: 100
     rerank_top: 20
   llm:
     base_model: Qwen/Qwen3-1.7B
@@ -69,3 +74,7 @@ finetune:  # all training data comes from the HF train split (no overlap with de
     learning_rate: 1.0e-4
     num_layers: 16
     max_toc_words: 1200
+
+qasper:  # second domain, evaluation only (no tuning): NLP papers, human-written questions
+  split: test
+  documents: null  # all 416 test papers

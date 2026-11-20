@@ -46,67 +46,68 @@ def main() -> None:
     args = ap.parse_args()
     cfg = load_config(args.config)
     set_seed(cfg["seed"])
-    ft = cfg["finetune"]
+    ft, rr = cfg["finetune"], cfg["finetune"]["reranker"]
     base_model = cfg["retrieval"]["embedding_model"]
-    ft_model = str(PROJECT_ROOT / ft["embedding"]["output"])
-    rr = ft["reranker"]
 
-    # Structure weights: base from the main evaluation; fine-tuned re-tuned on dev, same grid.
+    # Encoders: base, fine-tuned on ICT, fine-tuned on ICT + LLM paraphrases (when trained).
+    # Structure weights: base from the main evaluation; each fine-tuned encoder re-tuned on dev.
     base_params = StructureParams(**json.loads((REPORTS_DIR / "results.json").read_text())["tuned_structure_params"])
+    encoders: dict[str, tuple[str, StructureParams]] = {"base": (base_model, base_params)}
     dev_corpus = SectionCorpus(load_documents(DATA_DIR / "dev_documents.jsonl"))
-    ft_params, _ = tune_structure(
-        RetrieverSuite(dev_corpus, ft_model, CACHE_DIR), load_queries(DATA_DIR / "dev_queries.jsonl"), cfg["tuning"]
-    )
-    log.info("Fine-tuned encoder, dev-tuned structure params: %s", ft_params)
+    dev_q = load_queries(DATA_DIR / "dev_queries.jsonl")
+    for label, key in (("fine-tuned", "output"), ("fine-tuned ICT+LLM", "output_mixed")):
+        path = PROJECT_ROOT / ft["embedding"][key]
+        if path.exists():
+            params, _ = tune_structure(RetrieverSuite(dev_corpus, str(path), CACHE_DIR), dev_q, cfg["tuning"])
+            encoders[label] = (str(path), params)
+            log.info("%s: dev-tuned structure params %s", label, params)
 
     corpus = SectionCorpus(load_documents(DATA_DIR / "test_documents.jsonl"))
-    base = RetrieverSuite(corpus, base_model, CACHE_DIR, base_params)
-    tuned = RetrieverSuite(corpus, ft_model, CACHE_DIR, ft_params)
+    suites = {k: RetrieverSuite(corpus, m, CACHE_DIR, p) for k, (m, p) in encoders.items()}
+    systems: dict[str, Retriever] = {}
+    pairs = []
+    for kind in ("dense", "hybrid", "structure_aware"):
+        name = kind.replace("_", "-")
+        for label, suite in suites.items():
+            systems[f"{name} ({label})"] = suite.get(kind)
+            if label != "base":
+                pairs.append((f"{name} ({label})", f"{name} (base)"))
 
-    systems: dict[str, Retriever] = {
-        "dense (base)": base.dense(),
-        "dense (fine-tuned)": tuned.dense(),
-        "hybrid (base)": base.hybrid(),
-        "hybrid (fine-tuned)": tuned.hybrid(),
-        "structure-aware (base)": base.structure_aware(),
-        "structure-aware (fine-tuned)": tuned.structure_aware(),
-    }
-    pairs = [
-        ("dense (fine-tuned)", "dense (base)"),
-        ("hybrid (fine-tuned)", "hybrid (base)"),
-        ("structure-aware (fine-tuned)", "structure-aware (base)"),
-    ]
-    rr_path = PROJECT_ROOT / rr["output"]
-    if not args.skip_rerank and rr_path.exists():
-        sa = tuned.structure_aware()
-        systems["+ rerank (zero-shot)"] = RerankRetriever(
-            sa, rr["base_model"], rr["rerank_top"], rr["inference_max_length"], "zs"
-        )
-        systems["+ rerank (fine-tuned)"] = RerankRetriever(
-            sa, str(rr_path), rr["rerank_top"], rr["inference_max_length"], "ft"
-        )
-        pairs += [
-            ("+ rerank (zero-shot)", "structure-aware (fine-tuned)"),
-            ("+ rerank (fine-tuned)", "structure-aware (fine-tuned)"),
-            ("+ rerank (fine-tuned)", "+ rerank (zero-shot)"),
-        ]
+    if not args.skip_rerank:
+        sa = suites["fine-tuned"].structure_aware() if "fine-tuned" in suites else suites["base"].structure_aware()
+        first = "structure-aware (fine-tuned)" if "fine-tuned" in suites else "structure-aware (base)"
+        common = {"top_n": rr["rerank_top"], "max_length": rr["inference_max_length"]}
+        maxp = {"window_words": rr["window_words"], "window_stride": rr["window_stride"]}
+        rerankers = {"zero-shot": rr["base_model"]}
+        for label, key in (("fine-tuned", "output"), ("fine-tuned ICT+LLM", "output_mixed")):
+            if (PROJECT_ROOT / rr[key]).exists():
+                rerankers[label] = str(PROJECT_ROOT / rr[key])
+        for label, model in rerankers.items():
+            systems[f"+ rerank ({label})"] = RerankRetriever(sa, model, label=label, **common)
+            systems[f"+ rerank MaxP ({label})"] = RerankRetriever(sa, model, label=label, **common, **maxp)
+            pairs += [
+                (f"+ rerank MaxP ({label})", f"+ rerank ({label})"),
+                (f"+ rerank MaxP ({label})", first),
+            ]
+            if label != "zero-shot":
+                pairs.append((f"+ rerank MaxP ({label})", "+ rerank MaxP (zero-shot)"))
 
     query_sets = {
         "ict": load_queries(DATA_DIR / "test_queries.jsonl"),
         "llm": load_queries(DATA_DIR / "test_queries_llm.jsonl"),
     }
-    out: dict = {
-        "base_model": base_model,
-        "finetuned_model": ft["embedding"]["output"],
-        "structure_params": {"base": base_params.__dict__, "finetuned": ft_params.__dict__},
-        "query_sets": {},
-    }
+    params_out = {"base": base_params.__dict__}
+    for label, (_, p) in encoders.items():
+        if label != "base":
+            params_out["finetuned" if label == "fine-tuned" else "finetuned_ICT+LLM"] = p.__dict__
+    out: dict = {"base_model": base_model, "structure_params": params_out, "query_sets": {}}
     md = [
         "# Fine-tuning results\n",
         f"Document scope (route a question to a section of a known report). Base encoder `{base_model}`; "
-        f"fine-tuned on {ft['train_documents']} train-split reports (ICT questions, hard negatives from the "
-        "same report). Structure-aware weights re-tuned on dev for each encoder: "
-        f"base {base_params.__dict__}, fine-tuned {ft_params.__dict__}.\n",
+        f"fine-tuned on {ft['train_documents']} train-split reports with hard negatives from the same report, "
+        "on ICT questions only or on ICT + LLM-written paraphrases. Rerankers rescore the top "
+        f"{rr['rerank_top']} of fine-tuned structure-aware; MaxP = best of overlapping {rr['window_words']}-word "
+        f"windows. Structure weights re-tuned on dev per encoder: {params_out}.\n",
     ]
     frames = []
     for qs_name, qs in query_sets.items():

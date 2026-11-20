@@ -1,0 +1,10 @@
+.venv
+.git
+.claude
+artifacts
+data
+__pycache__
+.pytest_cache
+.ruff_cache
+Details.md
+reports/*per_query.csv

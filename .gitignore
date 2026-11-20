@@ -15,3 +15,4 @@ reports/generative_per_query.csv
 reports/answer_per_query.csv
 reports/finetune_per_query.csv
 reports/generative_ft_per_query.csv
+reports/crossdomain_per_query.csv
