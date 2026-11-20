@@ -1,0 +1,25 @@
+# StructuralRAG default experiment configuration.
+seed: 13
+
+data:
+  dataset: govreport
+  # Dev documents come from the HF validation split (used only for tuning),
+  # test documents from the HF test split -> no document overlap by construction.
+  dev_split: validation
+  dev_documents: 60
+  test_split: test
+  test_documents: 200
+  queries_per_document: 6
+
+retrieval:
+  embedding_model: BAAI/bge-small-en-v1.5
+  rrf_k: 60
+
+tuning:  # grid searched on dev, best by MRR@10 (document scope)
+  alpha: [0.0, 0.2, 0.4, 0.6]
+  beta: [0.0, 0.2, 0.4, 0.6]
+  sparse_weight: [0.0, 0.5, 1.0]
+
+evaluation:
+  scopes: [document, corpus]
+  ablation_views: [text, title, path, parent, full]
