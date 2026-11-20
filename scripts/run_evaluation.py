@@ -106,7 +106,9 @@ def main() -> None:
         for kind in ("bm25", "dense", "hybrid"):
             r = evaluate(getattr(suite, kind)(view), test_q, scope="document", latency_sample=0)
             s = r.summary()
-            ablations.append({"view": view.value, "method": kind, **{k: s[k] for k in ("recall@1", "recall@5", "mrr@10", "ndcg@10")}})
+            ablations.append(
+                {"view": view.value, "method": kind, **{k: s[k] for k in ("recall@1", "recall@5", "mrr@10", "ndcg@10")}}
+            )
     # Component ablation of the structure-aware score
     comp_abl = []
     sa_r = suite.structure_aware()
@@ -151,10 +153,24 @@ def main() -> None:
     write_json(REPORTS_DIR / "results.json", out)
     pq.to_csv(REPORTS_DIR / "per_query.csv", index=False)
 
-    cols = ["method", "n_queries", "recall@1", "recall@5", "recall@10", "mrr@10", "ndcg@10", "same_branch", "latency_p50_ms", "latency_p95_ms"]
-    md = ["# StructuralRAG benchmark results\n", f"Dataset: GovReport (structure), test docs={len(test_docs)}, "
-          f"sections={len(corpus)}, queries={len(test_q)} (ICT). Embedding model: `{model}`.\n",
-          f"Tuned on dev: alpha={params.alpha}, beta={params.beta}, sparse_weight={params.sparse_weight}\n"]
+    cols = [
+        "method",
+        "n_queries",
+        "recall@1",
+        "recall@5",
+        "recall@10",
+        "mrr@10",
+        "ndcg@10",
+        "same_branch",
+        "latency_p50_ms",
+        "latency_p95_ms",
+    ]
+    md = [
+        "# StructuralRAG benchmark results\n",
+        f"Dataset: GovReport (structure), test docs={len(test_docs)}, "
+        f"sections={len(corpus)}, queries={len(test_q)} (ICT). Embedding model: `{model}`.\n",
+        f"Tuned on dev: alpha={params.alpha}, beta={params.beta}, sparse_weight={params.sparse_weight}\n",
+    ]
     for scope in cfg["evaluation"]["scopes"]:
         md.append(f"\n## Scope: {scope}\n")
         md.append(fmt_table([r for r in results if r["scope"] == scope], cols))

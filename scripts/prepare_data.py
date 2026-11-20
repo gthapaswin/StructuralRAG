@@ -20,7 +20,9 @@ from structuralrag.utils.reproducibility import set_seed
 log = logging.getLogger("prepare_data")
 
 
-def check_leakage(dev_docs: list[Document], test_docs: list[Document], queries: list[Query], docs: list[Document]) -> dict:
+def check_leakage(
+    dev_docs: list[Document], test_docs: list[Document], queries: list[Query], docs: list[Document]
+) -> dict:
     dev_ids, test_ids = {d.document_id for d in dev_docs}, {d.document_id for d in test_docs}
     overlap = dev_ids & test_ids
     if overlap:
@@ -68,7 +70,9 @@ def main() -> None:
         raw = list(load_govreport(split, limit=n, seed=cfg["seed"]))
         for doc in raw:
             validate_hierarchy(doc)
-        docs, queries = generate_ict_queries(raw, split=name, queries_per_doc=d["queries_per_document"], seed=cfg["seed"])
+        docs, queries = generate_ict_queries(
+            raw, split=name, queries_per_doc=d["queries_per_document"], seed=cfg["seed"]
+        )
         all_docs[name] = (docs, queries)
         write_jsonl(DATA_DIR / f"{name}_documents.jsonl", docs)
         write_jsonl(DATA_DIR / f"{name}_queries.jsonl", queries)

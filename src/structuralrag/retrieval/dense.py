@@ -53,7 +53,10 @@ class Encoder:
     def encode_queries(self, queries: list[str]) -> np.ndarray:
         prefix = QUERY_PREFIX.get(self.model_name, "")
         return self.model.encode(
-            [prefix + q for q in queries], batch_size=self.batch_size, normalize_embeddings=True, show_progress_bar=False
+            [prefix + q for q in queries],
+            batch_size=self.batch_size,
+            normalize_embeddings=True,
+            show_progress_bar=False,
         ).astype(np.float32)
 
 

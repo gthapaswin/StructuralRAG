@@ -21,8 +21,14 @@ LONG = (
 @pytest.fixture
 def report() -> Document:
     return build_document(
-        "toy", "r1", "Report",
-        [FlatHeading("Background", 1, LONG), FlatHeading("Findings", 1, ""), FlatHeading("Details", 2, LONG.replace("agency", "office"))],
+        "toy",
+        "r1",
+        "Report",
+        [
+            FlatHeading("Background", 1, LONG),
+            FlatHeading("Findings", 1, ""),
+            FlatHeading("Details", 2, LONG.replace("agency", "office")),
+        ],
     )
 
 

@@ -12,12 +12,18 @@ def ml_doc():
     headings = [
         FlatHeading("Introduction", 1, "This handbook introduces core ideas of machine learning for practitioners."),
         FlatHeading("Machine Learning", 1, ""),
-        FlatHeading("Supervised Learning", 2, "Supervised learning trains models on labeled examples to predict targets."),
+        FlatHeading(
+            "Supervised Learning", 2, "Supervised learning trains models on labeled examples to predict targets."
+        ),
         FlatHeading("Classification", 3, "Classification predicts discrete class labels such as spam or not spam."),
-        FlatHeading("Unsupervised Learning", 2, "Unsupervised learning discovers clusters and structure in unlabeled data."),
+        FlatHeading(
+            "Unsupervised Learning", 2, "Unsupervised learning discovers clusters and structure in unlabeled data."
+        ),
         FlatHeading("Model Evaluation", 1, ""),
         FlatHeading("Accuracy", 2, "Accuracy is the fraction of predictions that are correct."),
-        FlatHeading("Precision and Recall", 2, "Precision measures false positives while recall measures false negatives."),
+        FlatHeading(
+            "Precision and Recall", 2, "Precision measures false positives while recall measures false negatives."
+        ),
     ]
     return build_document("toy", "ml_handbook", "Machine Learning Handbook", headings)
 

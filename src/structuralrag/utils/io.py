@@ -5,13 +5,10 @@ from __future__ import annotations
 import json
 from collections.abc import Iterable
 from pathlib import Path
-from typing import TypeVar
 
 from pydantic import BaseModel
 
 from structuralrag.schema import Document, Query
-
-T = TypeVar("T", bound=BaseModel)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
@@ -26,7 +23,7 @@ def write_jsonl(path: Path, items: Iterable[BaseModel]) -> int:
     return n
 
 
-def read_jsonl(path: Path, model: type[T]) -> list[T]:
+def read_jsonl[T: BaseModel](path: Path, model: type[T]) -> list[T]:
     with path.open() as f:
         return [model.model_validate_json(line) for line in f if line.strip()]
 

@@ -1,7 +1,12 @@
 import pytest
 
 from structuralrag.ingestion.govreport import row_to_document
-from structuralrag.preprocessing.hierarchy_builder import FlatHeading, HierarchyError, build_document, validate_hierarchy
+from structuralrag.preprocessing.hierarchy_builder import (
+    FlatHeading,
+    HierarchyError,
+    build_document,
+    validate_hierarchy,
+)
 
 
 def test_section_ids_and_paths(ml_doc):

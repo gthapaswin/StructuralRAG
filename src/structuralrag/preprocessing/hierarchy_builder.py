@@ -30,22 +30,24 @@ def build_document(
 ) -> Document:
     """Build a Document from headings given in reading order.
 
-    Depth jumps (e.g. 1 -> 3) are clamped to parent depth + 1 so every node has a
-    valid parent. Section ids are dotted counters: 1, 1.1, 1.2, 2, 2.1.1 ...
+    A heading's parent is the closest earlier heading with a smaller *raw* depth, so
+    depth jumps (1 -> 3) still yield a valid child at level 2, and headings that share
+    a raw depth are always siblings. Section ids are dotted counters: 1, 1.1, 2, 2.1.1 ...
     """
     sections: list[Section] = []
-    stack: list[Section] = []  # current ancestor chain
+    stack: list[tuple[int, Section]] = []  # (raw depth, section) for the current ancestor chain
     counters: list[int] = []
 
     for h in headings:
-        depth = max(1, min(h.depth, len(stack) + 1))
-        stack = stack[: depth - 1]
+        while stack and stack[-1][0] >= h.depth:
+            stack.pop()
+        depth = len(stack) + 1
         counters = counters[:depth]
         if len(counters) < depth:
             counters.append(0)
         counters[depth - 1] += 1
         section_id = ".".join(str(c) for c in counters)
-        parent = stack[-1] if stack else None
+        parent = stack[-1][1] if stack else None
         sec = Section(
             dataset=dataset,
             document_id=document_id,
@@ -61,7 +63,7 @@ def build_document(
         if parent:
             parent.children.append(section_id)
         sections.append(sec)
-        stack.append(sec)
+        stack.append((h.depth, sec))
 
     doc = Document(dataset=dataset, document_id=document_id, title=title, sections=sections, metadata=metadata or {})
     validate_hierarchy(doc)
