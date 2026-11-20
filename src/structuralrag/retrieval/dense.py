@@ -14,7 +14,12 @@ from structuralrag.utils.reproducibility import best_device
 log = logging.getLogger(__name__)
 
 DEFAULT_MODEL = "BAAI/bge-small-en-v1.5"
-QUERY_PREFIX = {"BAAI/bge-small-en-v1.5": "Represent this sentence for searching relevant passages: "}
+BGE_QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
+
+
+def query_prefix(model_name: str) -> str:
+    """bge models (and models fine-tuned from them, e.g. artifacts/models/bge-small-...) use a query prefix."""
+    return BGE_QUERY_PREFIX if "bge" in model_name.lower() else ""
 
 
 @lru_cache(maxsize=2)
@@ -37,7 +42,10 @@ class Encoder:
         return load_encoder(self.model_name)
 
     def encode_passages(self, texts: list[str]) -> np.ndarray:
-        key = hashlib.sha1((self.model_name + "\x00" + "\x00".join(texts)).encode()).hexdigest()[:16]
+        # The key includes the max sequence length: the same model truncating at 256 vs 512 tokens
+        # gives different embeddings.
+        ident = f"{self.model_name}@{self.model.max_seq_length}"
+        key = hashlib.sha1((ident + "\x00" + "\x00".join(texts)).encode()).hexdigest()[:16]
         path = self.cache_dir / f"emb_{key}.npy" if self.cache_dir else None
         if path and path.exists():
             return np.load(path)
@@ -51,7 +59,7 @@ class Encoder:
         return emb
 
     def encode_queries(self, queries: list[str]) -> np.ndarray:
-        prefix = QUERY_PREFIX.get(self.model_name, "")
+        prefix = query_prefix(self.model_name)
         return self.model.encode(
             [prefix + q for q in queries],
             batch_size=self.batch_size,

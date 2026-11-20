@@ -67,9 +67,12 @@ def evaluate(
             ranked_idx = retriever.rank(sc, TOP_K, q.document_id if scope == "document" else None)
             ranked = [corpus.sections[i].uid for i, _ in ranked_idx]
             gold = q.target_uids
-            row = {"query_id": q.query_id, "document_id": q.document_id, "top1": ranked[0]}
+            row = {"query_id": q.query_id, "document_id": q.document_id, "top1": ranked[0] if ranked else None}
             row.update(per_query_metrics(ranked, gold))
-            row.update(structural_metrics(ranked[0], gold, corpus))
+            if ranked:
+                row.update(structural_metrics(ranked[0], gold, corpus))
+            else:  # nothing returned (e.g. an LLM that named no valid section): a miss on every metric
+                row.update(valid_id=0.0, correct_document=0.0, same_branch=0.0, tree_distance=float("nan"))
             row["n_returned"] = len(ranked)
             row["target_level"] = q.metadata.get("target_level")
             res.per_query.append(row)

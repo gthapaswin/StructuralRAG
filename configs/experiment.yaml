@@ -37,3 +37,35 @@ answers:  # grounded answer generation (scripts/run_answer_eval.py)
   unanswerable: 100  # questions asked against a different report (should abstain)
   top_k: 3
   context_words: 900  # same budget for plain and hierarchical context
+
+finetune:  # all training data comes from the HF train split (no overlap with dev/test, checked)
+  train_split: train
+  train_documents: 1500
+  queries_per_document: 8
+  hard_negatives: 3  # other sections of the same report, nearest by the base model
+  embedding:
+    output: artifacts/models/bge-small-govreport
+    epochs: 1
+    batch_size: 32
+    learning_rate: 2.0e-5
+    max_seq_length: 256
+  reranker:
+    base_model: BAAI/bge-reranker-base
+    output: artifacts/models/bge-reranker-govreport
+    train_queries: 6000
+    epochs: 1
+    batch_size: 16
+    learning_rate: 2.0e-5
+    max_length: 384  # training (memory)
+    inference_max_length: 512  # evaluation: the most the model accepts, for both rerankers
+    rerank_top: 20
+  llm:
+    base_model: Qwen/Qwen3-1.7B
+    output: artifacts/models/qwen3-1.7b-toc-lora
+    train_examples: 4000
+    valid_examples: 300
+    iters: 1000
+    batch_size: 2
+    learning_rate: 1.0e-4
+    num_layers: 16
+    max_toc_words: 1200

@@ -35,6 +35,27 @@ def render_toc(doc: Document, snippets: bool = False) -> str:
     return "\n".join(lines)
 
 
+def toc_schema(doc: Document, max_ids: int) -> dict:
+    """JSON schema whose enum is the report's real section ids (constrained decoding)."""
+    return {
+        "type": "object",
+        "properties": {
+            "sections": {
+                "type": "array",
+                "items": {"type": "string", "enum": [s.section_id for s in doc.sections]},
+                "minItems": 1,
+                "maxItems": max_ids,
+            }
+        },
+        "required": ["sections"],
+    }
+
+
+def toc_prompt(toc: str, query: str, max_ids: int) -> str:
+    """User message. ToC first, question last: queries on one report share a cached prefix."""
+    return f"Table of contents:\n{toc}\n\nQuestion: {query}\n\nReturn up to {max_ids} section ids, best first."
+
+
 class GenerativeRetriever(Retriever):
     requires_document = True  # needs the document's ToC; corpus-wide search is not defined
 
@@ -48,29 +69,15 @@ class GenerativeRetriever(Retriever):
 
     def predict_ids(self, query: str, document_id: str) -> list[str]:
         doc = self.corpus.docs[document_id]
-        schema = {
-            "type": "object",
-            "properties": {
-                "sections": {
-                    "type": "array",
-                    "items": {"type": "string", "enum": [s.section_id for s in doc.sections]},
-                    "minItems": 1,
-                    "maxItems": self.max_ids,
-                }
-            },
-            "required": ["sections"],
-        }
-        # ToC first, question last: consecutive queries on one document share a cached prompt prefix.
-        user = (
-            f"Table of contents:\n{self._toc[document_id]}\n\n"
-            f"Question: {query}\n\nReturn up to {self.max_ids} section ids, best first."
-        )
-        out = self.client.chat_json(SYSTEM, user, schema, num_predict=24 * self.max_ids)
+        valid = {s.section_id for s in doc.sections}
+        user = toc_prompt(self._toc[document_id], query, self.max_ids)
+        out = self.client.chat_json(SYSTEM, user, toc_schema(doc, self.max_ids), num_predict=24 * self.max_ids)
         seen: list[str] = []
         for sid in out.get("sections", []):
-            if sid not in seen:  # grammar guarantees validity, not uniqueness
+            # Ollama's grammar guarantees valid ids; a backend without one (MLX) may not, so check.
+            if sid in valid and sid not in seen:
                 seen.append(sid)
-        return seen
+        return seen[: self.max_ids]
 
     def score_for_document(self, query: str, document_id: str) -> np.ndarray:
         scores = np.full(len(self.corpus), -np.inf)

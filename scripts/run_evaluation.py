@@ -6,44 +6,23 @@ uv run python scripts/run_evaluation.py [--config configs/experiment.yaml]
 from __future__ import annotations
 
 import argparse
-import itertools
 import logging
 import resource
 import time
 
-import numpy as np
 import pandas as pd
 
 from structuralrag.evaluation.evaluator import evaluate
-from structuralrag.evaluation.retrieval_metrics import reciprocal_rank
 from structuralrag.evaluation.statistical_tests import paired_test
+from structuralrag.evaluation.tuning import tune_structure
 from structuralrag.retrieval.corpus import SectionCorpus, View
 from structuralrag.retrieval.factory import METHODS, RetrieverSuite
-from structuralrag.retrieval.structure_aware import StructureAwareRetriever, StructureParams
+from structuralrag.retrieval.structure_aware import StructureParams
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, REPORTS_DIR, load_config
 from structuralrag.utils.io import load_documents, load_queries, write_json
 from structuralrag.utils.reproducibility import environment_info, set_seed
 
 log = logging.getLogger("run_evaluation")
-
-
-def tune_structure(suite: RetrieverSuite, queries, grid: dict) -> tuple[StructureParams, list[dict]]:
-    """Grid search on dev queries (document scope, MRR@10). Components are computed once."""
-    sa = suite.structure_aware()
-    comp = sa.components([q.question for q in queries])
-    doc_idx = [suite.corpus.doc_indices(q.document_id) for q in queries]
-    gold = [suite.corpus.uid_to_idx[next(iter(q.target_uids))] for q in queries]
-    trials = []
-    for alpha, beta, sw in itertools.product(grid["alpha"], grid["beta"], grid["sparse_weight"]):
-        p = StructureParams(alpha=alpha, beta=beta, sparse_weight=sw)
-        scores = StructureAwareRetriever.combine(comp, p)
-        rr = []
-        for s, idx, g in zip(scores, doc_idx, gold, strict=True):
-            order = idx[np.argsort(-s[idx], kind="stable")]
-            rr.append(reciprocal_rank(list(order), {g}, 10))
-        trials.append({"alpha": alpha, "beta": beta, "sparse_weight": sw, "dev_mrr@10": float(np.mean(rr))})
-    best = max(trials, key=lambda t: t["dev_mrr@10"])
-    return StructureParams(alpha=best["alpha"], beta=best["beta"], sparse_weight=best["sparse_weight"]), trials
 
 
 def fmt_table(rows: list[dict], cols: list[str]) -> str:

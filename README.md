@@ -97,6 +97,64 @@ LLM-written questions, with the top-3 sections and the same 900-word evidence bu
 Full tables and example answers: [`reports/answer_results.md`](reports/answer_results.md). Try it
 in the dashboard: choose a report, tick *Generate a cited answer*, and ask a question.
 
+### Fine-tuning
+
+Three models were fine-tuned on the GovReport **train** split: 1,500 reports and 11.4k ICT questions,
+with no report shared with dev or test (checked by id and by a text fingerprint). Hard negatives come
+from the document tree: they are other sections of the same report that the base model ranks highest,
+skipping ancestors and descendants of the gold section. Everything ran on one laptop (Apple M5, 16 GB):
+the embedding model took 24 min, the reranker 39 min and the LoRA adapter 40 min. All three are scored
+on the same test questions as the base models, within one report, with paired tests.
+
+**1. Embedding model** (`bge-small-en-v1.5`, contrastive loss with hard negatives, 1 epoch)
+
+| MRR@10 | ICT (n = 1,179) | LLM-written (n = 398) |
+|---|---|---|
+| Dense: base → fine-tuned | 0.661 → **0.712** (p < 0.001) | 0.871 → 0.881 (n.s.) |
+| Hybrid: base → fine-tuned | 0.695 → **0.731** (p < 0.001) | 0.862 → 0.866 (n.s.) |
+| Structure-aware: base → fine-tuned | 0.703 → 0.712 (n.s.) | 0.877 → 0.881 (n.s.) |
+
+- **Large gains on in-distribution questions** (dense +0.051 MRR, +6.1 points Recall@1), but
+  **no significant gain on paraphrased questions**, because training used ICT questions only.
+- **Fine-tuning absorbed the structure signal.** With the fine-tuned encoder, re-tuning on dev set
+  the path and parent weights to 0, so structure-aware became the same as dense. The path term
+  mostly compensated for a general-purpose encoder. Fine-tuned hybrid (dense + BM25) is now the
+  best ICT system.
+
+**2. Cross-encoder reranker** (`bge-reranker-base`, reranks the top 20, sees "path + text")
+
+| MRR@10 | ICT | LLM-written |
+|---|---|---|
+| Fine-tuned structure-aware (no reranker) | **0.712** | 0.881 |
+| + zero-shot reranker | 0.648 | **0.916** (p = 0.005) |
+| + fine-tuned reranker | 0.690 | 0.874 |
+
+- **On paraphrased questions the zero-shot reranker is the best system in the project** (0.916).
+  Fine-tuning it on ICT questions made it worse there (−0.042, p < 0.001): it overfit to sentences
+  copied from the text.
+- **On ICT questions reranking hurts.** A cross-encoder reads at most 512 tokens of a section. When the
+  removed sentence came from beyond the first 250 words (30% of questions), reranker MRR fell from
+  about 0.73 to 0.54, while BM25-fused methods held at about 0.68. Reranking adds about 750 ms per query.
+
+**3. Generative retrieval, LoRA** (`Qwen3-1.7B`, 4k examples, 1,000 steps with MLX; the target is
+the gold id followed by the 4 hardest negatives)
+
+| MRR@10 | ICT (n = 300) | LLM-written (n = 398) |
+|---|---|---|
+| Qwen3-1.7B zero-shot | 0.257 | 0.388 |
+| **Qwen3-1.7B fine-tuned** | **0.549** (+0.29, p < 0.001) | **0.704** (+0.32, p < 0.001) |
+| qwen3:8b zero-shot (earlier run, constrained decoding) | 0.510 | 0.732 |
+| Structure-aware | 0.706 | 0.877 |
+
+- **Fine-tuning more than doubles the small model's accuracy.** The fine-tuned 1.7B model is on par
+  with the zero-shot 8B model, which is 4.7× larger: better on ICT, close on paraphrases. It is also faster
+  (1.3 s vs 3.1 s per query), since it answers in JSON instead of prose.
+- **It is still well below embedding retrieval** (−0.16 MRR). The model sees only titles and 20-word
+  snippets, while the retrievers read every section's full text.
+
+Full tables: [`reports/finetune_results.md`](reports/finetune_results.md) and
+[`reports/generative_ft_results.md`](reports/generative_ft_results.md).
+
 ### Limitations
 
 - ICT queries are sentences taken from the section itself, which favours lexical matching.
@@ -106,7 +164,10 @@ in the dashboard: choose a report, tick *Generate a cited answer*, and ask a que
 - The answer evaluation uses the same LLM-written questions. The small NLI judge is strict with
   paraphrase, so absolute faithfulness scores are low; compare setups rather than read the scores
   in isolation. Faithfulness was not checked against human judgments.
-- Single dataset (government reports), one small embedding model, one zero-shot LLM.
+- Fine-tuning used ICT questions only; LLM-written training questions would likely help on
+  paraphrases. The MLX backend has no constrained decoding, so the zero-shot 1.7B model's prose
+  answers are parsed for section ids (both models get the same parser).
+- Single dataset (government reports).
 
 ## What it does
 
@@ -159,6 +220,14 @@ uv run pytest -q                          # tests
 uv run python scripts/generate_questions.py   # LLM-written questions (~30 min, cached)
 uv run python scripts/run_generative_eval.py  # generative retrieval on both question sets
 uv run python scripts/run_answer_eval.py      # cited answers (+ `ollama pull llama3.1`, ~1.5 h)
+
+# Optional fine-tuning (train split; Apple Silicon for the LLM step):
+uv run python scripts/prepare_train_data.py   # 1,500 train reports, ICT questions, overlap checks
+uv run python scripts/finetune_embeddings.py  # ~25 min
+uv run python scripts/finetune_reranker.py    # ~40 min
+uv run python scripts/run_finetune_eval.py    # base vs fine-tuned, with paired tests
+uv run --group finetune python scripts/finetune_generative.py   # LoRA with MLX, ~40 min
+uv run --group finetune python scripts/run_generative_ft_eval.py
 uv run streamlit run app/streamlit_app.py # dashboard
 uv run uvicorn structuralrag.api.routes:app --reload  # API at http://127.0.0.1:8000/docs
 ```
@@ -173,13 +242,14 @@ src/structuralrag/
   ingestion/             GovReport adapter, PDF parser
   preprocessing/         text cleaning, hierarchy builder + validation
   data_generation/       ICT queries, validated LLM-written questions
-  llm/                   Ollama client (schema-constrained output, response cache)
-  retrieval/             corpus views, BM25, dense, hybrid, structure-aware, generative
+  llm/                   Ollama and MLX clients (JSON output, response cache)
+  retrieval/             corpus views, BM25, dense, hybrid, structure-aware, generative, reranker
   generation/            evidence context (plain / hierarchical), cited answers, claim check
-  evaluation/            retrieval + answer metrics (NLI faithfulness), significance tests
+  evaluation/            retrieval + answer metrics (NLI faithfulness), significance tests, tuning
+  training/              hard negatives from the document tree
   api/                   FastAPI app and schemas
 scripts/                 prepare_data, run_evaluation, generate_questions, run_generative_eval,
-                         run_answer_eval
+                         run_answer_eval, prepare_train_data, finetune_*, run_*_ft_eval
 app/                     Streamlit dashboard
 tests/                   unit + integration tests (no model download needed)
 ```
@@ -188,8 +258,8 @@ Runs on a laptop: on an Apple M5, building all test indexes took ~30 s and peak 
 
 ## Roadmap
 
-- Fine-tune a small model (LoRA) on GovReport train-split questions for generative retrieval, the
-  STAIR setting, and compare with the zero-shot baseline above.
+- Train on LLM-written questions as well as ICT, so the fine-tuned models generalise to paraphrases.
+- Give the generative model more of each section (longer snippets) to close the gap to embeddings.
 - Human-written questions from PDFTriage.
 - Cross-domain evaluation (financial, academic documents).
 
