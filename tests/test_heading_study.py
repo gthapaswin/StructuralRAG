@@ -143,3 +143,25 @@ def test_label_weights_zero_only_for_boilerplate(ml_doc):
     corpus = SectionCorpus([ml_doc])
     w = dict(zip([s.title for s in corpus.sections], label_weights(corpus, {"accuracy"}), strict=True))
     assert w["Accuracy"] == 0.0 and w["Classification"] == 1.0
+
+
+def test_conditionalqa_page_and_evidence_mapping():
+    from structuralrag.ingestion.conditionalqa import page_to_document, question_to_query
+
+    page = {
+        "title": "Tax credit",
+        "url": "u",
+        "contents": [
+            "<h1>Overview</h1>",
+            "<p>Intro text.</p>",
+            "<h1>Eligibility</h1>",
+            "<h2>If you&#8217;re a couple</h2>",
+            "<p>Both must apply.</p>",
+        ],
+    }
+    doc, owner = page_to_document(page, "cqa_000")
+    assert [s.path for s in doc.sections] == [["Overview"], ["Eligibility"], ["Eligibility", "If you’re a couple"]]
+    q = {"id": "dev-1", "question": "Do both apply?", "not_answerable": False, "evidences": ["<p>Both must apply.</p>"]}
+    query = question_to_query(q, doc, owner)
+    assert query.target_section_ids == ["2.1"] and query.metadata["target_level"] == 2
+    assert question_to_query({**q, "evidences": ["<p>missing</p>"]}, doc, owner) is None

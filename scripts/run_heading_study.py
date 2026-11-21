@@ -22,7 +22,7 @@ import pandas as pd
 
 from structuralrag.analysis import experiment as ex
 from structuralrag.analysis import headings as hd
-from structuralrag.analysis.informativeness import document_features, label_weights, section_features
+from structuralrag.analysis.informativeness import document_features, label_weights, role_weights, section_features
 from structuralrag.retrieval.corpus import SectionCorpus
 from structuralrag.retrieval.dense import Encoder
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, REPORTS_DIR, load_config
@@ -34,6 +34,7 @@ OUT = REPORTS_DIR / "heading_study"
 ALPHAS = [0.0, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1.0, 1.5, 2.0]
 
 DATASETS = {
+    "conditionalqa": ("conditionalqa_documents.jsonl", {"human": "conditionalqa_queries.jsonl"}),
     "govreport_dev": ("dev_documents.jsonl", {"ict": "dev_queries.jsonl"}),
     "govreport": ("test_documents.jsonl", {"ict": "test_queries.jsonl", "llm": "test_queries_llm.jsonl"}),
     "qasper": ("qasper_documents.jsonl", {"human": "qasper_queries.jsonl"}),
@@ -144,6 +145,13 @@ def main() -> None:
                 )
                 for a, rr in zip(ALPHAS, rr_fbm, strict=True):
                     rows[f"safbm_a{a}"] = rr
+                rw = role_weights(corpus)
+                comp_role = replace(comp, specificity=[rw[corpus.doc_indices(q.document_id)] for q in qs])
+                rr_role = ex.structure_rr_per_alpha(
+                    comp_role, ALPHAS, beta=base["beta"], sparse_weight=base["sparse_weight"], fallback="mean"
+                )
+                for a, rr in zip(ALPHAS, rr_role, strict=True):
+                    rows[f"sasum_a{a}"] = rr
                 bp = boilerplate_headings(ds)
                 if bp is not None:
                     lw = label_weights(corpus, bp)

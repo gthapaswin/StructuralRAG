@@ -62,6 +62,14 @@ def label_weights(corpus: SectionCorpus, boilerplate: set[str]) -> np.ndarray:
     return np.array([0.0 if _norm(s.title) in norm else 1.0 for s in corpus.sections])
 
 
+def role_weights(corpus: SectionCorpus) -> np.ndarray:
+    """0 for summary-role sections (Introduction, lead, Abstract, Overview, Conclusions, Background),
+    1 otherwise: with the neutral fallback, only summary sections' headings stop counting."""
+    from structuralrag.analysis.headings import is_summary_heading
+
+    return np.array([0.0 if is_summary_heading(s.title) else 1.0 for s in corpus.sections])
+
+
 def _self_rank(q: np.ndarray, p: np.ndarray, keep: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Rank of section i when its query vector q[i] ranks the document's sections p.
 
