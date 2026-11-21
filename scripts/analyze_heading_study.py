@@ -48,6 +48,7 @@ QFILES = {
     ("qasper", "human"): "qasper_queries.jsonl",
     ("nq", "human"): "nq_queries.jsonl",
 }
+DOCFILES = {"govreport": "test_documents.jsonl", "qasper": "qasper_documents.jsonl", "nq": "nq_documents.jsonl"}
 FEATURES = ["self_nrank", "self_mrr", "title_mrr", "sibling_sim", "generic_rate", "title_idf"]
 SEED = 13
 
@@ -72,6 +73,28 @@ def spearman_ci(x: np.ndarray, y: np.ndarray, n_boot: int = 1000) -> tuple[float
     return float(rho), float(p), float(lo), float(hi)
 
 
+def holm(tests: list[dict], key: str = "p_permutation") -> list[dict]:
+    """Holm-Bonferroni adjusted p-values within one family of tests (added as p_holm)."""
+    order = np.argsort([t[key] for t in tests])
+    m, running = len(tests), 0.0
+    for rank, i in enumerate(order):
+        running = max(running, min(1.0, (m - rank) * tests[i][key]))
+        tests[i]["p_holm"] = running
+    return tests
+
+
+def specificity_by_uid() -> dict[str, float]:
+    from structuralrag.analysis.informativeness import heading_specificity
+    from structuralrag.retrieval.corpus import SectionCorpus
+    from structuralrag.utils.io import load_documents
+
+    out = {}
+    for f in DOCFILES.values():
+        corpus = SectionCorpus(load_documents(DATA_DIR / f))
+        out.update(zip([x.uid for x in corpus.sections], heading_specificity(corpus), strict=True))
+    return out
+
+
 def load() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, dict]:
     pq = pd.read_csv(DIR / "per_query.csv.gz")
     docf = pd.read_csv(DIR / "doc_features.csv")
@@ -84,6 +107,7 @@ def wide(pq: pd.DataFrame, ds: str, qs: str) -> pd.DataFrame:
     sub = pq[(pq.dataset == ds) & (pq.query_set == qs)]
     w = sub.pivot_table(index="query_id", columns=["variant", "system"], values="rr")
     meta = sub.drop_duplicates("query_id").set_index("query_id")[["document_id", "gold_uid", "target_level", "lead"]]
+    meta = meta.loc[w.index]  # same row order as the score table
     return w, meta
 
 
@@ -131,6 +155,8 @@ def main() -> None:
                     **paired_test(real, w[("generic_1.0", SA)].values),
                 }
             )
+    for name in {t["set"] for t in sig}:
+        holm([t for t in sig if t["set"] == name])
     cols = ["set", "n", "flat", "SA real", "SA placebo", "SA generic", "SA flattened", "SA OCR 0.2"]
     md += [
         "\n## A. Do headings help? (MRR@10)\n",
@@ -344,6 +370,121 @@ def main() -> None:
             fmt(rows_f, ["set", "encoder", "informativeness", "n", "gain_vs_flat", "gain_vs_placebo"]),
         ]
         out["F"] = rows_f
+
+    # ---------- H. Gain by the target section's heading specificity ----------
+    spec = specificity_by_uid()
+    bins = [(0.0, 0.5, "generic (w < 0.5)"), (0.5, 0.9, "shared (0.5-0.9)"), (0.9, 1.01, "unique (w >= 0.9)")]
+    rows_h = []
+    for ds, qs in sets:
+        w, meta = per_set[(ds, qs)]
+        sp = meta.gold_uid.map(spec).values
+        gain = w[("real", SA)].values - w[("real", "flat")].values
+        for lo, hi, name in bins:
+            m = (sp >= lo) & (sp < hi)
+            if m.sum():
+                ci = bootstrap_ci(gain[m])
+                rows_h.append(
+                    {
+                        "set": LABEL[(ds, qs)],
+                        "gold heading": name,
+                        "n": int(m.sum()),
+                        "gain_vs_flat": float(gain[m].mean()),
+                        "ci_lo": ci[0],
+                        "ci_hi": ci[1],
+                    }
+                )
+        rho, p, lo_, hi_ = spearman_ci(sp, gain)
+        rows_h.append(
+            {
+                "set": LABEL[(ds, qs)],
+                "gold heading": f"Spearman {rho:.3f} [{lo_:.3f}, {hi_:.3f}]",
+                "n": int(len(sp)),
+                "gain_vs_flat": float("nan"),
+                "ci_lo": float("nan"),
+                "ci_hi": p,
+            }
+        )
+    md += [
+        "\n## H. Gain by the target section's heading specificity (w = log(N/df)/log N)\n",
+        "The last row per set is the Spearman correlation between w and the per-question gain (p in last column).\n",
+        fmt(rows_h, ["set", "gold heading", "n", "gain_vs_flat", "ci_lo", "ci_hi"]),
+    ]
+    out["H"] = rows_h
+
+    # ---------- I. Specificity fallback ----------
+    # safbm = the method (generic headings become neutral: document-mean path score);
+    # safb  = ablation (generic headings fall back to the content score).
+    dev = pq[(pq.dataset == "govreport_dev") & (pq.variant == "real")]
+    rows_i, tests_i, split_i = [], [], []
+    if len(dev) and dev.system.str.startswith("safbm_").any():
+        dmean = dev.groupby("system").rr.mean()
+        a_sa = max(alphas, key=lambda a: dmean[f"sa_a{a}"])
+        a_m = max(alphas, key=lambda a: dmean[f"safbm_a{a}"])
+        a_c = max(alphas, key=lambda a: dmean[f"safb_a{a}"])
+        out["I_dev_alpha"] = {"structure-aware": a_sa, "fallback (mean)": a_m, "fallback (content)": a_c}
+        fig, axes = plt.subplots(1, len(sets), figsize=(3.0 * len(sets), 2.9), sharex=True)
+        for ax, (ds, qs) in zip(np.atleast_1d(axes), sets, strict=True):
+            w, meta = per_set[(ds, qs)]
+            flat = w[("real", "flat")].values
+            sa = w[("real", f"sa_a{a_sa}")].values
+            fm = w[("real", f"safbm_a{a_m}")].values
+            fc = w[("real", f"safb_a{a_c}")].values
+            rows_i.append(
+                {
+                    "set": LABEL[(ds, qs)],
+                    "n": len(w),
+                    "flat": flat.mean(),
+                    f"SA (a={a_sa})": sa.mean(),
+                    f"+ fallback, neutral (a={a_m})": fm.mean(),
+                    f"+ fallback, content (a={a_c})": fc.mean(),
+                }
+            )
+            lab = LABEL[(ds, qs)]
+            fam = [
+                {"set": lab, "comparison": "fallback (neutral) vs SA", **paired_test(fm, sa)},
+                {"set": lab, "comparison": "fallback (content) vs SA", **paired_test(fc, sa)},
+                {"set": lab, "comparison": "fallback (neutral) vs flat", **paired_test(fm, flat)},
+                {"set": lab, "comparison": "SA vs flat", **paired_test(sa, flat)},
+            ]
+            tests_i += holm(fam)
+            sp = meta.gold_uid.map(spec).values
+            for lo, hi, name in bins:
+                m = (sp >= lo) & (sp < hi)
+                if m.sum():
+                    split_i.append(
+                        {
+                            "set": lab,
+                            "gold heading": name,
+                            "n": int(m.sum()),
+                            "SA - flat": float((sa - flat)[m].mean()),
+                            "neutral fallback - flat": float((fm - flat)[m].mean()),
+                            "content fallback - flat": float((fc - flat)[m].mean()),
+                        }
+                    )
+            for key, name in (
+                ("sa", "structure-aware"),
+                ("safbm", "+ fallback (neutral)"),
+                ("safb", "+ fallback (content)"),
+            ):
+                ax.plot(alphas, [w[("real", f"{key}_a{a}")].mean() for a in alphas], marker="o", ms=3, label=name)
+            ax.axhline(flat.mean(), color="grey", lw=0.8, ls="--", label="flat")
+            ax.set_title(lab, fontsize=8)
+            ax.set_xlabel("path weight alpha", fontsize=8)
+        np.atleast_1d(axes)[0].set_ylabel("MRR@10")
+        np.atleast_1d(axes)[0].legend(fontsize=6, frameon=False)
+        fig.tight_layout()
+        fig.savefig(FIG / "alpha_sweep_fallback.png", dpi=200)
+        plt.close(fig)
+        md += [
+            f"\n## I. Specificity fallback (alpha tuned on GovReport dev: SA {a_sa}, neutral {a_m}, content {a_c}; "
+            "MRR@10)\n",
+            fmt(rows_i, list(rows_i[0])),
+            "\n",
+            fmt(tests_i, ["set", "comparison", "mean_diff", "p_permutation", "p_holm"]),
+            "\nBy the target section's heading specificity:\n",
+            fmt(split_i, list(split_i[0])),
+        ]
+        out["I"] = {"table": rows_i, "tests": tests_i, "by_specificity": split_i}
 
     # ---------- G. LLM-rewritten headings ----------
     rows_g, tests_g = [], []

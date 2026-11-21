@@ -107,3 +107,20 @@ def test_heading_specificity_and_fallback(ml_doc):
     w = comp.specificity[0]
     np.testing.assert_allclose(fb, comp.content[0] + w * comp.path[0] + (1 - w) * comp.content[0])
     assert not np.allclose(plain, fb)
+
+
+def test_neutral_fallback_uses_document_mean_path_score(ml_doc):
+    corpus = SectionCorpus([ml_doc, other_doc()])
+    q = Query(
+        query_id="q",
+        dataset="toy",
+        document_id="ml_handbook",
+        question="accuracy",
+        target_section_ids=["3.1"],
+        split="test",
+        generator="ict",
+    )
+    comp = ex.compute(corpus, FakeEncoder(), [q])
+    fb = ex.structure_scores(comp, alpha=1.0, sparse_weight=0, fallback="mean")[0]
+    w, p = comp.specificity[0], comp.path[0]
+    np.testing.assert_allclose(fb, comp.content[0] + w * p + (1 - w) * p.mean())

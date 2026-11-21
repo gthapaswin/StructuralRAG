@@ -124,10 +124,10 @@ Per question: does the gold section's own heading path rank it first among its d
 
 | set | questions | spearman | ci_lo | ci_hi | p |
 |---|---|---|---|---|---|
-| GovReport (ICT) | 1179 | -0.006 | -0.062 | 0.047 | 0.833 |
-| GovReport (LLM-written) | 398 | 0.092 | -0.008 | 0.189 | 0.066 |
-| QASPER (human) | 1256 | -0.002 | -0.058 | 0.051 | 0.933 |
-| NQ (human) | 1744 | -0.028 | -0.072 | 0.014 | 0.243 |
+| GovReport (ICT) | 1179 | 0.072 | 0.011 | 0.133 | 0.013 |
+| GovReport (LLM-written) | 398 | -0.080 | -0.180 | 0.025 | 0.113 |
+| QASPER (human) | 1256 | 0.043 | -0.015 | 0.096 | 0.132 |
+| NQ (human) | 1744 | 0.099 | 0.054 | 0.144 | 0.000 |
 
 
 Across all heading variants and datasets (48 points): Spearman between mean informativeness and mean gain = 0.199 (p = 0.17).
@@ -137,39 +137,142 @@ Across all heading variants and datasets (48 points): Spearman between mean info
 
 | set | fixed alpha=0.2 | best fixed alpha | alpha=0 | per-document oracle | per-question oracle |
 |---|---|---|---|---|---|
-| GovReport (ICT) | 0.691 | 0.1 (0.696) | 0.693 | 0.733 | 0.754 |
+| GovReport (ICT) | 0.691 | 0.1 (0.696) | 0.693 | 0.734 | 0.754 |
 | GovReport (LLM-written) | 0.878 | 0.1 (0.879) | 0.875 | 0.918 | 0.920 |
-| QASPER (human) | 0.542 | 0.4 (0.546) | 0.515 | 0.616 | 0.639 |
+| QASPER (human) | 0.542 | 0.4 (0.546) | 0.515 | 0.618 | 0.639 |
 | NQ (human) | 0.616 | 0.1 (0.624) | 0.624 | 0.696 | 0.696 |
-| Pooled (3 datasets) | 0.615 | 0.1 (0.616) | 0.611 | 0.682 | 0.695 |
+| Pooled (3 datasets) | 0.615 | 0.1 (0.616) | 0.611 | 0.683 | 0.695 |
 
 
 ## E. Setting the path weight (2-fold cross-validation over documents, 5 repeats; test MRR@10)
 
 | set | n | fixed alpha=0.2 | fixed, tuned | informativeness gate | query gate (ridge) |
 |---|---|---|---|---|---|
-| GovReport (ICT) | 1179 | 0.691 | 0.693 | 0.693 | 0.689 |
-| GovReport (LLM-written) | 398 | 0.878 | 0.870 | 0.874 | 0.875 |
-| QASPER (human) | 1256 | 0.542 | 0.543 | 0.540 | 0.542 |
-| NQ (human) | 1744 | 0.616 | 0.622 | 0.623 | 0.623 |
-| Pooled (3 datasets) | 4179 | 0.615 | 0.615 | 0.617 | 0.615 |
+| GovReport (ICT) | 1179 | 0.691 | 0.695 | 0.691 | 0.691 |
+| GovReport (LLM-written) | 398 | 0.878 | 0.874 | 0.876 | 0.874 |
+| QASPER (human) | 1256 | 0.542 | 0.542 | 0.547 | 0.542 |
+| NQ (human) | 1744 | 0.616 | 0.623 | 0.623 | 0.624 |
+| Pooled (3 datasets) | 4179 | 0.615 | 0.614 | 0.615 | 0.615 |
 
 
 
 | set | comparison | mean_diff | p_permutation | p_wilcoxon |
 |---|---|---|---|---|
-| GovReport (ICT) | fixed, tuned vs fixed alpha=0.2 | 0.002 | 0.435 | 0.999 |
-| GovReport (ICT) | informativeness gate vs fixed alpha=0.2 | 0.002 | 0.402 | 0.865 |
-| GovReport (ICT) | query gate (ridge) vs fixed alpha=0.2 | -0.002 | 0.490 | 0.254 |
-| GovReport (LLM-written) | fixed, tuned vs fixed alpha=0.2 | -0.008 | 0.078 | 0.562 |
-| GovReport (LLM-written) | informativeness gate vs fixed alpha=0.2 | -0.004 | 0.383 | 0.645 |
-| GovReport (LLM-written) | query gate (ridge) vs fixed alpha=0.2 | -0.003 | 0.414 | 0.642 |
-| QASPER (human) | fixed, tuned vs fixed alpha=0.2 | 0.001 | 0.735 | 0.860 |
-| QASPER (human) | informativeness gate vs fixed alpha=0.2 | -0.002 | 0.437 | 0.276 |
-| QASPER (human) | query gate (ridge) vs fixed alpha=0.2 | 0.000 | 0.929 | 0.217 |
-| NQ (human) | fixed, tuned vs fixed alpha=0.2 | 0.006 | 0.041 | 0.830 |
-| NQ (human) | informativeness gate vs fixed alpha=0.2 | 0.007 | 0.014 | 0.619 |
-| NQ (human) | query gate (ridge) vs fixed alpha=0.2 | 0.007 | 0.012 | 0.552 |
-| Pooled (3 datasets) | fixed, tuned vs fixed alpha=0.2 | -0.000 | 0.975 | 0.607 |
-| Pooled (3 datasets) | informativeness gate vs fixed alpha=0.2 | 0.002 | 0.121 | 0.117 |
-| Pooled (3 datasets) | query gate (ridge) vs fixed alpha=0.2 | -0.000 | 0.985 | 0.052 |
+| GovReport (ICT) | fixed, tuned vs fixed alpha=0.2 | 0.004 | 0.124 | 0.759 |
+| GovReport (ICT) | informativeness gate vs fixed alpha=0.2 | -0.000 | 0.956 | 0.997 |
+| GovReport (ICT) | query gate (ridge) vs fixed alpha=0.2 | -0.000 | 0.988 | 0.931 |
+| GovReport (LLM-written) | fixed, tuned vs fixed alpha=0.2 | -0.004 | 0.233 | 0.826 |
+| GovReport (LLM-written) | informativeness gate vs fixed alpha=0.2 | -0.002 | 0.662 | 0.988 |
+| GovReport (LLM-written) | query gate (ridge) vs fixed alpha=0.2 | -0.004 | 0.280 | 0.766 |
+| QASPER (human) | fixed, tuned vs fixed alpha=0.2 | 0.000 | 0.972 | 0.418 |
+| QASPER (human) | informativeness gate vs fixed alpha=0.2 | 0.005 | 0.223 | 0.934 |
+| QASPER (human) | query gate (ridge) vs fixed alpha=0.2 | 0.000 | 0.980 | 0.424 |
+| NQ (human) | fixed, tuned vs fixed alpha=0.2 | 0.007 | 0.024 | 0.624 |
+| NQ (human) | informativeness gate vs fixed alpha=0.2 | 0.007 | 0.021 | 0.679 |
+| NQ (human) | query gate (ridge) vs fixed alpha=0.2 | 0.007 | 0.007 | 0.655 |
+| Pooled (3 datasets) | fixed, tuned vs fixed alpha=0.2 | -0.001 | 0.613 | 0.460 |
+| Pooled (3 datasets) | informativeness gate vs fixed alpha=0.2 | 0.000 | 0.948 | 0.195 |
+| Pooled (3 datasets) | query gate (ridge) vs fixed alpha=0.2 | -0.000 | 0.876 | 0.045 |
+
+
+## F. Fine-tuning absorption (gain of SA by informativeness tercile)
+
+| set | encoder | informativeness | n | gain_vs_flat | gain_vs_placebo |
+|---|---|---|---|---|---|
+| GovReport (ICT) | base | low | 393 | -0.014 | -0.010 |
+| GovReport (ICT) | base | mid | 393 | 0.015 | -0.004 |
+| GovReport (ICT) | base | high | 393 | 0.003 | -0.011 |
+| GovReport (ICT) | fine-tuned | low | 393 | -0.017 | 0.001 |
+| GovReport (ICT) | fine-tuned | mid | 393 | 0.008 | 0.003 |
+| GovReport (ICT) | fine-tuned | high | 393 | 0.003 | -0.001 |
+| GovReport (LLM-written) | base | low | 133 | 0.034 | 0.026 |
+| GovReport (LLM-written) | base | mid | 132 | 0.004 | 0.023 |
+| GovReport (LLM-written) | base | high | 133 | 0.005 | -0.002 |
+| GovReport (LLM-written) | fine-tuned | low | 133 | 0.012 | 0.007 |
+| GovReport (LLM-written) | fine-tuned | mid | 132 | 0.007 | 0.010 |
+| GovReport (LLM-written) | fine-tuned | high | 133 | 0.021 | 0.008 |
+| QASPER (human) | base | low | 419 | 0.034 | 0.034 |
+| QASPER (human) | base | mid | 418 | 0.030 | 0.028 |
+| QASPER (human) | base | high | 419 | 0.034 | 0.031 |
+| QASPER (human) | fine-tuned | low | 419 | 0.035 | 0.019 |
+| QASPER (human) | fine-tuned | mid | 418 | 0.013 | 0.017 |
+| QASPER (human) | fine-tuned | high | 419 | 0.036 | 0.034 |
+| NQ (human) | base | low | 582 | -0.019 | 0.005 |
+| NQ (human) | base | mid | 581 | -0.022 | -0.005 |
+| NQ (human) | base | high | 581 | -0.029 | -0.028 |
+| NQ (human) | fine-tuned | low | 582 | -0.017 | 0.002 |
+| NQ (human) | fine-tuned | mid | 581 | -0.023 | -0.011 |
+| NQ (human) | fine-tuned | high | 581 | -0.020 | -0.019 |
+
+
+## H. Gain by the target section's heading specificity (w = log(N/df)/log N)
+
+The last row per set is the Spearman correlation between w and the per-question gain (p in last column).
+
+| set | gold heading | n | gain_vs_flat | ci_lo | ci_hi |
+|---|---|---|---|---|---|
+| GovReport (ICT) | generic (w < 0.5) | 175 | -0.076 | -0.107 | -0.046 |
+| GovReport (ICT) | shared (0.5-0.9) | 49 | -0.066 | -0.126 | -0.009 |
+| GovReport (ICT) | unique (w >= 0.9) | 955 | 0.019 | 0.008 | 0.031 |
+| GovReport (ICT) | Spearman 0.224 [0.165, 0.286] | 1179 | nan | nan | 0.000 |
+| GovReport (LLM-written) | generic (w < 0.5) | 65 | -0.103 | -0.160 | -0.050 |
+| GovReport (LLM-written) | shared (0.5-0.9) | 19 | 0.009 | -0.070 | 0.088 |
+| GovReport (LLM-written) | unique (w >= 0.9) | 314 | 0.039 | 0.022 | 0.057 |
+| GovReport (LLM-written) | Spearman 0.309 [0.213, 0.400] | 398 | nan | nan | 0.000 |
+| QASPER (human) | generic (w < 0.5) | 477 | 0.003 | -0.015 | 0.020 |
+| QASPER (human) | shared (0.5-0.9) | 274 | 0.039 | 0.013 | 0.065 |
+| QASPER (human) | unique (w >= 0.9) | 505 | 0.057 | 0.038 | 0.077 |
+| QASPER (human) | Spearman 0.184 [0.131, 0.236] | 1256 | nan | nan | 0.000 |
+| NQ (human) | generic (w < 0.5) | 1079 | -0.054 | -0.066 | -0.042 |
+| NQ (human) | shared (0.5-0.9) | 232 | 0.010 | -0.017 | 0.038 |
+| NQ (human) | unique (w >= 0.9) | 433 | 0.036 | 0.016 | 0.054 |
+| NQ (human) | Spearman 0.155 [0.106, 0.200] | 1744 | nan | nan | 0.000 |
+
+
+## I. Specificity fallback (alpha tuned on GovReport dev: SA 0.2, neutral 0.2, content 0.2; MRR@10)
+
+| set | n | flat | SA (a=0.2) | + fallback, neutral (a=0.2) | + fallback, content (a=0.2) |
+|---|---|---|---|---|---|
+| GovReport (ICT) | 1179 | 0.689 | 0.691 | 0.693 | 0.694 |
+| GovReport (LLM-written) | 398 | 0.864 | 0.878 | 0.887 | 0.890 |
+| QASPER (human) | 1256 | 0.509 | 0.542 | 0.530 | 0.514 |
+| NQ (human) | 1744 | 0.640 | 0.616 | 0.624 | 0.628 |
+
+
+
+| set | comparison | mean_diff | p_permutation | p_holm |
+|---|---|---|---|---|
+| GovReport (ICT) | fallback (neutral) vs SA | 0.002 | 0.207 | 0.828 |
+| GovReport (ICT) | fallback (content) vs SA | 0.003 | 0.322 | 0.966 |
+| GovReport (ICT) | fallback (neutral) vs flat | 0.004 | 0.426 | 0.966 |
+| GovReport (ICT) | SA vs flat | 0.002 | 0.767 | 0.966 |
+| GovReport (LLM-written) | fallback (neutral) vs SA | 0.009 | 0.033 | 0.067 |
+| GovReport (LLM-written) | fallback (content) vs SA | 0.012 | 0.018 | 0.054 |
+| GovReport (LLM-written) | fallback (neutral) vs flat | 0.023 | 0.004 | 0.016 |
+| GovReport (LLM-written) | SA vs flat | 0.014 | 0.123 | 0.123 |
+| QASPER (human) | fallback (neutral) vs SA | -0.012 | 0.000 | 0.001 |
+| QASPER (human) | fallback (content) vs SA | -0.027 | 0.000 | 0.000 |
+| QASPER (human) | fallback (neutral) vs flat | 0.021 | 0.000 | 0.001 |
+| QASPER (human) | SA vs flat | 0.033 | 0.000 | 0.000 |
+| NQ (human) | fallback (neutral) vs SA | 0.008 | 0.006 | 0.012 |
+| NQ (human) | fallback (content) vs SA | 0.012 | 0.008 | 0.012 |
+| NQ (human) | fallback (neutral) vs flat | -0.016 | 0.001 | 0.002 |
+| NQ (human) | SA vs flat | -0.023 | 0.000 | 0.000 |
+
+
+By the target section's heading specificity:
+
+| set | gold heading | n | SA - flat | neutral fallback - flat | content fallback - flat |
+|---|---|---|---|---|---|
+| GovReport (ICT) | generic (w < 0.5) | 175 | -0.076 | -0.047 | -0.005 |
+| GovReport (ICT) | shared (0.5-0.9) | 49 | -0.066 | -0.071 | -0.069 |
+| GovReport (ICT) | unique (w >= 0.9) | 955 | 0.019 | 0.017 | 0.010 |
+| GovReport (LLM-written) | generic (w < 0.5) | 65 | -0.103 | -0.053 | -0.014 |
+| GovReport (LLM-written) | shared (0.5-0.9) | 19 | 0.009 | 0.035 | 0.035 |
+| GovReport (LLM-written) | unique (w >= 0.9) | 314 | 0.039 | 0.038 | 0.035 |
+| QASPER (human) | generic (w < 0.5) | 477 | 0.003 | -0.000 | 0.013 |
+| QASPER (human) | shared (0.5-0.9) | 274 | 0.039 | 0.015 | -0.001 |
+| QASPER (human) | unique (w >= 0.9) | 505 | 0.057 | 0.044 | 0.001 |
+| NQ (human) | generic (w < 0.5) | 1079 | -0.054 | -0.038 | -0.005 |
+| NQ (human) | shared (0.5-0.9) | 232 | 0.010 | -0.001 | -0.025 |
+| NQ (human) | unique (w >= 0.9) | 433 | 0.036 | 0.033 | -0.021 |

@@ -102,13 +102,21 @@ def structure_scores(
     beta: float = 0.0,
     sparse_weight: float = 1.0,
     rrf_k: int = 60,
-    fallback: bool = False,
+    fallback: bool | str = False,
 ) -> list[np.ndarray]:
-    """fallback=True: the path term of a section with a generic heading falls back to its content
-    score, path' = w * cos(q, path) + (1 - w) * cos(q, content), w = heading specificity."""
+    """Heading-specificity fallback for the path term, w = heading specificity in [0, 1]:
+
+    "mean"    path' = w * cos(q, path) + (1 - w) * mean over the document of cos(q, path), so a
+              generic heading is neutral: it neither helps nor hurts its section (the method).
+    "content" path' = w * cos(q, path) + (1 - w) * cos(q, content) (ablation; content scores are
+              on a higher scale, so this boosts sections with generic headings).
+    True is the same as "content".
+    """
     paths = comp.path
-    if fallback:
+    if fallback in (True, "content"):
         paths = [w * p + (1 - w) * c for w, p, c in zip(comp.specificity, comp.path, comp.content, strict=True)]
+    elif fallback == "mean":
+        paths = [w * p + (1 - w) * p.mean() for w, p in zip(comp.specificity, comp.path, strict=True)]
     dense = [c + alpha * p + beta * pa for c, p, pa in zip(comp.content, paths, comp.parent, strict=True)]
     if sparse_weight <= 0:
         return dense
@@ -116,7 +124,7 @@ def structure_scores(
 
 
 def structure_rr_per_alpha(
-    comp: Components, alphas, beta: float = 0.0, sparse_weight: float = 1.0, fallback: bool = False
+    comp: Components, alphas, beta: float = 0.0, sparse_weight: float = 1.0, fallback: bool | str = False
 ) -> np.ndarray:
     """(n_alphas, n_queries) reciprocal ranks, for oracle and gating analyses."""
     return np.stack(

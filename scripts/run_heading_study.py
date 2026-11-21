@@ -72,6 +72,7 @@ def main() -> None:
     ap.add_argument("--variants", nargs="+", default=None, help="subset of variants (default: all)")
     ap.add_argument("--encoder", default=None, help="embedding model path (default: config base model)")
     ap.add_argument("--tag", default="", help="suffix for output files")
+    ap.add_argument("--merge", action="store_true", help="replace only the computed dataset/variant rows")
     args = ap.parse_args()
     cfg = load_config()
     set_seed(cfg["seed"])
@@ -117,6 +118,11 @@ def main() -> None:
                 )
                 for a, rr in zip(ALPHAS, rr_fb, strict=True):
                     rows[f"safb_a{a}"] = rr
+                rr_fbm = ex.structure_rr_per_alpha(
+                    comp, ALPHAS, beta=base["beta"], sparse_weight=base["sparse_weight"], fallback="mean"
+                )
+                for a, rr in zip(ALPHAS, rr_fbm, strict=True):
+                    rows[f"safbm_a{a}"] = rr
                 for system, rr in rows.items():
                     frames.append(meta.assign(dataset=ds, query_set=qs_name, variant=variant, system=system, rr=rr))
                 log.info(
@@ -130,10 +136,23 @@ def main() -> None:
                     time.time() - t0,
                 )
     t = f"_{args.tag}" if args.tag else ""
-    pd.concat(frames).to_csv(OUT / f"per_query{t}.csv.gz", index=False)
-    pd.concat(doc_frames).to_csv(OUT / f"doc_features{t}.csv", index=False)
-    if sec_frames:
-        pd.concat(sec_frames).to_csv(OUT / f"section_features{t}.csv", index=False)
+    outputs = {
+        "per_query": (frames, ".csv.gz"),
+        "doc_features": (doc_frames, ".csv"),
+        "section_features": (sec_frames, ".csv"),
+    }
+    for name, (fr, ext) in outputs.items():
+        if not fr:
+            continue
+        new = pd.concat(fr)
+        path = OUT / f"{name}{t}{ext}"
+        if args.merge and path.exists():
+            old = pd.read_csv(path)
+            keys = ["dataset", "variant"] if "variant" in new else ["dataset"]
+            done = set(map(tuple, new[keys].drop_duplicates().values))
+            old = old[[tuple(r) not in done for r in old[keys].values]]
+            new = pd.concat([old, new])
+        new.to_csv(path, index=False)
     settings = {"base_params": base, "alphas": ALPHAS, "encoder": encoder.model_name}
     (OUT / f"settings{t}.json").write_text(json.dumps(settings, indent=2))
 

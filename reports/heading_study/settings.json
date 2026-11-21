@@ -16,5 +16,6 @@
     1.0,
     1.5,
     2.0
-  ]
+  ],
+  "encoder": "BAAI/bge-small-en-v1.5"
 }

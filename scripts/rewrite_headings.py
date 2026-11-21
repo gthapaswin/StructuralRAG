@@ -16,7 +16,7 @@ import logging
 import random
 import time
 
-from structuralrag.llm.ollama_client import OllamaClient
+from structuralrag.llm.ollama_client import OllamaClient, OllamaError
 from structuralrag.schema import Document
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, load_config
 from structuralrag.utils.io import load_documents
@@ -73,16 +73,22 @@ def main() -> None:
         out_path = DATA_DIR / f"{ds}_llm_headings.json"
         out = json.loads(out_path.read_text()) if out_path.exists() else {}
         t0 = time.time()
+        skipped: list[str] = []
         for n, d in enumerate(docs, 1):
             if d.document_id in out:
                 continue
-            res = client.chat_json(SYSTEM, prompt(d), schema(d), num_predict=24 * len(d.sections) + 64)
+            try:
+                res = client.chat_json(SYSTEM, prompt(d), schema(d), num_predict=40 * len(d.sections) + 128)
+            except OllamaError as e:  # e.g. output cut off; keep the original headings out of the study
+                log.warning("%s: skipped %s (%s)", ds, d.document_id, str(e)[:80])
+                skipped.append(d.document_id)
+                continue
             out[d.document_id] = {s.section_id: str(res.get(s.section_id, "")).strip() or s.title for s in d.sections}
             if n % 10 == 0:
                 out_path.write_text(json.dumps(out))
                 log.info("%s: %d/%d documents (%.0fs)", ds, n, len(docs), time.time() - t0)
         out_path.write_text(json.dumps(out))
-        log.info("%s: done, %d documents", ds, len(out))
+        log.info("%s: done, %d documents, %d skipped", ds, len(out), len(skipped))
 
 
 if __name__ == "__main__":
