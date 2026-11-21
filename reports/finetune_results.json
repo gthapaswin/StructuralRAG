@@ -1,6 +1,5 @@
 {
   "base_model": "BAAI/bge-small-en-v1.5",
-  "finetuned_model": "artifacts/models/bge-small-govreport",
   "structure_params": {
     "base": {
       "alpha": 0.2,
@@ -9,6 +8,12 @@
       "rrf_k": 60
     },
     "finetuned": {
+      "alpha": 0.0,
+      "beta": 0.0,
+      "sparse_weight": 0.0,
+      "rrf_k": 60
+    },
+    "finetuned_ICT+LLM": {
       "alpha": 0.0,
       "beta": 0.0,
       "sparse_weight": 0.0,
@@ -25,7 +30,7 @@
           "recall@5": 0.8719253604749788,
           "mrr@10": 0.6605264752211317,
           "ndcg@10": 0.7310166281762842,
-          "p50_ms": 21.081395498185884
+          "p50_ms": 5.0063335002050735
         },
         {
           "system": "dense (fine-tuned)",
@@ -33,7 +38,15 @@
           "recall@5": 0.8931297709923665,
           "mrr@10": 0.7116583868492266,
           "ndcg@10": 0.7732657065608424,
-          "p50_ms": 18.354333500610664
+          "p50_ms": 4.973645500285784
+        },
+        {
+          "system": "dense (fine-tuned ICT+LLM)",
+          "recall@1": 0.5903307888040712,
+          "recall@5": 0.90754877014419,
+          "mrr@10": 0.7233514412267592,
+          "ndcg@10": 0.7816734612000364,
+          "p50_ms": 5.052020998846274
         },
         {
           "system": "hybrid (base)",
@@ -41,7 +54,7 @@
           "recall@5": 0.90754877014419,
           "mrr@10": 0.6945932118960109,
           "ndcg@10": 0.7612966073907907,
-          "p50_ms": 25.810437498876126
+          "p50_ms": 11.89002100363723
         },
         {
           "system": "hybrid (fine-tuned)",
@@ -49,7 +62,15 @@
           "recall@5": 0.9134860050890585,
           "mrr@10": 0.7309594490892201,
           "ndcg@10": 0.7906037756335381,
-          "p50_ms": 26.53939600349986
+          "p50_ms": 12.173354498372646
+        },
+        {
+          "system": "hybrid (fine-tuned ICT+LLM)",
+          "recall@1": 0.6005089058524173,
+          "recall@5": 0.9151823579304496,
+          "mrr@10": 0.7355978297454124,
+          "ndcg@10": 0.7940480891087788,
+          "p50_ms": 11.75858349961345
         },
         {
           "system": "structure-aware (base)",
@@ -57,7 +78,7 @@
           "recall@5": 0.8922815945716709,
           "mrr@10": 0.7028622588419026,
           "ndcg@10": 0.7688287627995789,
-          "p50_ms": 26.983729003404733
+          "p50_ms": 12.491354002122534
         },
         {
           "system": "structure-aware (fine-tuned)",
@@ -65,7 +86,15 @@
           "recall@5": 0.8931297709923665,
           "mrr@10": 0.7116583868492266,
           "ndcg@10": 0.7732657065608424,
-          "p50_ms": 27.679082999384264
+          "p50_ms": 11.990417002380127
+        },
+        {
+          "system": "structure-aware (fine-tuned ICT+LLM)",
+          "recall@1": 0.5903307888040712,
+          "recall@5": 0.90754877014419,
+          "mrr@10": 0.7233514412267592,
+          "ndcg@10": 0.7816734612000364,
+          "p50_ms": 12.326374995609513
         },
         {
           "system": "+ rerank (zero-shot)",
@@ -73,7 +102,15 @@
           "recall@5": 0.8617472434266328,
           "mrr@10": 0.6479647131682754,
           "ndcg@10": 0.720646139278345,
-          "p50_ms": 750.3730624994205
+          "p50_ms": 530.5488749982032
+        },
+        {
+          "system": "+ rerank MaxP (zero-shot)",
+          "recall@1": 0.5368956743002544,
+          "recall@5": 0.8846480067854113,
+          "mrr@10": 0.6795047592121384,
+          "ndcg@10": 0.7488528239238205,
+          "p50_ms": 1554.9535620011739
         },
         {
           "system": "+ rerank (fine-tuned)",
@@ -81,7 +118,31 @@
           "recall@5": 0.8778625954198473,
           "mrr@10": 0.6897316800624689,
           "ndcg@10": 0.7540292944017634,
-          "p50_ms": 740.2339789987309
+          "p50_ms": 537.613603992213
+        },
+        {
+          "system": "+ rerank MaxP (fine-tuned)",
+          "recall@1": 0.6005089058524173,
+          "recall@5": 0.9033078880407125,
+          "mrr@10": 0.7265610485076133,
+          "ndcg@10": 0.7838891562647657,
+          "p50_ms": 963.6874170028022
+        },
+        {
+          "system": "+ rerank (fine-tuned ICT+LLM)",
+          "recall@1": 0.5114503816793893,
+          "recall@5": 0.8490245971162002,
+          "mrr@10": 0.6588442586534189,
+          "ndcg@10": 0.7285807802509678,
+          "p50_ms": 540.0015000050189
+        },
+        {
+          "system": "+ rerank MaxP (fine-tuned ICT+LLM)",
+          "recall@1": 0.5572519083969466,
+          "recall@5": 0.8787107718405428,
+          "mrr@10": 0.6909208099411661,
+          "ndcg@10": 0.7542015668773941,
+          "p50_ms": 955.7595624937676
         }
       ],
       "significance": [
@@ -100,6 +161,20 @@
           "p_wilcoxon": 0.0003750321439546881
         },
         {
+          "comparison": "dense (fine-tuned ICT+LLM) vs dense (base)",
+          "metric": "mrr@10",
+          "mean_diff": 0.06282496600562758,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 7.277637364328687e-15
+        },
+        {
+          "comparison": "dense (fine-tuned ICT+LLM) vs dense (base)",
+          "metric": "recall@1",
+          "mean_diff": 0.07888040712468193,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 3.652300946975935e-06
+        },
+        {
           "comparison": "hybrid (fine-tuned) vs hybrid (base)",
           "metric": "mrr@10",
           "mean_diff": 0.03636623719320921,
@@ -112,6 +187,20 @@
           "mean_diff": 0.05173876166242578,
           "p_permutation": 9.999000099990002e-05,
           "p_wilcoxon": 0.0014665280033813728
+        },
+        {
+          "comparison": "hybrid (fine-tuned ICT+LLM) vs hybrid (base)",
+          "metric": "mrr@10",
+          "mean_diff": 0.04100461784940156,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 5.191404284852498e-10
+        },
+        {
+          "comparison": "hybrid (fine-tuned ICT+LLM) vs hybrid (base)",
+          "metric": "recall@1",
+          "mean_diff": 0.05597964376590331,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 0.0005401797149653105
         },
         {
           "comparison": "structure-aware (fine-tuned) vs structure-aware (base)",
@@ -128,46 +217,130 @@
           "p_wilcoxon": 0.5988076580915469
         },
         {
-          "comparison": "+ rerank (zero-shot) vs structure-aware (fine-tuned)",
+          "comparison": "structure-aware (fine-tuned ICT+LLM) vs structure-aware (base)",
           "metric": "mrr@10",
-          "mean_diff": -0.06369367368095105,
-          "p_permutation": 9.999000099990002e-05,
-          "p_wilcoxon": 3.543806562767092e-08
+          "mean_diff": 0.020489182384856686,
+          "p_permutation": 0.021097890210978902,
+          "p_wilcoxon": 0.027045744776741158
         },
         {
-          "comparison": "+ rerank (zero-shot) vs structure-aware (fine-tuned)",
+          "comparison": "structure-aware (fine-tuned ICT+LLM) vs structure-aware (base)",
           "metric": "recall@1",
-          "mean_diff": -0.0737913486005089,
-          "p_permutation": 9.999000099990002e-05,
-          "p_wilcoxon": 6.517371988177125e-05
+          "mean_diff": 0.02714164546225615,
+          "p_permutation": 0.05269473052694731,
+          "p_wilcoxon": 0.12409333610346249
         },
         {
-          "comparison": "+ rerank (fine-tuned) vs structure-aware (fine-tuned)",
+          "comparison": "+ rerank MaxP (zero-shot) vs + rerank (zero-shot)",
           "metric": "mrr@10",
-          "mean_diff": -0.021926706786757677,
-          "p_permutation": 0.0337966203379662,
-          "p_wilcoxon": 0.024826110248835683
+          "mean_diff": 0.03154004604386284,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 0.14446399980846686
         },
         {
-          "comparison": "+ rerank (fine-tuned) vs structure-aware (fine-tuned)",
+          "comparison": "+ rerank MaxP (zero-shot) vs + rerank (zero-shot)",
           "metric": "recall@1",
-          "mean_diff": -0.01441899915182358,
-          "p_permutation": 0.3862613738626137,
-          "p_wilcoxon": 0.43760248198385143
+          "mean_diff": 0.03816793893129771,
+          "p_permutation": 0.0014998500149985001,
+          "p_wilcoxon": 0.02305124288022302
         },
         {
-          "comparison": "+ rerank (fine-tuned) vs + rerank (zero-shot)",
+          "comparison": "+ rerank MaxP (zero-shot) vs structure-aware (fine-tuned)",
           "metric": "mrr@10",
-          "mean_diff": 0.041766966894193354,
-          "p_permutation": 9.999000099990002e-05,
-          "p_wilcoxon": 8.689186667234583e-06
+          "mean_diff": -0.0321536276370882,
+          "p_permutation": 0.0047995200479952005,
+          "p_wilcoxon": 0.001724706914843266
         },
         {
-          "comparison": "+ rerank (fine-tuned) vs + rerank (zero-shot)",
+          "comparison": "+ rerank MaxP (zero-shot) vs structure-aware (fine-tuned)",
           "metric": "recall@1",
-          "mean_diff": 0.05937234944868533,
+          "mean_diff": -0.035623409669211195,
+          "p_permutation": 0.03189681031896811,
+          "p_wilcoxon": 0.06206991967985929
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs + rerank (fine-tuned)",
+          "metric": "mrr@10",
+          "mean_diff": 0.03682936844514453,
           "p_permutation": 9.999000099990002e-05,
-          "p_wilcoxon": 0.0007811247531586526
+          "p_wilcoxon": 0.003042153777367398
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs + rerank (fine-tuned)",
+          "metric": "recall@1",
+          "mean_diff": 0.04240882103477523,
+          "p_permutation": 0.00029997000299970003,
+          "p_wilcoxon": 0.011626488081346297
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs structure-aware (fine-tuned)",
+          "metric": "mrr@10",
+          "mean_diff": 0.01490266165838685,
+          "p_permutation": 0.17248275172482752,
+          "p_wilcoxon": 0.320382822877853
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs structure-aware (fine-tuned)",
+          "metric": "recall@1",
+          "mean_diff": 0.027989821882951654,
+          "p_permutation": 0.0973902609739026,
+          "p_wilcoxon": 0.13937979689949123
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs + rerank MaxP (zero-shot)",
+          "metric": "mrr@10",
+          "mean_diff": 0.04705628929547505,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 1.035360828196198e-05
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs + rerank MaxP (zero-shot)",
+          "metric": "recall@1",
+          "mean_diff": 0.06361323155216285,
+          "p_permutation": 0.00019998000199980003,
+          "p_wilcoxon": 0.00043866576276818886
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs + rerank (fine-tuned ICT+LLM)",
+          "metric": "mrr@10",
+          "mean_diff": 0.03207655128774721,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 0.258533605632451
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs + rerank (fine-tuned ICT+LLM)",
+          "metric": "recall@1",
+          "mean_diff": 0.04580152671755725,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 0.005837119010126529
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs structure-aware (fine-tuned)",
+          "metric": "mrr@10",
+          "mean_diff": -0.02073757690806037,
+          "p_permutation": 0.059994000599940006,
+          "p_wilcoxon": 0.03046307579697701
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs structure-aware (fine-tuned)",
+          "metric": "recall@1",
+          "mean_diff": -0.015267175572519083,
+          "p_permutation": 0.3638636136386361,
+          "p_wilcoxon": 0.41564444929487465
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs + rerank MaxP (zero-shot)",
+          "metric": "mrr@10",
+          "mean_diff": 0.01141605072902783,
+          "p_permutation": 0.19758024197580243,
+          "p_wilcoxon": 0.4238564867364354
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs + rerank MaxP (zero-shot)",
+          "metric": "recall@1",
+          "mean_diff": 0.020356234096692113,
+          "p_permutation": 0.14328567143285673,
+          "p_wilcoxon": 0.2481164711479259
         }
       ]
     },
@@ -180,7 +353,7 @@
           "recall@5": 0.9798994974874372,
           "mrr@10": 0.8711115099306055,
           "ndcg@10": 0.903162117175079,
-          "p50_ms": 18.380375502601964
+          "p50_ms": 5.757708495366387
         },
         {
           "system": "dense (fine-tuned)",
@@ -188,7 +361,15 @@
           "recall@5": 0.9798994974874372,
           "mrr@10": 0.8806004227486639,
           "ndcg@10": 0.9103417245442598,
-          "p50_ms": 17.8626040033123
+          "p50_ms": 4.988062006304972
+        },
+        {
+          "system": "dense (fine-tuned ICT+LLM)",
+          "recall@1": 0.8592964824120602,
+          "recall@5": 0.9949748743718593,
+          "mrr@10": 0.9160594639865997,
+          "ndcg@10": 0.9371486875006965,
+          "p50_ms": 4.981229503755458
         },
         {
           "system": "hybrid (base)",
@@ -196,7 +377,7 @@
           "recall@5": 0.9723618090452262,
           "mrr@10": 0.8623624072744676,
           "ndcg@10": 0.8959501457601183,
-          "p50_ms": 25.585354000213556
+          "p50_ms": 10.519187497266103
         },
         {
           "system": "hybrid (fine-tuned)",
@@ -204,7 +385,15 @@
           "recall@5": 0.9798994974874372,
           "mrr@10": 0.8656536651511526,
           "ndcg@10": 0.8985515484365335,
-          "p50_ms": 25.686687498819083
+          "p50_ms": 10.853771003894508
+        },
+        {
+          "system": "hybrid (fine-tuned ICT+LLM)",
+          "recall@1": 0.8040201005025126,
+          "recall@5": 0.9849246231155779,
+          "mrr@10": 0.8829684134960517,
+          "ndcg@10": 0.9117778982737332,
+          "p50_ms": 10.433354495035019
         },
         {
           "system": "structure-aware (base)",
@@ -212,7 +401,7 @@
           "recall@5": 0.9748743718592965,
           "mrr@10": 0.8771625987078248,
           "ndcg@10": 0.9071303540793939,
-          "p50_ms": 24.406916498264764
+          "p50_ms": 10.34245850314619
         },
         {
           "system": "structure-aware (fine-tuned)",
@@ -220,7 +409,15 @@
           "recall@5": 0.9798994974874372,
           "mrr@10": 0.8806004227486639,
           "ndcg@10": 0.9103417245442598,
-          "p50_ms": 24.687666500540217
+          "p50_ms": 10.064354501082562
+        },
+        {
+          "system": "structure-aware (fine-tuned ICT+LLM)",
+          "recall@1": 0.8592964824120602,
+          "recall@5": 0.9949748743718593,
+          "mrr@10": 0.9160594639865997,
+          "ndcg@10": 0.9371486875006965,
+          "p50_ms": 10.466478997841477
         },
         {
           "system": "+ rerank (zero-shot)",
@@ -228,7 +425,15 @@
           "recall@5": 0.992462311557789,
           "mrr@10": 0.9158082077051927,
           "ndcg@10": 0.9371209096542514,
-          "p50_ms": 768.530687000748
+          "p50_ms": 555.035624995071
+        },
+        {
+          "system": "+ rerank MaxP (zero-shot)",
+          "recall@1": 0.8618090452261307,
+          "recall@5": 0.9874371859296482,
+          "mrr@10": 0.9166905958363245,
+          "ndcg@10": 0.9369837392772099,
+          "p50_ms": 1031.9790834982996
         },
         {
           "system": "+ rerank (fine-tuned)",
@@ -236,7 +441,31 @@
           "recall@5": 0.9773869346733668,
           "mrr@10": 0.8738135120044668,
           "ndcg@10": 0.905214159665122,
-          "p50_ms": 774.3289589998312
+          "p50_ms": 554.2339999956312
+        },
+        {
+          "system": "+ rerank MaxP (fine-tuned)",
+          "recall@1": 0.7688442211055276,
+          "recall@5": 0.9773869346733668,
+          "mrr@10": 0.8616893993778416,
+          "ndcg@10": 0.894548984427745,
+          "p50_ms": 1034.7242505013128
+        },
+        {
+          "system": "+ rerank (fine-tuned ICT+LLM)",
+          "recall@1": 0.907035175879397,
+          "recall@5": 0.9899497487437185,
+          "mrr@10": 0.9433895668820291,
+          "ndcg@10": 0.9574904370899676,
+          "p50_ms": 552.7859584981343
+        },
+        {
+          "system": "+ rerank MaxP (fine-tuned ICT+LLM)",
+          "recall@1": 0.8944723618090452,
+          "recall@5": 0.992462311557789,
+          "mrr@10": 0.9374581239530989,
+          "ndcg@10": 0.9531636714791349,
+          "p50_ms": 1030.1672915011295
         }
       ],
       "significance": [
@@ -255,6 +484,20 @@
           "p_wilcoxon": 0.6566559232447946
         },
         {
+          "comparison": "dense (fine-tuned ICT+LLM) vs dense (base)",
+          "metric": "mrr@10",
+          "mean_diff": 0.04494795405599425,
+          "p_permutation": 0.00029997000299970003,
+          "p_wilcoxon": 0.004830881113590915
+        },
+        {
+          "comparison": "dense (fine-tuned ICT+LLM) vs dense (base)",
+          "metric": "recall@1",
+          "mean_diff": 0.0678391959798995,
+          "p_permutation": 0.0004999500049995,
+          "p_wilcoxon": 0.018303015743696877
+        },
+        {
           "comparison": "hybrid (fine-tuned) vs hybrid (base)",
           "metric": "mrr@10",
           "mean_diff": 0.003291257876685012,
@@ -267,6 +510,20 @@
           "mean_diff": 0.002512562814070352,
           "p_permutation": 1.0,
           "p_wilcoxon": 0.9259303036916134
+        },
+        {
+          "comparison": "hybrid (fine-tuned ICT+LLM) vs hybrid (base)",
+          "metric": "mrr@10",
+          "mean_diff": 0.020606006221584112,
+          "p_permutation": 0.009299070092990702,
+          "p_wilcoxon": 0.04430957175257877
+        },
+        {
+          "comparison": "hybrid (fine-tuned ICT+LLM) vs hybrid (base)",
+          "metric": "recall@1",
+          "mean_diff": 0.02763819095477387,
+          "p_permutation": 0.07229277072292771,
+          "p_wilcoxon": 0.30648295259412717
         },
         {
           "comparison": "structure-aware (fine-tuned) vs structure-aware (base)",
@@ -283,46 +540,130 @@
           "p_wilcoxon": 0.8687407437442947
         },
         {
-          "comparison": "+ rerank (zero-shot) vs structure-aware (fine-tuned)",
+          "comparison": "structure-aware (fine-tuned ICT+LLM) vs structure-aware (base)",
           "metric": "mrr@10",
-          "mean_diff": 0.035207784956528675,
-          "p_permutation": 0.004999500049995001,
-          "p_wilcoxon": 0.04416467133716656
+          "mean_diff": 0.03889686527877483,
+          "p_permutation": 0.006399360063993601,
+          "p_wilcoxon": 0.028236067623412547
         },
         {
-          "comparison": "+ rerank (zero-shot) vs structure-aware (fine-tuned)",
+          "comparison": "structure-aware (fine-tuned ICT+LLM) vs structure-aware (base)",
           "metric": "recall@1",
-          "mean_diff": 0.05025125628140704,
-          "p_permutation": 0.0235976402359764,
-          "p_wilcoxon": 0.0890276082419739
+          "mean_diff": 0.06030150753768844,
+          "p_permutation": 0.014198580141985802,
+          "p_wilcoxon": 0.04915412609352605
         },
         {
-          "comparison": "+ rerank (fine-tuned) vs structure-aware (fine-tuned)",
+          "comparison": "+ rerank MaxP (zero-shot) vs + rerank (zero-shot)",
           "metric": "mrr@10",
-          "mean_diff": -0.006786910744197174,
-          "p_permutation": 0.6139386061393861,
-          "p_wilcoxon": 0.5406721874442242
+          "mean_diff": 0.0008823881311318494,
+          "p_permutation": 0.9091090890910909,
+          "p_wilcoxon": 0.6734929002917418
         },
         {
-          "comparison": "+ rerank (fine-tuned) vs structure-aware (fine-tuned)",
+          "comparison": "+ rerank MaxP (zero-shot) vs + rerank (zero-shot)",
+          "metric": "recall@1",
+          "mean_diff": 0.007537688442211055,
+          "p_permutation": 0.7205279472052795,
+          "p_wilcoxon": 0.7803223250541673
+        },
+        {
+          "comparison": "+ rerank MaxP (zero-shot) vs structure-aware (fine-tuned)",
+          "metric": "mrr@10",
+          "mean_diff": 0.03609017308766053,
+          "p_permutation": 0.0082991700829917,
+          "p_wilcoxon": 0.08257625582091366
+        },
+        {
+          "comparison": "+ rerank MaxP (zero-shot) vs structure-aware (fine-tuned)",
+          "metric": "recall@1",
+          "mean_diff": 0.05778894472361809,
+          "p_permutation": 0.0110988901109889,
+          "p_wilcoxon": 0.05195118140409481
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs + rerank (fine-tuned)",
+          "metric": "mrr@10",
+          "mean_diff": -0.012124112626625187,
+          "p_permutation": 0.21647835216478353,
+          "p_wilcoxon": 0.1234357669931287
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs + rerank (fine-tuned)",
+          "metric": "recall@1",
+          "mean_diff": -0.022613065326633167,
+          "p_permutation": 0.26807319268073193,
+          "p_wilcoxon": 0.42562843739009204
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs structure-aware (fine-tuned)",
+          "metric": "mrr@10",
+          "mean_diff": -0.01891102337082236,
+          "p_permutation": 0.1728827117288271,
+          "p_wilcoxon": 0.21573564883936347
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs structure-aware (fine-tuned)",
+          "metric": "recall@1",
+          "mean_diff": -0.035175879396984924,
+          "p_permutation": 0.17678232176782321,
+          "p_wilcoxon": 0.25303961776787376
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs + rerank MaxP (zero-shot)",
+          "metric": "mrr@10",
+          "mean_diff": -0.055001196458482886,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 0.00016338440609818533
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned) vs + rerank MaxP (zero-shot)",
+          "metric": "recall@1",
+          "mean_diff": -0.09296482412060302,
+          "p_permutation": 0.00019998000199980003,
+          "p_wilcoxon": 0.0015469834759295586
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs + rerank (fine-tuned ICT+LLM)",
+          "metric": "mrr@10",
+          "mean_diff": -0.005931442928930366,
+          "p_permutation": 0.42475752424757524,
+          "p_wilcoxon": 0.32097278009827557
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs + rerank (fine-tuned ICT+LLM)",
           "metric": "recall@1",
           "mean_diff": -0.01256281407035176,
-          "p_permutation": 0.6573342665733427,
-          "p_wilcoxon": 0.6764235067180298
+          "p_permutation": 0.42705729427057293,
+          "p_wilcoxon": 0.6374149915371257
         },
         {
-          "comparison": "+ rerank (fine-tuned) vs + rerank (zero-shot)",
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs structure-aware (fine-tuned)",
           "metric": "mrr@10",
-          "mean_diff": -0.04199469570072585,
-          "p_permutation": 0.00019998000199980003,
-          "p_wilcoxon": 0.007431792500355605
+          "mean_diff": 0.056857701204434875,
+          "p_permutation": 9.999000099990002e-05,
+          "p_wilcoxon": 0.00299382317677786
         },
         {
-          "comparison": "+ rerank (fine-tuned) vs + rerank (zero-shot)",
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs structure-aware (fine-tuned)",
           "metric": "recall@1",
-          "mean_diff": -0.06281407035175879,
-          "p_permutation": 0.0033996600339966003,
-          "p_wilcoxon": 0.031715817754953066
+          "mean_diff": 0.09045226130653267,
+          "p_permutation": 0.00019998000199980003,
+          "p_wilcoxon": 0.0026035738442868037
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs + rerank MaxP (zero-shot)",
+          "metric": "mrr@10",
+          "mean_diff": 0.020767528116774348,
+          "p_permutation": 0.0476952304769523,
+          "p_wilcoxon": 0.16148863788897594
+        },
+        {
+          "comparison": "+ rerank MaxP (fine-tuned ICT+LLM) vs + rerank MaxP (zero-shot)",
+          "metric": "recall@1",
+          "mean_diff": 0.032663316582914576,
+          "p_permutation": 0.0928907109289071,
+          "p_wilcoxon": 0.2477667924288346
         }
       ]
     }
