@@ -211,6 +211,36 @@ Full tables: [`reports/crossdomain_results.md`](reports/crossdomain_results.md).
   document): paper sections are more alike, and the questions were written without seeing the paper. Most gold sections are at depth 1–2 (919 and 276 questions); depth 3–4
   have only 59 and 2.
 
+### When do section headings help? (heading study)
+
+Structure-aware retrieval helps on some collections and not others, so the project tests *why*. Only
+the headings change between conditions; section text and questions stay the same. Four question
+sets: GovReport ICT and LLM-written questions, QASPER, and **Natural Questions** (1,744 real Google
+queries over Wikipedia pages, a third domain). Within-document retrieval, MRR@10; tests treat
+documents as the independent units.
+
+| MRR@10 | Flat (no headings) | Real headings | Shuffled headings (placebo) | Generic "Section 3.2" |
+|---|---|---|---|---|
+| GovReport ICT | 0.689 | 0.691 | 0.690 | 0.689 |
+| GovReport LLM-written | 0.864 | 0.878 | 0.866 | 0.867 |
+| QASPER | 0.509 | **0.542** | 0.507 | 0.507 |
+| NQ | **0.642** | 0.616 | 0.624 | 0.631 |
+
+- **Headings help on QASPER (+0.035 over shuffled headings, p < 0.001), do nothing on GovReport ICT,
+  and hurt on NQ (−0.026).** On QASPER the gain shrinks steadily as headings are made generic or noisy.
+- **What explains it is how specific the target section's own heading is.** Specificity
+  w = log(N/df)/log N (df = documents sharing the heading) needs no labels. Targets with generic
+  headings ("Introduction", "Conclusions") lose to neighbours whose headings sound related to the
+  question; targets with unique headings gain. This holds in all four sets (Spearman 0.15–0.31,
+  p < 0.001) and survives controls for section length, depth, position and document size.
+- **Negative results.** A document-level informativeness score and learned per-query weights do not
+  beat a fixed weight; making common headings neutral helps GovReport and NQ but hurts QASPER,
+  where common headings ("Results", "Datasets") are what questions target.
+
+Details: [`reports/heading_study/FINDINGS.md`](reports/heading_study/FINDINGS.md); full tables in
+[`results.md`](reports/heading_study/results.md); examples in
+[`examples.md`](reports/heading_study/examples.md). Reproduce with `make heading-study`.
+
 ### Limitations
 
 - ICT queries are sentences taken from the section itself, which favours lexical matching.
@@ -223,8 +253,8 @@ Full tables: [`reports/crossdomain_results.md`](reports/crossdomain_results.md).
 - The LLM-written training and test questions come from the same model and prompt (different
   reports), which may overstate the gain from training on them. The MLX backend has no constrained decoding, so the zero-shot 1.7B model's prose
   answers are parsed for section ids (both models get the same parser).
-- Two domains (government reports, NLP papers), both English and both with clean headings; PDFs with
-  noisy or missing headings are not evaluated.
+- Three domains (government reports, NLP papers, Wikipedia), all English; scanned PDFs with noisy
+  headings are only simulated (OCR noise on headings), not evaluated directly.
 
 ## What it does
 
@@ -292,6 +322,9 @@ uv run --group finetune python scripts/run_generative_ft_eval.py
 # Second domain (QASPER research papers, human-written questions):
 uv run python scripts/prepare_qasper.py
 uv run python scripts/run_crossdomain_eval.py
+
+# Heading study (third domain: download two NQ dev shards first, see scripts/prepare_nq.py):
+make heading-study
 uv run streamlit run app/streamlit_app.py # dashboard
 uv run uvicorn structuralrag.api.routes:app --reload  # API at http://127.0.0.1:8000/docs
 ```
@@ -317,7 +350,7 @@ CI (GitHub Actions) runs ruff and the test suite on every push.
 ```text
 src/structuralrag/
   schema.py              unified Document / Section / Query models
-  ingestion/             GovReport and QASPER adapters, PDF parser
+  ingestion/             GovReport, QASPER and Natural Questions adapters, PDF parser
   preprocessing/         text cleaning, hierarchy builder + validation
   data_generation/       ICT queries, validated LLM-written questions
   llm/                   Ollama and MLX clients (JSON output, response cache)
@@ -325,6 +358,7 @@ src/structuralrag/
   generation/            evidence context (plain / hierarchical), cited answers, claim check
   evaluation/            retrieval + answer metrics (NLI faithfulness), significance tests, tuning
   training/              hard negatives from the document tree, training question mixes
+  analysis/              heading study: heading variants, within-document scoring, specificity
   api/                   FastAPI app and schemas
 scripts/                 prepare_data, run_evaluation, generate_questions, run_generative_eval,
                          run_answer_eval, prepare_train_data, finetune_*, run_*_ft_eval,

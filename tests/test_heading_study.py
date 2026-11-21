@@ -125,3 +125,13 @@ def test_neutral_fallback_uses_document_mean_path_score(ml_doc):
     fb = ex.structure_scores(comp, alpha=1.0, sparse_weight=0, fallback="mean")[0]
     w, p = comp.specificity[0], comp.path[0]
     np.testing.assert_allclose(fb, comp.content[0] + w * p + (1 - w) * p.mean())
+
+
+def test_clustered_test_is_more_conservative_with_correlated_questions():
+    from structuralrag.evaluation.statistical_tests import clustered_paired_test, paired_test
+
+    rng = np.random.default_rng(0)
+    doc_effect = np.repeat(rng.normal(0, 1, 20), 10)  # 20 documents x 10 questions, shared effects
+    a, b = doc_effect + rng.normal(0, 0.1, 200), np.zeros(200)
+    assert clustered_paired_test(a, b, np.repeat(np.arange(20), 10))["p_cluster"] > paired_test(a, b)["p_permutation"]
+    assert clustered_paired_test(np.ones(30), np.zeros(30), np.arange(30))["p_cluster"] < 0.001

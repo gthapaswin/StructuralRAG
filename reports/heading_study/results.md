@@ -14,20 +14,20 @@ Within-document section retrieval. Structure-aware (SA) uses the GovReport-dev s
 
 
 
-| set | comparison | mean_diff | p_permutation | p_wilcoxon |
-|---|---|---|---|---|
-| GovReport (ICT) | SA real vs flat | 0.002 | 0.767 | 0.934 |
-| GovReport (ICT) | SA real vs SA placebo | 0.000 | 0.911 | 0.855 |
-| GovReport (ICT) | SA real vs SA generic | 0.002 | 0.662 | 0.627 |
-| GovReport (LLM-written) | SA real vs flat | 0.014 | 0.123 | 0.292 |
-| GovReport (LLM-written) | SA real vs SA placebo | 0.012 | 0.115 | 0.099 |
-| GovReport (LLM-written) | SA real vs SA generic | 0.011 | 0.170 | 0.329 |
-| QASPER (human) | SA real vs flat | 0.033 | 0.000 | 0.000 |
-| QASPER (human) | SA real vs SA placebo | 0.035 | 0.000 | 0.000 |
-| QASPER (human) | SA real vs SA generic | 0.034 | 0.000 | 0.000 |
-| NQ (human) | SA real vs flat | -0.026 | 0.000 | 0.000 |
-| NQ (human) | SA real vs SA placebo | -0.007 | 0.057 | 0.185 |
-| NQ (human) | SA real vs SA generic | -0.014 | 0.001 | 0.046 |
+| set | comparison | mean_diff | p_permutation | p_cluster | p_holm |
+|---|---|---|---|---|---|
+| GovReport (ICT) | SA real vs flat | 0.002 | 0.767 | 0.771 | 1.000 |
+| GovReport (ICT) | SA real vs SA placebo | 0.000 | 0.911 | 0.913 | 1.000 |
+| GovReport (ICT) | SA real vs SA generic | 0.002 | 0.662 | 0.683 | 1.000 |
+| GovReport (LLM-written) | SA real vs flat | 0.014 | 0.123 | 0.116 | 0.284 |
+| GovReport (LLM-written) | SA real vs SA placebo | 0.012 | 0.115 | 0.095 | 0.284 |
+| GovReport (LLM-written) | SA real vs SA generic | 0.011 | 0.170 | 0.159 | 0.284 |
+| QASPER (human) | SA real vs flat | 0.033 | 0.000 | 0.000 | 0.000 |
+| QASPER (human) | SA real vs SA placebo | 0.035 | 0.000 | 0.000 | 0.000 |
+| QASPER (human) | SA real vs SA generic | 0.034 | 0.000 | 0.000 | 0.000 |
+| NQ (human) | SA real vs flat | -0.026 | 0.000 | 0.000 | 0.000 |
+| NQ (human) | SA real vs SA placebo | -0.007 | 0.057 | 0.057 | 0.057 |
+| NQ (human) | SA real vs SA generic | -0.014 | 0.001 | 0.001 | 0.001 |
 
 
 ## B. Dose-response (SA gain over flat, MRR@10)
@@ -273,24 +273,24 @@ OLS on standardized covariates (target section length, depth, relative position,
 
 
 
-| set | comparison | mean_diff | p_permutation | p_holm |
-|---|---|---|---|---|
-| GovReport (ICT) | fallback (neutral) vs SA | 0.002 | 0.207 | 0.828 |
-| GovReport (ICT) | fallback (content) vs SA | 0.003 | 0.322 | 0.966 |
-| GovReport (ICT) | fallback (neutral) vs flat | 0.004 | 0.426 | 0.966 |
-| GovReport (ICT) | SA vs flat | 0.002 | 0.767 | 0.966 |
-| GovReport (LLM-written) | fallback (neutral) vs SA | 0.009 | 0.033 | 0.067 |
-| GovReport (LLM-written) | fallback (content) vs SA | 0.012 | 0.018 | 0.054 |
-| GovReport (LLM-written) | fallback (neutral) vs flat | 0.023 | 0.004 | 0.016 |
-| GovReport (LLM-written) | SA vs flat | 0.014 | 0.123 | 0.123 |
-| QASPER (human) | fallback (neutral) vs SA | -0.012 | 0.000 | 0.001 |
-| QASPER (human) | fallback (content) vs SA | -0.027 | 0.000 | 0.000 |
-| QASPER (human) | fallback (neutral) vs flat | 0.021 | 0.000 | 0.001 |
-| QASPER (human) | SA vs flat | 0.033 | 0.000 | 0.000 |
-| NQ (human) | fallback (neutral) vs SA | 0.008 | 0.004 | 0.007 |
-| NQ (human) | fallback (content) vs SA | 0.013 | 0.003 | 0.007 |
-| NQ (human) | fallback (neutral) vs flat | -0.018 | 0.000 | 0.001 |
-| NQ (human) | SA vs flat | -0.026 | 0.000 | 0.000 |
+| set | comparison | mean_diff | p_permutation | p_cluster | p_holm |
+|---|---|---|---|---|---|
+| GovReport (ICT) | fallback (neutral) vs SA | 0.002 | 0.207 | 0.200 | 0.799 |
+| GovReport (ICT) | fallback (content) vs SA | 0.003 | 0.322 | 0.271 | 0.813 |
+| GovReport (ICT) | fallback (neutral) vs flat | 0.004 | 0.426 | 0.422 | 0.844 |
+| GovReport (ICT) | SA vs flat | 0.002 | 0.767 | 0.771 | 0.844 |
+| GovReport (LLM-written) | fallback (neutral) vs SA | 0.009 | 0.033 | 0.008 | 0.026 |
+| GovReport (LLM-written) | fallback (content) vs SA | 0.012 | 0.018 | 0.009 | 0.026 |
+| GovReport (LLM-written) | fallback (neutral) vs flat | 0.023 | 0.004 | 0.006 | 0.026 |
+| GovReport (LLM-written) | SA vs flat | 0.014 | 0.123 | 0.116 | 0.116 |
+| QASPER (human) | fallback (neutral) vs SA | -0.012 | 0.000 | 0.000 | 0.000 |
+| QASPER (human) | fallback (content) vs SA | -0.027 | 0.000 | 0.000 | 0.000 |
+| QASPER (human) | fallback (neutral) vs flat | 0.021 | 0.000 | 0.000 | 0.000 |
+| QASPER (human) | SA vs flat | 0.033 | 0.000 | 0.000 | 0.000 |
+| NQ (human) | fallback (neutral) vs SA | 0.008 | 0.004 | 0.004 | 0.007 |
+| NQ (human) | fallback (content) vs SA | 0.013 | 0.003 | 0.003 | 0.007 |
+| NQ (human) | fallback (neutral) vs flat | -0.018 | 0.000 | 0.000 | 0.001 |
+| NQ (human) | SA vs flat | -0.026 | 0.000 | 0.000 | 0.000 |
 
 
 By the target section's heading specificity:

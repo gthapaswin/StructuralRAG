@@ -27,7 +27,7 @@ import pandas as pd  # noqa: E402
 from scipy import stats  # noqa: E402
 from sklearn.linear_model import Ridge  # noqa: E402
 
-from structuralrag.evaluation.statistical_tests import bootstrap_ci, paired_test  # noqa: E402
+from structuralrag.evaluation.statistical_tests import bootstrap_ci, clustered_paired_test, paired_test  # noqa: E402
 from structuralrag.retrieval.dense import Encoder  # noqa: E402
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, REPORTS_DIR, load_config  # noqa: E402
 from structuralrag.utils.io import load_queries  # noqa: E402
@@ -106,7 +106,12 @@ def clustered_ols(
     return beta, np.quantile(np.array(boots), [0.025, 0.975], axis=0)
 
 
-def holm(tests: list[dict], key: str = "p_permutation") -> list[dict]:
+def ptest(a: np.ndarray, b: np.ndarray, groups: np.ndarray) -> dict:
+    """Per-question permutation test plus the document-clustered version (the primary test)."""
+    return {**paired_test(a, b), **clustered_paired_test(a, b, groups)}
+
+
+def holm(tests: list[dict], key: str = "p_cluster") -> list[dict]:
     """Holm-Bonferroni adjusted p-values within one family of tests (added as p_holm)."""
     order = np.argsort([t[key] for t in tests])
     m, running = len(tests), 0.0
@@ -179,13 +184,13 @@ def main() -> None:
             r[name] = w[(v, SA)].mean() if (v, SA) in w else float("nan")
         rows.append(r)
         for a, b, an, bn in ((real, flat, "SA real", "flat"), (real, plac, "SA real", "SA placebo")):
-            sig.append({"set": LABEL[(ds, qs)], "comparison": f"{an} vs {bn}", **paired_test(a, b)})
+            sig.append({"set": LABEL[(ds, qs)], "comparison": f"{an} vs {bn}", **ptest(a, b, meta.document_id.values)})
         if ("generic_1.0", SA) in w:
             sig.append(
                 {
                     "set": LABEL[(ds, qs)],
                     "comparison": "SA real vs SA generic",
-                    **paired_test(real, w[("generic_1.0", SA)].values),
+                    **ptest(real, w[("generic_1.0", SA)].values, meta.document_id.values),
                 }
             )
     for name in {t["set"] for t in sig}:
@@ -195,7 +200,7 @@ def main() -> None:
         "\n## A. Do headings help? (MRR@10)\n",
         fmt(rows, cols),
         "\n",
-        fmt(sig, ["set", "comparison", "mean_diff", "p_permutation", "p_wilcoxon"]),
+        fmt(sig, ["set", "comparison", "mean_diff", "p_permutation", "p_cluster", "p_holm"]),
     ]
     out["A"] = {"table": rows, "tests": sig}
 
@@ -494,6 +499,42 @@ def main() -> None:
     ]
     out["J"] = rows_j
 
+    # ---------- K. Replication with a larger encoder ----------
+    rep_path = DIR / "per_query_bgebase.csv.gz"
+    if rep_path.exists():
+        rep = pd.read_csv(rep_path)
+        rows_k = []
+        for ds, qs in sets:
+            if not ((rep.dataset == ds) & (rep.query_set == qs)).any():
+                continue
+            wk, mk = wide(rep, ds, qs)
+            flat_k, real_k = wk[("real", "flat")].values, wk[("real", SA)].values
+            gain_k = real_k - flat_k
+            sp = mk.gold_uid.map(spec).values
+            rho, p, lo_, hi_ = spearman_ci(sp, gain_k)
+            row = {
+                "set": LABEL[(ds, qs)],
+                "n": len(wk),
+                "flat": flat_k.mean(),
+                "SA real": real_k.mean(),
+                "SA placebo": wk[("placebo_s0", SA)].mean(),
+                "SA generic": wk[("generic_1.0", SA)].mean(),
+                "gain, generic target": float(gain_k[sp < 0.5].mean()),
+                "gain, unique target": float(gain_k[sp >= 0.9].mean()),
+                "spearman(w, gain)": rho,
+                "p": p,
+                "p real vs placebo (cluster)": clustered_paired_test(
+                    real_k, wk[("placebo_s0", SA)].values, mk.document_id.values
+                )["p_cluster"],
+            }
+            rows_k.append(row)
+        if rows_k:
+            md += [
+                "\n## K. Replication with bge-base-en-v1.5 (110M parameters; same settings, alpha = 0.2)\n",
+                fmt(rows_k, list(rows_k[0])),
+            ]
+            out["K"] = rows_k
+
     # ---------- I. Specificity fallback ----------
     # safbm = the method (generic headings become neutral: document-mean path score);
     # safb  = ablation (generic headings fall back to the content score).
@@ -524,10 +565,10 @@ def main() -> None:
             )
             lab = LABEL[(ds, qs)]
             fam = [
-                {"set": lab, "comparison": "fallback (neutral) vs SA", **paired_test(fm, sa)},
-                {"set": lab, "comparison": "fallback (content) vs SA", **paired_test(fc, sa)},
-                {"set": lab, "comparison": "fallback (neutral) vs flat", **paired_test(fm, flat)},
-                {"set": lab, "comparison": "SA vs flat", **paired_test(sa, flat)},
+                {"set": lab, "comparison": "fallback (neutral) vs SA", **ptest(fm, sa, meta.document_id.values)},
+                {"set": lab, "comparison": "fallback (content) vs SA", **ptest(fc, sa, meta.document_id.values)},
+                {"set": lab, "comparison": "fallback (neutral) vs flat", **ptest(fm, flat, meta.document_id.values)},
+                {"set": lab, "comparison": "SA vs flat", **ptest(sa, flat, meta.document_id.values)},
             ]
             tests_i += holm(fam)
             sp = meta.gold_uid.map(spec).values
@@ -563,7 +604,7 @@ def main() -> None:
             "MRR@10)\n",
             fmt(rows_i, list(rows_i[0])),
             "\n",
-            fmt(tests_i, ["set", "comparison", "mean_diff", "p_permutation", "p_holm"]),
+            fmt(tests_i, ["set", "comparison", "mean_diff", "p_permutation", "p_cluster", "p_holm"]),
             "\nBy the target section's heading specificity:\n",
             fmt(split_i, list(split_i[0])),
         ]
@@ -598,14 +639,14 @@ def main() -> None:
             {
                 "set": LABEL[(ds, qs)],
                 "comparison": "LLM-written vs real",
-                **paired_test(w[("llm", SA)].values[m], w[("real", SA)].values[m]),
+                **ptest(w[("llm", SA)].values[m], w[("real", SA)].values[m], meta.document_id.values[m]),
             }
         )
         tests_g.append(
             {
                 "set": LABEL[(ds, qs)],
                 "comparison": "LLM-written vs generic",
-                **paired_test(w[("llm", SA)].values[m], w[("generic_1.0", SA)].values[m]),
+                **ptest(w[("llm", SA)].values[m], w[("generic_1.0", SA)].values[m], meta.document_id.values[m]),
             }
         )
     if rows_g:
@@ -613,7 +654,7 @@ def main() -> None:
             "\n## G. LLM-written headings (rewritten documents only, MRR@10)\n",
             fmt(rows_g, list(rows_g[0])),
             "\n",
-            fmt(tests_g, ["set", "comparison", "mean_diff", "p_permutation", "p_wilcoxon"]),
+            fmt(tests_g, ["set", "comparison", "mean_diff", "p_permutation", "p_cluster"]),
         ]
         out["G"] = {"table": rows_g, "tests": tests_g}
 
