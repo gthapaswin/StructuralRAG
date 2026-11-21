@@ -212,6 +212,72 @@ def fig_pipeline() -> None:
     save(fig, "fig5_pipeline")
 
 
+def fig_loss_sources(pq: pd.DataFrame) -> None:
+    """Fig 6: where the gain or loss comes from, by the target section's heading.
+
+    Each bar is a category's contribution to the dataset's mean gain (sum of per-question gains
+    in the category / all questions), so the bars of one dataset add up to its overall gain.
+    """
+    import re
+
+    from structuralrag.analysis.informativeness import heading_specificity
+    from structuralrag.retrieval.corpus import SectionCorpus
+    from structuralrag.utils.config import DATA_DIR
+    from structuralrag.utils.io import load_documents
+
+    cats = [
+        ("Introduction / lead / abstract", re.compile(r"^(introduction|abstract|overview|summary)\b", re.I)),
+        ("Conclusion(s)", re.compile(r"^(conclusions?|concluding)", re.I)),
+        ("Background", re.compile(r"^background\b", re.I)),
+    ]
+    names = [c for c, _ in cats] + ["Other generic heading (w < 0.5)", "Specific heading (w ≥ 0.5)"]
+    files = {"govreport": "test_documents.jsonl", "qasper": "qasper_documents.jsonl", "nq": "nq_documents.jsonl"}
+    keys = {
+        "GovReport (ICT)": ("govreport", "ict"),
+        "GovReport (LLM-written)": ("govreport", "llm"),
+        "QASPER (human)": ("qasper", "human"),
+        "NQ (human)": ("nq", "human"),
+    }
+    real = pq[pq.variant == "real"]
+    contrib = {}
+    cache = {}
+    for s in SETS:
+        ds, qs = keys[s]
+        if ds not in cache:
+            c = SectionCorpus(load_documents(DATA_DIR / files[ds]))
+            cache[ds] = (
+                {x.uid: x.title for x in c.sections},
+                dict(zip([x.uid for x in c.sections], heading_specificity(c), strict=True)),
+            )
+        title, spec = cache[ds]
+        g = real[(real.dataset == ds) & (real.query_set == qs)]
+        w = g.pivot_table(index="query_id", columns="system", values="rr")
+        meta = g.drop_duplicates("query_id").set_index("query_id").loc[w.index]
+        gain = (w["sa_a0.2"] - w["flat"]).values
+        cat = []
+        for u in meta.gold_uid:
+            t = title[u].strip()
+            name = next((n for n, rx in cats if rx.match(t)), None)
+            if name is None:
+                name = names[3] if spec[u] < 0.5 else names[4]
+            cat.append(name)
+        cat = np.array(cat)
+        contrib[s] = [gain[cat == n].sum() / len(gain) for n in names]
+    fig, ax = plt.subplots(figsize=(6.4, 3.0))
+    y = np.arange(len(names))
+    h = 0.19
+    for k, s in enumerate(SETS):
+        ax.barh(y + (k - 1.5) * h, contrib[s], h - 0.02, color=COLOR[s], label=SHORT[s], zorder=2)
+    ax.axvline(0, color=INK2, lw=0.8, zorder=1)
+    ax.set_yticks(y, names)
+    ax.invert_yaxis()
+    ax.grid(axis="x", color=GRID, lw=0.6)
+    ax.grid(axis="y", visible=False)
+    ax.set_xlabel("Contribution to mean MRR@10 gain over flat")
+    ax.legend(fontsize=7, loc="upper right")
+    save(fig, "fig6_loss_sources")
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     res = json.loads((DIR / "results.json").read_text())
@@ -221,6 +287,7 @@ def main() -> None:
     fig_dose(res)
     fig_alpha(pq, res["alphas"])
     fig_pipeline()
+    fig_loss_sources(pq)
     print(sorted(p.name for p in OUT.glob("*.png")))
 
 
