@@ -15,17 +15,18 @@ import argparse
 import json
 import logging
 import time
+from dataclasses import replace
 
 import numpy as np
 import pandas as pd
 
 from structuralrag.analysis import experiment as ex
 from structuralrag.analysis import headings as hd
-from structuralrag.analysis.informativeness import document_features, section_features
+from structuralrag.analysis.informativeness import document_features, label_weights, section_features
 from structuralrag.retrieval.corpus import SectionCorpus
 from structuralrag.retrieval.dense import Encoder
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, REPORTS_DIR, load_config
-from structuralrag.utils.io import load_documents, load_queries
+from structuralrag.utils.io import PROJECT_ROOT, load_documents, load_queries
 from structuralrag.utils.reproducibility import set_seed
 
 log = logging.getLogger("run_heading_study")
@@ -38,6 +39,18 @@ DATASETS = {
     "qasper": ("qasper_documents.jsonl", {"human": "qasper_queries.jsonl"}),
     "nq": ("nq_documents.jsonl", {"human": "nq_queries.jsonl"}),
 }
+
+
+LABELS = PROJECT_ROOT / "data/annotations/heading_labels.csv"
+
+
+def boilerplate_headings(ds: str) -> set[str] | None:
+    """Headings labelled boilerplate for this dataset (human-reviewed LLM labels), if available."""
+    if not LABELS.exists():
+        return None
+    lab = pd.read_csv(LABELS, keep_default_na=False)
+    lab = lab[(lab.dataset == ds.replace("_dev", "")) & (lab.label == "boilerplate")]
+    return set(lab.heading)
 
 
 def llm_rewritten(ds, docs):
@@ -123,6 +136,15 @@ def main() -> None:
                 )
                 for a, rr in zip(ALPHAS, rr_fbm, strict=True):
                     rows[f"safbm_a{a}"] = rr
+                bp = boilerplate_headings(ds)
+                if bp is not None:
+                    lw = label_weights(corpus, bp)
+                    comp_lab = replace(comp, specificity=[lw[corpus.doc_indices(q.document_id)] for q in qs])
+                    rr_lab = ex.structure_rr_per_alpha(
+                        comp_lab, ALPHAS, beta=base["beta"], sparse_weight=base["sparse_weight"], fallback="mean"
+                    )
+                    for a, rr in zip(ALPHAS, rr_lab, strict=True):
+                        rows[f"salab_a{a}"] = rr
                 for system, rr in rows.items():
                     frames.append(meta.assign(dataset=ds, query_set=qs_name, variant=variant, system=system, rr=rr))
                 log.info(

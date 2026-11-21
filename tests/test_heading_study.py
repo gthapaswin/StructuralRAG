@@ -135,3 +135,11 @@ def test_clustered_test_is_more_conservative_with_correlated_questions():
     a, b = doc_effect + rng.normal(0, 0.1, 200), np.zeros(200)
     assert clustered_paired_test(a, b, np.repeat(np.arange(20), 10))["p_cluster"] > paired_test(a, b)["p_permutation"]
     assert clustered_paired_test(np.ones(30), np.zeros(30), np.arange(30))["p_cluster"] < 0.001
+
+
+def test_label_weights_zero_only_for_boilerplate(ml_doc):
+    from structuralrag.analysis.informativeness import label_weights
+
+    corpus = SectionCorpus([ml_doc])
+    w = dict(zip([s.title for s in corpus.sections], label_weights(corpus, {"accuracy"}), strict=True))
+    assert w["Accuracy"] == 0.0 and w["Classification"] == 1.0

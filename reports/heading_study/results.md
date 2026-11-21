@@ -274,48 +274,56 @@ OLS on standardized covariates (target section length, depth, relative position,
 
 ## I. Specificity fallback (alpha tuned on GovReport dev: SA 0.2, neutral 0.2, content 0.2; MRR@10)
 
-| set | n | flat | SA (a=0.2) | + fallback, neutral (a=0.2) | + fallback, content (a=0.2) |
-|---|---|---|---|---|---|
-| GovReport (ICT) | 1179 | 0.689 | 0.691 | 0.693 | 0.694 |
-| GovReport (LLM-written) | 398 | 0.864 | 0.878 | 0.887 | 0.890 |
-| QASPER (human) | 1256 | 0.509 | 0.542 | 0.530 | 0.514 |
-| NQ (human) | 1744 | 0.642 | 0.616 | 0.624 | 0.630 |
+| set | n | flat | SA (a=0.2) | + fallback, neutral (a=0.2) | + fallback, content (a=0.2) | + fallback, labels (a=0.2) |
+|---|---|---|---|---|---|---|
+| GovReport (ICT) | 1179 | 0.689 | 0.691 | 0.693 | 0.694 | 0.691 |
+| GovReport (LLM-written) | 398 | 0.864 | 0.878 | 0.887 | 0.890 | 0.879 |
+| QASPER (human) | 1256 | 0.509 | 0.542 | 0.530 | 0.514 | 0.542 |
+| NQ (human) | 1744 | 0.642 | 0.616 | 0.624 | 0.630 | 0.610 |
 
 
 
 | set | comparison | mean_diff | p_permutation | p_cluster | p_holm |
 |---|---|---|---|---|---|
-| GovReport (ICT) | fallback (neutral) vs SA | 0.002 | 0.207 | 0.200 | 0.799 |
-| GovReport (ICT) | fallback (content) vs SA | 0.003 | 0.322 | 0.271 | 0.813 |
-| GovReport (ICT) | fallback (neutral) vs flat | 0.004 | 0.426 | 0.422 | 0.844 |
-| GovReport (ICT) | SA vs flat | 0.002 | 0.767 | 0.771 | 0.844 |
-| GovReport (LLM-written) | fallback (neutral) vs SA | 0.009 | 0.033 | 0.008 | 0.026 |
-| GovReport (LLM-written) | fallback (content) vs SA | 0.012 | 0.018 | 0.009 | 0.026 |
-| GovReport (LLM-written) | fallback (neutral) vs flat | 0.023 | 0.004 | 0.006 | 0.026 |
-| GovReport (LLM-written) | SA vs flat | 0.014 | 0.123 | 0.116 | 0.116 |
-| QASPER (human) | fallback (neutral) vs SA | -0.012 | 0.000 | 0.000 | 0.000 |
-| QASPER (human) | fallback (content) vs SA | -0.027 | 0.000 | 0.000 | 0.000 |
-| QASPER (human) | fallback (neutral) vs flat | 0.021 | 0.000 | 0.000 | 0.000 |
-| QASPER (human) | SA vs flat | 0.033 | 0.000 | 0.000 | 0.000 |
+| GovReport (ICT) | fallback (neutral) vs SA | 0.002 | 0.207 | 0.200 | 1.000 |
+| GovReport (ICT) | fallback (content) vs SA | 0.003 | 0.322 | 0.271 | 1.000 |
+| GovReport (ICT) | fallback (neutral) vs flat | 0.004 | 0.426 | 0.422 | 1.000 |
+| GovReport (ICT) | SA vs flat | 0.002 | 0.767 | 0.771 | 1.000 |
+| GovReport (ICT) | fallback (labels) vs SA | 0.000 | 0.768 | 0.754 | 1.000 |
+| GovReport (ICT) | fallback (labels) vs flat | 0.002 | 0.730 | 0.731 | 1.000 |
+| GovReport (LLM-written) | fallback (neutral) vs SA | 0.009 | 0.033 | 0.008 | 0.042 |
+| GovReport (LLM-written) | fallback (content) vs SA | 0.012 | 0.018 | 0.009 | 0.042 |
+| GovReport (LLM-written) | fallback (neutral) vs flat | 0.023 | 0.004 | 0.006 | 0.039 |
+| GovReport (LLM-written) | SA vs flat | 0.014 | 0.123 | 0.116 | 0.256 |
+| GovReport (LLM-written) | fallback (labels) vs SA | 0.001 | 0.759 | 0.752 | 0.752 |
+| GovReport (LLM-written) | fallback (labels) vs flat | 0.016 | 0.085 | 0.085 | 0.256 |
+| QASPER (human) | fallback (neutral) vs SA | -0.012 | 0.000 | 0.000 | 0.001 |
+| QASPER (human) | fallback (content) vs SA | -0.027 | 0.000 | 0.000 | 0.001 |
+| QASPER (human) | fallback (neutral) vs flat | 0.021 | 0.000 | 0.000 | 0.001 |
+| QASPER (human) | SA vs flat | 0.033 | 0.000 | 0.000 | 0.001 |
+| QASPER (human) | fallback (labels) vs SA | -0.000 | 0.797 | 0.799 | 0.799 |
+| QASPER (human) | fallback (labels) vs flat | 0.033 | 0.000 | 0.000 | 0.001 |
 | NQ (human) | fallback (neutral) vs SA | 0.008 | 0.004 | 0.004 | 0.007 |
 | NQ (human) | fallback (content) vs SA | 0.013 | 0.003 | 0.003 | 0.007 |
 | NQ (human) | fallback (neutral) vs flat | -0.018 | 0.000 | 0.000 | 0.001 |
-| NQ (human) | SA vs flat | -0.026 | 0.000 | 0.000 | 0.000 |
+| NQ (human) | SA vs flat | -0.026 | 0.000 | 0.000 | 0.001 |
+| NQ (human) | fallback (labels) vs SA | -0.006 | 0.000 | 0.000 | 0.001 |
+| NQ (human) | fallback (labels) vs flat | -0.032 | 0.000 | 0.000 | 0.001 |
 
 
 By the target section's heading specificity:
 
-| set | gold heading | n | SA - flat | neutral fallback - flat | content fallback - flat |
-|---|---|---|---|---|---|
-| GovReport (ICT) | generic (w < 0.5) | 175 | -0.076 | -0.047 | -0.005 |
-| GovReport (ICT) | shared (0.5-0.9) | 49 | -0.066 | -0.071 | -0.069 |
-| GovReport (ICT) | unique (w >= 0.9) | 955 | 0.019 | 0.017 | 0.010 |
-| GovReport (LLM-written) | generic (w < 0.5) | 65 | -0.103 | -0.053 | -0.014 |
-| GovReport (LLM-written) | shared (0.5-0.9) | 19 | 0.009 | 0.035 | 0.035 |
-| GovReport (LLM-written) | unique (w >= 0.9) | 314 | 0.039 | 0.038 | 0.035 |
-| QASPER (human) | generic (w < 0.5) | 477 | 0.003 | -0.000 | 0.013 |
-| QASPER (human) | shared (0.5-0.9) | 274 | 0.039 | 0.015 | -0.001 |
-| QASPER (human) | unique (w >= 0.9) | 505 | 0.057 | 0.044 | 0.001 |
-| NQ (human) | generic (w < 0.5) | 1106 | -0.056 | -0.041 | -0.006 |
-| NQ (human) | shared (0.5-0.9) | 222 | 0.012 | 0.006 | -0.025 |
-| NQ (human) | unique (w >= 0.9) | 416 | 0.034 | 0.032 | -0.022 |
+| set | gold heading | n | SA - flat | neutral fallback - flat | content fallback - flat | label fallback - flat |
+|---|---|---|---|---|---|---|
+| GovReport (ICT) | generic (w < 0.5) | 175 | -0.076 | -0.047 | -0.005 | -0.076 |
+| GovReport (ICT) | shared (0.5-0.9) | 49 | -0.066 | -0.071 | -0.069 | -0.060 |
+| GovReport (ICT) | unique (w >= 0.9) | 955 | 0.019 | 0.017 | 0.010 | 0.019 |
+| GovReport (LLM-written) | generic (w < 0.5) | 65 | -0.103 | -0.053 | -0.014 | -0.093 |
+| GovReport (LLM-written) | shared (0.5-0.9) | 19 | 0.009 | 0.035 | 0.035 | 0.009 |
+| GovReport (LLM-written) | unique (w >= 0.9) | 314 | 0.039 | 0.038 | 0.035 | 0.039 |
+| QASPER (human) | generic (w < 0.5) | 477 | 0.003 | -0.000 | 0.013 | 0.002 |
+| QASPER (human) | shared (0.5-0.9) | 274 | 0.039 | 0.015 | -0.001 | 0.039 |
+| QASPER (human) | unique (w >= 0.9) | 505 | 0.057 | 0.044 | 0.001 | 0.058 |
+| NQ (human) | generic (w < 0.5) | 1106 | -0.056 | -0.041 | -0.006 | -0.064 |
+| NQ (human) | shared (0.5-0.9) | 222 | 0.012 | 0.006 | -0.025 | 0.009 |
+| NQ (human) | unique (w >= 0.9) | 416 | 0.034 | 0.032 | -0.022 | 0.032 |

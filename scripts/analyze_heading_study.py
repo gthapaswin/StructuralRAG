@@ -545,7 +545,14 @@ def main() -> None:
         a_sa = max(alphas, key=lambda a: dmean[f"sa_a{a}"])
         a_m = max(alphas, key=lambda a: dmean[f"safbm_a{a}"])
         a_c = max(alphas, key=lambda a: dmean[f"safb_a{a}"])
-        out["I_dev_alpha"] = {"structure-aware": a_sa, "fallback (mean)": a_m, "fallback (content)": a_c}
+        has_lab = f"salab_a{alphas[0]}" in set(dmean.index)
+        a_l = max(alphas, key=lambda a: dmean[f"salab_a{a}"]) if has_lab else None
+        out["I_dev_alpha"] = {
+            "structure-aware": a_sa,
+            "fallback (mean)": a_m,
+            "fallback (content)": a_c,
+            "fallback (labels)": a_l,
+        }
         fig, axes = plt.subplots(1, len(sets), figsize=(3.0 * len(sets), 2.9), sharex=True)
         for ax, (ds, qs) in zip(np.atleast_1d(axes), sets, strict=True):
             w, meta = per_set[(ds, qs)]
@@ -553,6 +560,7 @@ def main() -> None:
             sa = w[("real", f"sa_a{a_sa}")].values
             fm = w[("real", f"safbm_a{a_m}")].values
             fc = w[("real", f"safb_a{a_c}")].values
+            fl = w[("real", f"salab_a{a_l}")].values if has_lab and ("real", f"salab_a{a_l}") in w else None
             rows_i.append(
                 {
                     "set": LABEL[(ds, qs)],
@@ -561,6 +569,7 @@ def main() -> None:
                     f"SA (a={a_sa})": sa.mean(),
                     f"+ fallback, neutral (a={a_m})": fm.mean(),
                     f"+ fallback, content (a={a_c})": fc.mean(),
+                    f"+ fallback, labels (a={a_l})": fl.mean() if fl is not None else float("nan"),
                 }
             )
             lab = LABEL[(ds, qs)]
@@ -570,6 +579,11 @@ def main() -> None:
                 {"set": lab, "comparison": "fallback (neutral) vs flat", **ptest(fm, flat, meta.document_id.values)},
                 {"set": lab, "comparison": "SA vs flat", **ptest(sa, flat, meta.document_id.values)},
             ]
+            if fl is not None:
+                fam += [
+                    {"set": lab, "comparison": "fallback (labels) vs SA", **ptest(fl, sa, meta.document_id.values)},
+                    {"set": lab, "comparison": "fallback (labels) vs flat", **ptest(fl, flat, meta.document_id.values)},
+                ]
             tests_i += holm(fam)
             sp = meta.gold_uid.map(spec).values
             for lo, hi, name in bins:
@@ -583,6 +597,7 @@ def main() -> None:
                             "SA - flat": float((sa - flat)[m].mean()),
                             "neutral fallback - flat": float((fm - flat)[m].mean()),
                             "content fallback - flat": float((fc - flat)[m].mean()),
+                            "label fallback - flat": float((fl - flat)[m].mean()) if fl is not None else float("nan"),
                         }
                     )
             for key, name in (

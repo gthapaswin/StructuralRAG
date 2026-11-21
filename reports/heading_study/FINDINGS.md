@@ -68,8 +68,29 @@ Paper figures: `figures/paper/`.
   ("Results", "Datasets") are exactly what questions target. Heading frequency predicts where SA
   loses, but frequency alone cannot tell a boilerplate heading from a functional one.
 - The GovReport-fine-tuned encoder keeps most of the QASPER heading gain (+0.027 vs +0.033).
+- Human-reviewed labels do not fix it either. 210 frequent headings were pre-labelled by the local
+  LLM and reviewed by the author (7 of 210 changed, all among rows flagged as likely errors; a
+  second, independent labeller would strengthen this). Making only *boilerplate* headings neutral
+  keeps the QASPER gain intact (0.542, unchanged) but no longer helps GovReport (+0.001) and
+  slightly hurts NQ (−0.006). The losses do not come from boilerplate headings (GAO Contact,
+  References), which are rarely targets.
 
-## 4. Position against the closest work (both read in full)
+## 4. Where the losses come from: summary sections
+
+Among questions whose target heading is generic, the losses concentrate in sections that summarise
+the document: in NQ the untitled lead ("Introduction") accounts for −59 of the −61.5 total MRR lost;
+in GovReport ICT, "Conclusions" (−5.2), "Background" (−3.5) and "Introduction" (−1.3) lead; in QASPER
+"Introduction" (−6.2) and "Conclusion" (−1.0). These sections restate content that body sections
+cover under specific headings, so a question is pulled to the body section whose heading matches it
+("when did the first Harry Potter movie come out" → "Release" instead of the lead).
+
+Is that only an evaluation artifact (the body section also answers the question)? NQ's short answers
+allow a check (1,467 questions with a short answer): the top-1 section contains the answer in 69.4%
+of questions for flat retrieval vs 67.6% for structure-aware (−0.018, p = 0.03), close to the gold-
+section gap (−0.020). Single-gold labels are strict for both methods, but the loss is real.
+(`nq_answer_check.json`)
+
+## 5. Position against the closest work (both read in full)
 
 - Kuehlkamp et al. (arXiv 2610.10170, v1 Oct 2026): placebo-controlled heading-path prefixes for
   chunk retrieval over whole corpora (QASPER, Wikipedia; bge-small/large). Real paths beat shuffled
@@ -84,4 +105,5 @@ Paper figures: `figures/paper/`.
 ## Pending
 
 - LLM-rewritten headings (in progress): does replacing headings with specific, model-written ones
-  recover the gain on documents with generic headings?
+  recover the gain on documents with generic headings? (A natural test of the summary-section
+  account: a rewritten lead heading that names its content should stop losing to body sections.)

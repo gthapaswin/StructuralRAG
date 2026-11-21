@@ -2031,7 +2031,8 @@
   "I_dev_alpha": {
     "structure-aware": 0.2,
     "fallback (mean)": 0.2,
-    "fallback (content)": 0.2
+    "fallback (content)": 0.2,
+    "fallback (labels)": 0.2
   },
   "I": {
     "table": [
@@ -2041,7 +2042,8 @@
         "flat": 0.6893940923839142,
         "SA (a=0.2)": 0.6909662479637034,
         "+ fallback, neutral (a=0.2)": 0.6934596173781925,
-        "+ fallback, content (a=0.2)": 0.6938773106075905
+        "+ fallback, content (a=0.2)": 0.6938773106075905,
+        "+ fallback, labels (a=0.2)": 0.6911883894072189
       },
       {
         "set": "GovReport (LLM-written)",
@@ -2049,7 +2051,8 @@
         "flat": 0.863562853952301,
         "SA (a=0.2)": 0.8780210576692989,
         "+ fallback, neutral (a=0.2)": 0.8866235941612826,
-        "+ fallback, content (a=0.2)": 0.8903505623354869
+        "+ fallback, content (a=0.2)": 0.8903505623354869,
+        "+ fallback, labels (a=0.2)": 0.8792773390763341
       },
       {
         "set": "QASPER (human)",
@@ -2057,7 +2060,8 @@
         "flat": 0.5091942801536751,
         "SA (a=0.2)": 0.5418142124153271,
         "+ fallback, neutral (a=0.2)": 0.5300453063390961,
-        "+ fallback, content (a=0.2)": 0.5143647002325346
+        "+ fallback, content (a=0.2)": 0.5143647002325346,
+        "+ fallback, labels (a=0.2)": 0.5417289075927613
       },
       {
         "set": "NQ (human)",
@@ -2065,7 +2069,8 @@
         "flat": 0.641920370977137,
         "SA (a=0.2)": 0.6163474315567206,
         "+ fallback, neutral (a=0.2)": 0.6243435543177516,
-        "+ fallback, content (a=0.2)": 0.6295555282510558
+        "+ fallback, content (a=0.2)": 0.6295555282510558,
+        "+ fallback, labels (a=0.2)": 0.6102123379933013
       }
     ],
     "tests": [
@@ -2077,7 +2082,7 @@
         "p_wilcoxon": 0.35460961098144206,
         "p_cluster": 0.19968003199680032,
         "n_documents": 200,
-        "p_holm": 0.7987201279872013
+        "p_holm": 1.0
       },
       {
         "set": "GovReport (ICT)",
@@ -2087,7 +2092,7 @@
         "p_wilcoxon": 0.7024551141945601,
         "p_cluster": 0.27107289271072893,
         "n_documents": 200,
-        "p_holm": 0.8132186781321868
+        "p_holm": 1.0
       },
       {
         "set": "GovReport (ICT)",
@@ -2097,7 +2102,7 @@
         "p_wilcoxon": 0.90162852176633,
         "p_cluster": 0.42195780421957807,
         "n_documents": 200,
-        "p_holm": 0.8439156084391561
+        "p_holm": 1.0
       },
       {
         "set": "GovReport (ICT)",
@@ -2107,7 +2112,27 @@
         "p_wilcoxon": 0.9344572965358167,
         "p_cluster": 0.7707229277072293,
         "n_documents": 200,
-        "p_holm": 0.8439156084391561
+        "p_holm": 1.0
+      },
+      {
+        "set": "GovReport (ICT)",
+        "comparison": "fallback (labels) vs SA",
+        "mean_diff": 0.00022214144351548936,
+        "p_permutation": 0.7681231876812319,
+        "p_wilcoxon": 0.8630711347723172,
+        "p_cluster": 0.7535246475352465,
+        "n_documents": 200,
+        "p_holm": 1.0
+      },
+      {
+        "set": "GovReport (ICT)",
+        "comparison": "fallback (labels) vs flat",
+        "mean_diff": 0.0017942970233046569,
+        "p_permutation": 0.7303269673032696,
+        "p_wilcoxon": 0.812010654499477,
+        "p_cluster": 0.7313268673132687,
+        "n_documents": 200,
+        "p_holm": 1.0
       },
       {
         "set": "GovReport (LLM-written)",
@@ -2117,7 +2142,7 @@
         "p_wilcoxon": 0.21540060261291216,
         "p_cluster": 0.008399160083991601,
         "n_documents": 200,
-        "p_holm": 0.025997400259974
+        "p_holm": 0.041995800419958006
       },
       {
         "set": "GovReport (LLM-written)",
@@ -2127,7 +2152,7 @@
         "p_wilcoxon": 0.29685163084328137,
         "p_cluster": 0.009499050094990502,
         "n_documents": 200,
-        "p_holm": 0.025997400259974
+        "p_holm": 0.041995800419958006
       },
       {
         "set": "GovReport (LLM-written)",
@@ -2137,7 +2162,7 @@
         "p_wilcoxon": 0.04119377064247199,
         "p_cluster": 0.0064993500649935,
         "n_documents": 200,
-        "p_holm": 0.025997400259974
+        "p_holm": 0.038996100389961
       },
       {
         "set": "GovReport (LLM-written)",
@@ -2147,7 +2172,27 @@
         "p_wilcoxon": 0.29167366363646774,
         "p_cluster": 0.11608839116088392,
         "n_documents": 200,
-        "p_holm": 0.11608839116088392
+        "p_holm": 0.25617438256174385
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "comparison": "fallback (labels) vs SA",
+        "mean_diff": 0.001256281407035176,
+        "p_permutation": 0.7586241375862414,
+        "p_wilcoxon": 0.9206384121906894,
+        "p_cluster": 0.7515248475152485,
+        "n_documents": 200,
+        "p_holm": 0.7515248475152485
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "comparison": "fallback (labels) vs flat",
+        "mean_diff": 0.01571448512403286,
+        "p_permutation": 0.0846915308469153,
+        "p_wilcoxon": 0.2854531617354663,
+        "p_cluster": 0.08539146085391461,
+        "n_documents": 200,
+        "p_holm": 0.25617438256174385
       },
       {
         "set": "QASPER (human)",
@@ -2157,7 +2202,7 @@
         "p_wilcoxon": 0.048051032604846416,
         "p_cluster": 0.0004999500049995,
         "n_documents": 402,
-        "p_holm": 0.0004999500049995
+        "p_holm": 0.000999900009999
       },
       {
         "set": "QASPER (human)",
@@ -2167,7 +2212,7 @@
         "p_wilcoxon": 4.245798788860338e-05,
         "p_cluster": 9.999000099990002e-05,
         "n_documents": 402,
-        "p_holm": 0.00039996000399960006
+        "p_holm": 0.0005999400059994001
       },
       {
         "set": "QASPER (human)",
@@ -2177,7 +2222,7 @@
         "p_wilcoxon": 0.01715405511251242,
         "p_cluster": 0.00019998000199980003,
         "n_documents": 402,
-        "p_holm": 0.00039996000399960006
+        "p_holm": 0.0005999400059994001
       },
       {
         "set": "QASPER (human)",
@@ -2187,7 +2232,27 @@
         "p_wilcoxon": 0.00016017439597819833,
         "p_cluster": 9.999000099990002e-05,
         "n_documents": 402,
-        "p_holm": 0.00039996000399960006
+        "p_holm": 0.0005999400059994001
+      },
+      {
+        "set": "QASPER (human)",
+        "comparison": "fallback (labels) vs SA",
+        "mean_diff": -8.530482256596907e-05,
+        "p_permutation": 0.7965203479652034,
+        "p_wilcoxon": 0.9555819546167585,
+        "p_cluster": 0.7985201479852014,
+        "n_documents": 402,
+        "p_holm": 0.7985201479852014
+      },
+      {
+        "set": "QASPER (human)",
+        "comparison": "fallback (labels) vs flat",
+        "mean_diff": 0.032534627439086035,
+        "p_permutation": 9.999000099990002e-05,
+        "p_wilcoxon": 0.0002185566474099527,
+        "p_cluster": 9.999000099990002e-05,
+        "n_documents": 402,
+        "p_holm": 0.0005999400059994001
       },
       {
         "set": "NQ (human)",
@@ -2217,7 +2282,7 @@
         "p_wilcoxon": 4.430918242326241e-08,
         "p_cluster": 0.00019998000199980003,
         "n_documents": 1744,
-        "p_holm": 0.0005999400059994001
+        "p_holm": 0.0007999200079992001
       },
       {
         "set": "NQ (human)",
@@ -2227,7 +2292,27 @@
         "p_wilcoxon": 1.5694108985612295e-11,
         "p_cluster": 9.999000099990002e-05,
         "n_documents": 1744,
-        "p_holm": 0.00039996000399960006
+        "p_holm": 0.0005999400059994001
+      },
+      {
+        "set": "NQ (human)",
+        "comparison": "fallback (labels) vs SA",
+        "mean_diff": -0.006135093563419252,
+        "p_permutation": 0.00029997000299970003,
+        "p_wilcoxon": 0.0073424019336862404,
+        "p_cluster": 0.00029997000299970003,
+        "n_documents": 1744,
+        "p_holm": 0.0008999100089991002
+      },
+      {
+        "set": "NQ (human)",
+        "comparison": "fallback (labels) vs flat",
+        "mean_diff": -0.03170803298383574,
+        "p_permutation": 9.999000099990002e-05,
+        "p_wilcoxon": 8.941542513154055e-15,
+        "p_cluster": 9.999000099990002e-05,
+        "n_documents": 1744,
+        "p_holm": 0.0005999400059994001
       }
     ],
     "by_specificity": [
@@ -2237,7 +2322,8 @@
         "n": 175,
         "SA - flat": -0.07585487528344671,
         "neutral fallback - flat": -0.04717006802721088,
-        "content fallback - flat": -0.004548752834467121
+        "content fallback - flat": -0.004548752834467121,
+        "label fallback - flat": -0.0757845804988662
       },
       {
         "set": "GovReport (ICT)",
@@ -2245,7 +2331,8 @@
         "n": 49,
         "SA - flat": -0.0655571752510528,
         "neutral fallback - flat": -0.07128279883381923,
-        "content fallback - flat": -0.06904761904761905
+        "content fallback - flat": -0.06904761904761905,
+        "label fallback - flat": -0.06045513443472626
       },
       {
         "set": "GovReport (ICT)",
@@ -2253,7 +2340,8 @@
         "n": 955,
         "SA - flat": 0.01920468711044627,
         "neutral fallback - flat": 0.017320285880495303,
-        "content fallback - flat": 0.009911077869193053
+        "content fallback - flat": 0.009911077869193053,
+        "label fallback - flat": 0.019204271586470544
       },
       {
         "set": "GovReport (LLM-written)",
@@ -2261,7 +2349,8 @@
         "n": 65,
         "SA - flat": -0.10322954822954823,
         "neutral fallback - flat": -0.052606837606837605,
-        "content fallback - flat": -0.014145299145299143
+        "content fallback - flat": -0.014145299145299143,
+        "label fallback - flat": -0.09297313797313798
       },
       {
         "set": "GovReport (LLM-written)",
@@ -2269,7 +2358,8 @@
         "n": 19,
         "SA - flat": 0.008771929824561405,
         "neutral fallback - flat": 0.03508771929824562,
-        "content fallback - flat": 0.03508771929824562
+        "content fallback - flat": 0.03508771929824562,
+        "label fallback - flat": 0.008771929824561405
       },
       {
         "set": "GovReport (LLM-written)",
@@ -2277,7 +2367,8 @@
         "n": 314,
         "SA - flat": 0.03916439187139824,
         "neutral fallback - flat": 0.037996663633606306,
-        "content fallback - flat": 0.03475887170154686
+        "content fallback - flat": 0.03475887170154686,
+        "label fallback - flat": 0.03863360630876555
       },
       {
         "set": "QASPER (human)",
@@ -2285,7 +2376,8 @@
         "n": 477,
         "SA - flat": 0.002827692922032546,
         "neutral fallback - flat": -0.0004791853848457633,
-        "content fallback - flat": 0.01304282719377059
+        "content fallback - flat": 0.01304282719377059,
+        "label fallback - flat": 0.002038201723736316
       },
       {
         "set": "QASPER (human)",
@@ -2293,7 +2385,8 @@
         "n": 274,
         "SA - flat": 0.03873537249449659,
         "neutral fallback - flat": 0.014888193720310508,
-        "content fallback - flat": -0.0009124087591240904
+        "content fallback - flat": -0.0009124087591240904,
+        "label fallback - flat": 0.039161163248754495
       },
       {
         "set": "QASPER (human)",
@@ -2301,7 +2394,8 @@
         "n": 505,
         "SA - flat": 0.05744224422442244,
         "neutral fallback - flat": 0.044233851956624236,
-        "content fallback - flat": 0.001034889203206035
+        "content fallback - flat": 0.001034889203206035,
+        "label fallback - flat": 0.05774477447744775
       },
       {
         "set": "NQ (human)",
@@ -2309,7 +2403,8 @@
         "n": 1106,
         "SA - flat": -0.0555964579924797,
         "neutral fallback - flat": -0.041126682740606796,
-        "content fallback - flat": -0.006220399552225956
+        "content fallback - flat": -0.006220399552225956,
+        "label fallback - flat": -0.06359288441114842
       },
       {
         "set": "NQ (human)",
@@ -2317,7 +2412,8 @@
         "n": 222,
         "SA - flat": 0.012058487058487057,
         "neutral fallback - flat": 0.006365293865293864,
-        "content fallback - flat": -0.025421850421850422
+        "content fallback - flat": -0.025421850421850422,
+        "label fallback - flat": 0.008622908622908623
       },
       {
         "set": "NQ (human)",
@@ -2325,7 +2421,8 @@
         "n": 416,
         "SA - flat": 0.03416704822954823,
         "neutral fallback - flat": 0.03225732600732601,
-        "content fallback - flat": -0.021732867826617826
+        "content fallback - flat": -0.021732867826617826,
+        "label fallback - flat": 0.03153998778998779
       }
     ]
   }

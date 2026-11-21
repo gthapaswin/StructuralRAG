@@ -56,6 +56,12 @@ def heading_specificity(corpus: SectionCorpus) -> np.ndarray:
     return np.array([np.log(n / max(df[_norm(s.title)], 1)) / np.log(n) for s in corpus.sections])
 
 
+def label_weights(corpus: SectionCorpus, boilerplate: set[str]) -> np.ndarray:
+    """1 for every section except those whose (normalized) heading was labelled boilerplate (0)."""
+    norm = {_norm(t) for t in boilerplate}
+    return np.array([0.0 if _norm(s.title) in norm else 1.0 for s in corpus.sections])
+
+
 def _self_rank(q: np.ndarray, p: np.ndarray, keep: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Rank of section i when its query vector q[i] ranks the document's sections p.
 
