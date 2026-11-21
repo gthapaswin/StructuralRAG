@@ -47,12 +47,12 @@
       {
         "set": "NQ (human)",
         "n": 1744,
-        "flat": 0.639525766346294,
-        "SA real": 0.6162170525702636,
-        "SA placebo": 0.6235016655744867,
-        "SA generic": 0.6291116025921071,
-        "SA flattened": 0.6173929663608563,
-        "SA OCR 0.2": 0.6236834680355321
+        "flat": 0.641920370977137,
+        "SA real": 0.6163474315567206,
+        "SA placebo": 0.6237061459395176,
+        "SA generic": 0.6308329237658366,
+        "SA flattened": 0.6172671381243631,
+        "SA OCR 0.2": 0.622737367118101
       }
     ],
     "tests": [
@@ -131,26 +131,26 @@
       {
         "set": "NQ (human)",
         "comparison": "SA real vs flat",
-        "mean_diff": -0.023308713776030294,
+        "mean_diff": -0.02557293942041649,
         "p_permutation": 9.999000099990002e-05,
-        "p_wilcoxon": 2.2547476463700616e-10,
+        "p_wilcoxon": 1.5694108985612295e-11,
         "p_holm": 0.00029997000299970003
       },
       {
         "set": "NQ (human)",
         "comparison": "SA real vs SA placebo",
-        "mean_diff": -0.007284613004223094,
-        "p_permutation": 0.0413958604139586,
-        "p_wilcoxon": 0.4133605521396614,
-        "p_holm": 0.0413958604139586
+        "mean_diff": -0.00735871438279695,
+        "p_permutation": 0.05729427057294271,
+        "p_wilcoxon": 0.18453476946500247,
+        "p_holm": 0.05729427057294271
       },
       {
         "set": "NQ (human)",
         "comparison": "SA real vs SA generic",
-        "mean_diff": -0.012894550021843601,
-        "p_permutation": 0.0013998600139986002,
-        "p_wilcoxon": 0.18421293775065972,
-        "p_holm": 0.0027997200279972004
+        "mean_diff": -0.014485492209116062,
+        "p_permutation": 0.0005999400059994001,
+        "p_wilcoxon": 0.04626790111235855,
+        "p_holm": 0.0011998800119988001
       }
     ]
   },
@@ -375,73 +375,73 @@
       "set": "NQ (human)",
       "corruption": "generic",
       "level": 0.0,
-      "gain_vs_flat": -0.023308713776030294,
-      "ci_lo": -0.032662063583078486,
-      "ci_hi": -0.013739499144459013
+      "gain_vs_flat": -0.02557293942041649,
+      "ci_lo": -0.03558485669688365,
+      "ci_hi": -0.01586097913936217
     },
     {
       "set": "NQ (human)",
       "corruption": "generic",
       "level": 0.25,
-      "gain_vs_flat": -0.016506252730449977,
-      "ci_lo": -0.025738347804718217,
-      "ci_hi": -0.006685523836828312
+      "gain_vs_flat": -0.02211232161060143,
+      "ci_lo": -0.031498601782073685,
+      "ci_hi": -0.012648729885685165
     },
     {
       "set": "NQ (human)",
       "corruption": "generic",
       "level": 0.5,
-      "gain_vs_flat": -0.016031154434250763,
-      "ci_lo": -0.025231894841269843,
-      "ci_hi": -0.007288230850444167
+      "gain_vs_flat": -0.020291794087665644,
+      "ci_lo": -0.029170978502257174,
+      "ci_hi": -0.011363774437527304
     },
     {
       "set": "NQ (human)",
       "corruption": "generic",
       "level": 0.75,
-      "gain_vs_flat": -0.014224051623707585,
-      "ci_lo": -0.022252786196665212,
-      "ci_hi": -0.005975072129386942
+      "gain_vs_flat": -0.014371495922528033,
+      "ci_lo": -0.022772254305009468,
+      "ci_hi": -0.005995669961409643
     },
     {
       "set": "NQ (human)",
       "corruption": "generic",
       "level": 1.0,
-      "gain_vs_flat": -0.010414163754186691,
-      "ci_lo": -0.017586327726809375,
-      "ci_hi": -0.0033991599315567208
+      "gain_vs_flat": -0.011087447211300422,
+      "ci_lo": -0.018535881525775445,
+      "ci_hi": -0.00353234900611621
     },
     {
       "set": "NQ (human)",
       "corruption": "ocr",
       "level": 0.0,
-      "gain_vs_flat": -0.023308713776030294,
-      "ci_lo": -0.032662063583078486,
-      "ci_hi": -0.013739499144459013
+      "gain_vs_flat": -0.02557293942041649,
+      "ci_lo": -0.03558485669688365,
+      "ci_hi": -0.01586097913936217
     },
     {
       "set": "NQ (human)",
       "corruption": "ocr",
       "level": 0.1,
-      "gain_vs_flat": -0.02034572047473424,
-      "ci_lo": -0.02892798551951362,
-      "ci_hi": -0.011529216952453767
+      "gain_vs_flat": -0.02364660696082714,
+      "ci_lo": -0.033536723414518715,
+      "ci_hi": -0.014151700387723898
     },
     {
       "set": "NQ (human)",
       "corruption": "ocr",
       "level": 0.2,
-      "gain_vs_flat": -0.015842298310761612,
-      "ci_lo": -0.02426409253494976,
-      "ci_hi": -0.007230373753094509
+      "gain_vs_flat": -0.01918300385903597,
+      "ci_lo": -0.02725817883537207,
+      "ci_hi": -0.010946220374617737
     },
     {
       "set": "NQ (human)",
       "corruption": "ocr",
       "level": 0.4,
-      "gain_vs_flat": -0.018262614678899083,
-      "ci_lo": -0.026126504022862967,
-      "ci_hi": -0.010141625027304509
+      "gain_vs_flat": -0.020783957696228338,
+      "ci_lo": -0.028621520951652837,
+      "ci_hi": -0.012725973177879718
     }
   ],
   "C": {
@@ -811,120 +811,120 @@
         "feature": "self_nrank",
         "target": "gain",
         "docs": 1744,
-        "spearman": -0.0018258577207678134,
-        "ci_lo": -0.049525967203638534,
-        "ci_hi": 0.042109735759403494,
-        "p": 0.9392636019370888
+        "spearman": 0.004526965783691042,
+        "ci_lo": -0.04365931172662223,
+        "ci_hi": 0.0511106224539489,
+        "p": 0.8501578199420069
       },
       {
         "set": "NQ (human)",
         "feature": "self_nrank",
         "target": "gain_vs_placebo",
         "docs": 1744,
-        "spearman": -0.06762266855588368,
-        "ci_lo": -0.11095195644711194,
-        "ci_hi": -0.018828767163708796,
-        "p": 0.0047248890012377255
+        "spearman": -0.05977052600757685,
+        "ci_lo": -0.10722567549847731,
+        "ci_hi": -0.013386918926759358,
+        "p": 0.01254140125972397
       },
       {
         "set": "NQ (human)",
         "feature": "self_mrr",
         "target": "gain",
         "docs": 1744,
-        "spearman": -0.012242347165944648,
-        "ci_lo": -0.05967296586044793,
-        "ci_hi": 0.032586201973745677,
-        "p": 0.6094154704475779
+        "spearman": 0.00596354963296658,
+        "ci_lo": -0.04037271363683399,
+        "ci_hi": 0.05260457405673334,
+        "p": 0.8034622726302292
       },
       {
         "set": "NQ (human)",
         "feature": "self_mrr",
         "target": "gain_vs_placebo",
         "docs": 1744,
-        "spearman": -0.03325606105869323,
-        "ci_lo": -0.08006854857697975,
-        "ci_hi": 0.016027994528575996,
-        "p": 0.16507551302924434
+        "spearman": 3.597149785817579e-05,
+        "ci_lo": -0.04874316706595624,
+        "ci_hi": 0.04626086164748927,
+        "p": 0.9988022665760609
       },
       {
         "set": "NQ (human)",
         "feature": "title_mrr",
         "target": "gain",
         "docs": 1744,
-        "spearman": -0.008650837919470898,
-        "ci_lo": -0.057984278857351405,
-        "ci_hi": 0.03597583869379723,
-        "p": 0.7180864922897447
+        "spearman": 0.008791522662562645,
+        "ci_lo": -0.03715775106250633,
+        "ci_hi": 0.053410371436952875,
+        "p": 0.7137021006614069
       },
       {
         "set": "NQ (human)",
         "feature": "title_mrr",
         "target": "gain_vs_placebo",
         "docs": 1744,
-        "spearman": -0.03922560745757086,
-        "ci_lo": -0.08380845594466008,
-        "ci_hi": 0.01059108252239328,
-        "p": 0.10151242943014895
+        "spearman": -0.00642460888741464,
+        "ci_lo": -0.05167627796847716,
+        "ci_hi": 0.03929302909784848,
+        "p": 0.788614690672935
       },
       {
         "set": "NQ (human)",
         "feature": "sibling_sim",
         "target": "gain",
         "docs": 1744,
-        "spearman": 0.03635405350101799,
-        "ci_lo": -0.010466537566704784,
-        "ci_hi": 0.08190518967206827,
-        "p": 0.12911451658045273
+        "spearman": 0.041251486417373806,
+        "ci_lo": -0.006041184254276428,
+        "ci_hi": 0.08625430498954599,
+        "p": 0.0850313820764949
       },
       {
         "set": "NQ (human)",
         "feature": "sibling_sim",
         "target": "gain_vs_placebo",
         "docs": 1744,
-        "spearman": 0.05609261257677767,
-        "ci_lo": 0.01025823375796491,
-        "ci_hi": 0.10730276973860697,
-        "p": 0.01914675781137217
+        "spearman": 0.09728691740230136,
+        "ci_lo": 0.051215287085140226,
+        "ci_hi": 0.144712098343798,
+        "p": 4.710109583745721e-05
       },
       {
         "set": "NQ (human)",
         "feature": "generic_rate",
         "target": "gain",
         "docs": 1744,
-        "spearman": 0.01726183310233295,
-        "ci_lo": -0.029375057312200425,
-        "ci_hi": 0.06366174295939023,
-        "p": 0.4712712813938254
+        "spearman": 0.02038957655535244,
+        "ci_lo": -0.029606863854963868,
+        "ci_hi": 0.06747413488209182,
+        "p": 0.39478508948621316
       },
       {
         "set": "NQ (human)",
         "feature": "generic_rate",
         "target": "gain_vs_placebo",
         "docs": 1744,
-        "spearman": 0.11573298971325678,
-        "ci_lo": 0.06826968960870007,
-        "ci_hi": 0.15890684948093461,
-        "p": 1.2598959816996563e-06
+        "spearman": 0.13437875353176684,
+        "ci_lo": 0.0852133448769025,
+        "ci_hi": 0.1799300967707217,
+        "p": 1.7672609936529092e-08
       },
       {
         "set": "NQ (human)",
         "feature": "title_idf",
         "target": "gain",
         "docs": 1744,
-        "spearman": -0.016881338780109997,
-        "ci_lo": -0.06172335158126794,
-        "ci_hi": 0.03009447136376086,
-        "p": 0.4811026837456531
+        "spearman": -0.028250873162277024,
+        "ci_lo": -0.07581108132129155,
+        "ci_hi": 0.024389658661233892,
+        "p": 0.2383262855770664
       },
       {
         "set": "NQ (human)",
         "feature": "title_idf",
         "target": "gain_vs_placebo",
         "docs": 1744,
-        "spearman": -0.09688504652211238,
-        "ci_lo": -0.1410628867471587,
-        "ci_hi": -0.0491402176392716,
-        "p": 5.063546276454109e-05
+        "spearman": -0.11346379613606844,
+        "ci_lo": -0.16028045336011776,
+        "ci_hi": -0.06467832588609768,
+        "p": 2.030774758281502e-06
       }
     ],
     "question": [
@@ -955,10 +955,10 @@
       {
         "set": "NQ (human)",
         "questions": 1744,
-        "spearman": 0.09873291096010986,
-        "ci_lo": 0.053563497496775164,
-        "ci_hi": 0.14375114922597723,
-        "p": 3.622172642295602e-05
+        "spearman": 0.10291849169203632,
+        "ci_lo": 0.05722043784390275,
+        "ci_hi": 0.14624085813639076,
+        "p": 1.6596268275513907e-05
       }
     ],
     "variants": [
@@ -1181,79 +1181,79 @@
       {
         "set": "NQ (human)",
         "variant": "flatten",
-        "self_nrank": 0.7508637575521396,
-        "gain_vs_flat": -0.0221327999854376
+        "self_nrank": 0.7894879533055423,
+        "gain_vs_flat": -0.024653232852774137
       },
       {
         "set": "NQ (human)",
         "variant": "generic_0.25",
-        "self_nrank": 0.688055924335868,
-        "gain_vs_flat": -0.016506252730449977
+        "self_nrank": 0.7237252064408196,
+        "gain_vs_flat": -0.02211232161060143
       },
       {
         "set": "NQ (human)",
         "variant": "generic_0.5",
-        "self_nrank": 0.6293666510851442,
-        "gain_vs_flat": -0.016031154434250763
+        "self_nrank": 0.6558248576088711,
+        "gain_vs_flat": -0.020291794087665644
       },
       {
         "set": "NQ (human)",
         "variant": "generic_0.75",
-        "self_nrank": 0.5698716040124331,
-        "gain_vs_flat": -0.014224051623707585
+        "self_nrank": 0.5812722459610815,
+        "gain_vs_flat": -0.014371495922528033
       },
       {
         "set": "NQ (human)",
         "variant": "generic_1.0",
-        "self_nrank": 0.5040436384562605,
-        "gain_vs_flat": -0.010414163754186691
+        "self_nrank": 0.5030094683042681,
+        "gain_vs_flat": -0.011087447211300422
       },
       {
         "set": "NQ (human)",
         "variant": "ocr_0.1",
-        "self_nrank": 0.6638106399038848,
-        "gain_vs_flat": -0.02034572047473424
+        "self_nrank": 0.6988091599152566,
+        "gain_vs_flat": -0.02364660696082714
       },
       {
         "set": "NQ (human)",
         "variant": "ocr_0.2",
-        "self_nrank": 0.6092240075257469,
-        "gain_vs_flat": -0.015842298310761612
+        "self_nrank": 0.6336669670724229,
+        "gain_vs_flat": -0.01918300385903597
       },
       {
         "set": "NQ (human)",
         "variant": "ocr_0.4",
-        "self_nrank": 0.5433345591624482,
-        "gain_vs_flat": -0.018262614678899083
+        "self_nrank": 0.5546359357929943,
+        "gain_vs_flat": -0.020783957696228338
       },
       {
         "set": "NQ (human)",
         "variant": "placebo_s0",
-        "self_nrank": 0.49998710282716774,
-        "gain_vs_flat": -0.014080702999854375
+        "self_nrank": 0.49874929961910386,
+        "gain_vs_flat": -0.01869584607543323
       },
       {
         "set": "NQ (human)",
         "variant": "placebo_s1",
-        "self_nrank": 0.5012408445944231,
-        "gain_vs_flat": -0.01738272717343818
+        "self_nrank": 0.5005076359756515,
+        "gain_vs_flat": -0.017486939347604483
       },
       {
         "set": "NQ (human)",
         "variant": "placebo_s2",
-        "self_nrank": 0.49942362133970813,
-        "gain_vs_flat": -0.016608872142129024
+        "self_nrank": 0.500240223252077,
+        "gain_vs_flat": -0.01845988968982088
       },
       {
         "set": "NQ (human)",
         "variant": "real",
-        "self_nrank": 0.7421752564515608,
-        "gain_vs_flat": -0.023308713776030294
+        "self_nrank": 0.7887374358258264,
+        "gain_vs_flat": -0.02557293942041649
       }
     ],
     "variant_spearman": [
-      0.19942448663799084,
-      0.17416920301781288
+      0.15088501180696337,
+      0.3059854899281892
     ]
   },
   "D": [
@@ -1283,19 +1283,19 @@
     },
     {
       "set": "NQ (human)",
-      "fixed alpha=0.2": 0.6162170525702648,
+      "fixed alpha=0.2": 0.6163474315567218,
       "best fixed alpha": "0.1 (0.624)",
-      "alpha=0": 0.6236245358235045,
-      "per-document oracle": 0.6960567751565456,
-      "per-question oracle": 0.6960567751565456
+      "alpha=0": 0.6238538936216695,
+      "per-document oracle": 0.6981608144022134,
+      "per-question oracle": 0.6981608144022134
     },
     {
       "set": "Pooled (3 datasets)",
-      "fixed alpha=0.2": 0.6149438614083266,
+      "fixed alpha=0.2": 0.6149982717821912,
       "best fixed alpha": "0.1 (0.616)",
-      "alpha=0": 0.610777147263149,
-      "per-document oracle": 0.6831400957926441,
-      "per-question oracle": 0.6952852888782536
+      "alpha=0": 0.6108728639417796,
+      "per-document oracle": 0.6840181633792545,
+      "per-question oracle": 0.6961633564648639
     }
   ],
   "E": {
@@ -1327,18 +1327,18 @@
       {
         "set": "NQ (human)",
         "n": 1744,
-        "fixed alpha=0.2": 0.6162170525702636,
-        "fixed, tuned": 0.6230575123780397,
-        "informativeness gate": 0.6229051077617591,
-        "query gate (ridge)": 0.6236908402504734
+        "fixed alpha=0.2": 0.6163474315567204,
+        "fixed, tuned": 0.6229646315712829,
+        "informativeness gate": 0.6225093290374253,
+        "query gate (ridge)": 0.625498625673511
       },
       {
         "set": "Pooled (3 datasets)",
         "n": 4179,
-        "fixed alpha=0.2": 0.6149438614083266,
-        "fixed, tuned": 0.6144367149428168,
-        "informativeness gate": 0.6150210994503886,
-        "query gate (ridge)": 0.6146870216539994
+        "fixed alpha=0.2": 0.6149982717821912,
+        "fixed, tuned": 0.6147900500233594,
+        "informativeness gate": 0.6151590909954154,
+        "query gate (ridge)": 0.615452660126027
       }
     ],
     "tests": [
@@ -1408,44 +1408,44 @@
       {
         "set": "NQ (human)",
         "comparison": "fixed, tuned vs fixed alpha=0.2",
-        "mean_diff": 0.006840459807776321,
-        "p_permutation": 0.0240975902409759,
-        "p_wilcoxon": 0.6235819052300935
+        "mean_diff": 0.006617200014562398,
+        "p_permutation": 0.024797520247975203,
+        "p_wilcoxon": 0.8774778579933755
       },
       {
         "set": "NQ (human)",
         "comparison": "informativeness gate vs fixed alpha=0.2",
-        "mean_diff": 0.006688055191495558,
-        "p_permutation": 0.0211978802119788,
-        "p_wilcoxon": 0.6786421351691369
+        "mean_diff": 0.006161897480704818,
+        "p_permutation": 0.015598440155984402,
+        "p_wilcoxon": 0.8000334298938199
       },
       {
         "set": "NQ (human)",
         "comparison": "query gate (ridge) vs fixed alpha=0.2",
-        "mean_diff": 0.007473787680209698,
-        "p_permutation": 0.006799320067993201,
-        "p_wilcoxon": 0.6551426350922525
+        "mean_diff": 0.009151194116790447,
+        "p_permutation": 0.0012998700129987,
+        "p_wilcoxon": 0.35963749172988024
       },
       {
         "set": "Pooled (3 datasets)",
         "comparison": "fixed, tuned vs fixed alpha=0.2",
-        "mean_diff": -0.0005071464655097117,
-        "p_permutation": 0.6132386761323868,
-        "p_wilcoxon": 0.45961512900387147
+        "mean_diff": -0.00020822175883195474,
+        "p_permutation": 0.8749125087491251,
+        "p_wilcoxon": 0.8492636631791299
       },
       {
         "set": "Pooled (3 datasets)",
         "comparison": "informativeness gate vs fixed alpha=0.2",
-        "mean_diff": 7.723804206216135e-05,
-        "p_permutation": 0.9477052294770523,
-        "p_wilcoxon": 0.19533093871317397
+        "mean_diff": 0.000160819213224093,
+        "p_permutation": 0.8863113688631137,
+        "p_wilcoxon": 0.5833871661031318
       },
       {
         "set": "Pooled (3 datasets)",
         "comparison": "query gate (ridge) vs fixed alpha=0.2",
-        "mean_diff": -0.00025683975432719275,
-        "p_permutation": 0.8761123887611239,
-        "p_wilcoxon": 0.04494725720502894
+        "mean_diff": 0.0004543883438355779,
+        "p_permutation": 0.7911208879112088,
+        "p_wilcoxon": 0.16426248004968325
       }
     ]
   },
@@ -1599,48 +1599,48 @@
       "encoder": "base",
       "informativeness": "low",
       "n": 582,
-      "gain_vs_flat": -0.018875797741777122,
-      "gain_vs_placebo": 0.005175775923198603
+      "gain_vs_flat": -0.024590901652757322,
+      "gain_vs_placebo": 0.001386161566573938
     },
     {
       "set": "NQ (human)",
       "encoder": "base",
       "informativeness": "mid",
       "n": 581,
-      "gain_vs_flat": -0.02181173674288993,
-      "gain_vs_placebo": -0.005167609212359641
+      "gain_vs_flat": -0.02864451001284048,
+      "gain_vs_placebo": -0.009164549353878096
     },
     {
       "set": "NQ (human)",
       "encoder": "base",
       "informativeness": "high",
       "n": 581,
-      "gain_vs_flat": -0.02924623664726935,
-      "gain_vs_placebo": -0.02771699041062208
+      "gain_vs_flat": -0.023485096849984972,
+      "gain_vs_placebo": -0.012867114717372894
     },
     {
       "set": "NQ (human)",
       "encoder": "fine-tuned",
       "informativeness": "low",
       "n": 582,
-      "gain_vs_flat": -0.0172823596792669,
-      "gain_vs_placebo": 0.002387770686739761
+      "gain_vs_flat": -0.028331424207712865,
+      "gain_vs_placebo": -0.0031357388316151195
     },
     {
       "set": "NQ (human)",
       "encoder": "fine-tuned",
       "informativeness": "mid",
       "n": 581,
-      "gain_vs_flat": -0.02272491325847608,
-      "gain_vs_placebo": -0.010613201103734668
+      "gain_vs_flat": -0.023786301669262083,
+      "gain_vs_placebo": -0.004438843810616616
     },
     {
       "set": "NQ (human)",
       "encoder": "fine-tuned",
       "informativeness": "high",
       "n": 581,
-      "gain_vs_flat": -0.019632953583039642,
-      "gain_vs_placebo": -0.018774417397481077
+      "gain_vs_flat": -0.019606316422151188,
+      "gain_vs_placebo": -0.010109827063355462
     }
   ],
   "H": [
@@ -1743,34 +1743,211 @@
     {
       "set": "NQ (human)",
       "gold heading": "generic (w < 0.5)",
-      "n": 1079,
-      "gain_vs_flat": -0.05418119363902497,
-      "ci_lo": -0.06598810994895332,
-      "ci_hi": -0.04193976455271636
+      "n": 1106,
+      "gain_vs_flat": -0.0555964579924797,
+      "ci_lo": -0.06738769769511181,
+      "ci_hi": -0.043965607867619626
     },
     {
       "set": "NQ (human)",
       "gold heading": "shared (0.5-0.9)",
-      "n": 232,
-      "gain_vs_flat": 0.010262725779967164,
-      "ci_lo": -0.01715149493705528,
-      "ci_hi": 0.038355141625615756
+      "n": 222,
+      "gain_vs_flat": 0.012058487058487057,
+      "ci_lo": -0.01832578113828114,
+      "ci_hi": 0.04334642678392677
     },
     {
       "set": "NQ (human)",
       "gold heading": "unique (w >= 0.9)",
-      "n": 433,
-      "gain_vs_flat": 0.03563547050844972,
-      "ci_lo": 0.016116564023607904,
-      "ci_hi": 0.05408901994207997
+      "n": 416,
+      "gain_vs_flat": 0.03416704822954823,
+      "ci_lo": 0.015790312118437122,
+      "ci_hi": 0.05375846592643466
     },
     {
       "set": "NQ (human)",
-      "gold heading": "Spearman 0.155 [0.106, 0.200]",
+      "gold heading": "Spearman 0.153 [0.105, 0.198]",
       "n": 1744,
       "gain_vs_flat": NaN,
       "ci_lo": NaN,
-      "ci_hi": 8.582124160174648e-11
+      "ci_hi": 1.207182767892662e-10
+    }
+  ],
+  "J": [
+    {
+      "set": "GovReport (ICT)",
+      "covariate (standardized)": "specificity",
+      "coef": 0.03289723506765699,
+      "ci_lo": 0.019371620083496632,
+      "ci_hi": 0.04655424300850234
+    },
+    {
+      "set": "GovReport (ICT)",
+      "covariate (standardized)": "log_words",
+      "coef": -8.689548499085018e-06,
+      "ci_lo": -0.009669546351656729,
+      "ci_hi": 0.010406380228492305
+    },
+    {
+      "set": "GovReport (ICT)",
+      "covariate (standardized)": "depth",
+      "coef": 0.008016273610180825,
+      "ci_lo": -0.0051855211495564916,
+      "ci_hi": 0.020894551259807857
+    },
+    {
+      "set": "GovReport (ICT)",
+      "covariate (standardized)": "position",
+      "coef": -0.00017786161633516736,
+      "ci_lo": -0.010928547227970922,
+      "ci_hi": 0.010832375154042314
+    },
+    {
+      "set": "GovReport (ICT)",
+      "covariate (standardized)": "log_sections",
+      "coef": -0.004009682968755055,
+      "ci_lo": -0.013502468889560635,
+      "ci_hi": 0.005543112180644865
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "covariate (standardized)": "specificity",
+      "coef": 0.058188335126749306,
+      "ci_lo": 0.03168954900162752,
+      "ci_hi": 0.08582589799585968
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "covariate (standardized)": "log_words",
+      "coef": -0.00936226249940779,
+      "ci_lo": -0.02766320701066817,
+      "ci_hi": 0.00723932887032709
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "covariate (standardized)": "depth",
+      "coef": -0.004581612321250748,
+      "ci_lo": -0.022218845125955507,
+      "ci_hi": 0.013404610891926653
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "covariate (standardized)": "position",
+      "coef": 0.011046462418078303,
+      "ci_lo": -0.008068274115066068,
+      "ci_hi": 0.031168293490202174
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "covariate (standardized)": "log_sections",
+      "coef": -0.011457719552464317,
+      "ci_lo": -0.028185546869630075,
+      "ci_hi": 0.0028553406585562838
+    },
+    {
+      "set": "QASPER (human)",
+      "covariate (standardized)": "specificity",
+      "coef": 0.026022347573999703,
+      "ci_lo": 0.013092500810583715,
+      "ci_hi": 0.03763914854714901
+    },
+    {
+      "set": "QASPER (human)",
+      "covariate (standardized)": "log_words",
+      "coef": -0.006342772611771171,
+      "ci_lo": -0.018397673424411353,
+      "ci_hi": 0.005811726406117334
+    },
+    {
+      "set": "QASPER (human)",
+      "covariate (standardized)": "depth",
+      "coef": 0.007802245115154412,
+      "ci_lo": -0.007359121221767372,
+      "ci_hi": 0.02375465447570636
+    },
+    {
+      "set": "QASPER (human)",
+      "covariate (standardized)": "position",
+      "coef": -0.00048467322058977916,
+      "ci_lo": -0.012341804488076199,
+      "ci_hi": 0.012241846883307119
+    },
+    {
+      "set": "QASPER (human)",
+      "covariate (standardized)": "log_sections",
+      "coef": -0.008570312088737675,
+      "ci_lo": -0.02388450417941445,
+      "ci_hi": 0.00630760891905795
+    },
+    {
+      "set": "NQ (human)",
+      "covariate (standardized)": "specificity",
+      "coef": 0.029733907552736694,
+      "ci_lo": 0.016774213224861598,
+      "ci_hi": 0.04252593374810419
+    },
+    {
+      "set": "NQ (human)",
+      "covariate (standardized)": "log_words",
+      "coef": -0.02309400120040202,
+      "ci_lo": -0.03170731758483507,
+      "ci_hi": -0.014125175350394896
+    },
+    {
+      "set": "NQ (human)",
+      "covariate (standardized)": "depth",
+      "coef": 0.016275459157331675,
+      "ci_lo": 0.0021342376038522193,
+      "ci_hi": 0.02972839630059542
+    },
+    {
+      "set": "NQ (human)",
+      "covariate (standardized)": "position",
+      "coef": 0.010855187247813798,
+      "ci_lo": -0.002466991127643693,
+      "ci_hi": 0.026100263920350742
+    },
+    {
+      "set": "NQ (human)",
+      "covariate (standardized)": "log_sections",
+      "coef": -0.016238493194165902,
+      "ci_lo": -0.026294987791365316,
+      "ci_hi": -0.00690844565352052
+    },
+    {
+      "set": "Pooled (3 datasets, dataset fixed effects)",
+      "covariate (standardized)": "specificity",
+      "coef": 0.030795912115737067,
+      "ci_lo": 0.023460488773875018,
+      "ci_hi": 0.037612115892400544
+    },
+    {
+      "set": "Pooled (3 datasets, dataset fixed effects)",
+      "covariate (standardized)": "log_words",
+      "coef": -0.011050584022347492,
+      "ci_lo": -0.016706516521330157,
+      "ci_hi": -0.005241534030290218
+    },
+    {
+      "set": "Pooled (3 datasets, dataset fixed effects)",
+      "covariate (standardized)": "depth",
+      "coef": 0.012636116448374366,
+      "ci_lo": 0.004148156977039192,
+      "ci_hi": 0.020813325391786187
+    },
+    {
+      "set": "Pooled (3 datasets, dataset fixed effects)",
+      "covariate (standardized)": "position",
+      "coef": 0.0030044842095018395,
+      "ci_lo": -0.0035803699506100095,
+      "ci_hi": 0.009734372150770627
+    },
+    {
+      "set": "Pooled (3 datasets, dataset fixed effects)",
+      "covariate (standardized)": "log_sections",
+      "coef": -0.011801282690988388,
+      "ci_lo": -0.018237363081356265,
+      "ci_hi": -0.005622408342401872
     }
   ],
   "I_dev_alpha": {
@@ -1807,10 +1984,10 @@
       {
         "set": "NQ (human)",
         "n": 1744,
-        "flat": 0.639525766346294,
-        "SA (a=0.2)": 0.6162170525702636,
-        "+ fallback, neutral (a=0.2)": 0.6239763087956895,
-        "+ fallback, content (a=0.2)": 0.6278642420270861
+        "flat": 0.641920370977137,
+        "SA (a=0.2)": 0.6163474315567206,
+        "+ fallback, neutral (a=0.2)": 0.6243435543177516,
+        "+ fallback, content (a=0.2)": 0.6295555282510558
       }
     ],
     "tests": [
@@ -1913,33 +2090,33 @@
       {
         "set": "NQ (human)",
         "comparison": "fallback (neutral) vs SA",
-        "mean_diff": 0.007759256225425951,
-        "p_permutation": 0.0059994000599940004,
-        "p_wilcoxon": 0.6119675268396247,
-        "p_holm": 0.011998800119988001
+        "mean_diff": 0.007996122761031019,
+        "p_permutation": 0.004399560043995601,
+        "p_wilcoxon": 0.40051807697810604,
+        "p_holm": 0.0065993400659934
       },
       {
         "set": "NQ (human)",
         "comparison": "fallback (content) vs SA",
-        "mean_diff": 0.011647189456822487,
-        "p_permutation": 0.008099190080991902,
-        "p_wilcoxon": 0.8962982263370565,
-        "p_holm": 0.011998800119988001
+        "mean_diff": 0.013208096694335229,
+        "p_permutation": 0.0032996700329967,
+        "p_wilcoxon": 0.6940201067270257,
+        "p_holm": 0.0065993400659934
       },
       {
         "set": "NQ (human)",
         "comparison": "fallback (neutral) vs flat",
-        "mean_diff": -0.01554945755060434,
-        "p_permutation": 0.0005999400059994001,
-        "p_wilcoxon": 7.549168363318946e-08,
-        "p_holm": 0.0017998200179982003
+        "mean_diff": -0.01757681665938547,
+        "p_permutation": 0.00019998000199980003,
+        "p_wilcoxon": 4.430918242326241e-08,
+        "p_holm": 0.0005999400059994001
       },
       {
         "set": "NQ (human)",
         "comparison": "SA vs flat",
-        "mean_diff": -0.023308713776030294,
+        "mean_diff": -0.02557293942041649,
         "p_permutation": 9.999000099990002e-05,
-        "p_wilcoxon": 2.2547476463700616e-10,
+        "p_wilcoxon": 1.5694108985612295e-11,
         "p_holm": 0.00039996000399960006
       }
     ],
@@ -2019,26 +2196,26 @@
       {
         "set": "NQ (human)",
         "gold heading": "generic (w < 0.5)",
-        "n": 1079,
-        "SA - flat": -0.05418119363902497,
-        "neutral fallback - flat": -0.03819269753004693,
-        "content fallback - flat": -0.005084440325404182
+        "n": 1106,
+        "SA - flat": -0.0555964579924797,
+        "neutral fallback - flat": -0.041126682740606796,
+        "content fallback - flat": -0.006220399552225956
       },
       {
         "set": "NQ (human)",
         "gold heading": "shared (0.5-0.9)",
-        "n": 232,
-        "SA - flat": 0.010262725779967164,
-        "neutral fallback - flat": -0.0007645730706075493,
-        "content fallback - flat": -0.02459975369458128
+        "n": 222,
+        "SA - flat": 0.012058487058487057,
+        "neutral fallback - flat": 0.006365293865293864,
+        "content fallback - flat": -0.025421850421850422
       },
       {
         "set": "NQ (human)",
         "gold heading": "unique (w >= 0.9)",
-        "n": 433,
-        "SA - flat": 0.03563547050844972,
-        "neutral fallback - flat": 0.0329539205982624,
-        "content fallback - flat": -0.021118809340518352
+        "n": 416,
+        "SA - flat": 0.03416704822954823,
+        "neutral fallback - flat": 0.03225732600732601,
+        "content fallback - flat": -0.021732867826617826
       }
     ]
   }

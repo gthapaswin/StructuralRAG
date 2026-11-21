@@ -23,6 +23,7 @@ log = logging.getLogger(__name__)
 
 LEAD = "Introduction"
 HEADING = re.compile(r"^<H([2-4])>$", re.IGNORECASE)
+EDIT_LINK = re.compile(r"\s*[(\[]\s*edit\s*[)\]]\s*", re.IGNORECASE)  # Wikipedia "[edit]" link text
 MIN_ANSWERS = 2
 
 
@@ -41,7 +42,8 @@ def parse_page(tokens: list[str], is_html: list[bool]) -> tuple[list[FlatHeading
                 if not is_html[j]:
                     title.append(tokens[j])
                 j += 1
-            heads.append(FlatHeading(title=" ".join(title).strip() or "Untitled", depth=int(m.group(1)) - 1, text=""))
+            clean = EDIT_LINK.sub(" ", " ".join(title)).strip()
+            heads.append(FlatHeading(title=clean or "Untitled", depth=int(m.group(1)) - 1, text=""))
             starts.append(i)
             texts.append([])
             i = j + 1
@@ -50,7 +52,10 @@ def parse_page(tokens: list[str], is_html: list[bool]) -> tuple[list[FlatHeading
             texts[-1].append(tok)
         i += 1
     heads = [FlatHeading(title=h.title, depth=h.depth, text=" ".join(t)) for h, t in zip(heads, texts, strict=True)]
-    return heads, starts
+    # Drop the page's table-of-contents box (navigation, not content); tokens inside it map to
+    # the preceding section.
+    keep = [i for i, h in enumerate(heads) if not (i > 0 and h.title.lower() == "contents")]
+    return [heads[i] for i in keep], [starts[i] for i in keep]
 
 
 def _section_of(token: int, starts: list[int]) -> int:

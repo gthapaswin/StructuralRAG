@@ -17,13 +17,14 @@ paired permutation tests with Holm correction within each question set.
 | GovReport ICT | 0.689 | 0.691 | 0.690 | 0.689 |
 | GovReport LLM-written | 0.864 | 0.878 | 0.866 | 0.867 |
 | QASPER | 0.509 | **0.542** | 0.507 | 0.507 |
-| NQ | **0.640** | 0.616 | 0.624 | 0.629 |
+| NQ | **0.642** | 0.616 | 0.624 | 0.631 |
 
 - QASPER: real headings beat the placebo by +0.035 (p < 0.001). The gain comes from what headings
   say, not from extra text, and it shrinks steadily as headings are made generic or noisy (a
   dose-response curve: `figures/dose_response.png`).
 - GovReport ICT: no effect (the question is a sentence copied from the section text).
-- NQ: headings hurt (−0.023 vs flat, p < 0.001).
+- NQ: headings hurt (−0.026 vs flat, p < 0.001). (NQ headings were cleaned of Wikipedia "[edit]" link
+  text and the page's contents box was removed; results barely changed.)
 
 ## 2. What explains it: how specific the target section's own heading is
 
@@ -35,11 +36,17 @@ the heading ("Introduction" → about 0; a heading unique to its document → 1)
 | GovReport ICT | −0.076 | +0.019 | 0.22 |
 | GovReport LLM-written | −0.103 | +0.039 | 0.31 |
 | QASPER | +0.003 | +0.057 | 0.18 |
-| NQ | −0.054 | +0.036 | 0.16 |
+| NQ | −0.056 | +0.034 | 0.15 |
 
 All four correlations have p < 0.001. A section with a generic heading loses to neighbours whose
-headings sound related to the question. NQ is negative overall because 62% of its targets have
+headings sound related to the question. NQ is negative overall because 63% of its targets have
 generic headings (53% are the untitled lead section).
+
+Robustness: in a regression of the per-question gain on the target's heading specificity plus its
+section length, depth, relative position and the document's size (standardized; 95% CIs from a
+bootstrap over documents), specificity stays positive with a CI above zero in every question set
+(pooled +0.030 per standard deviation, CI 0.023–0.037; `results.md` section J). Real examples:
+[`examples.md`](examples.md).
 
 ## 3. Negative results (reported, not hidden)
 
@@ -50,10 +57,22 @@ generic headings (53% are the untitled lead section).
   (+0.07 to +0.10 MRR), so the right weight varies, but these signals do not find it.
 - A label-free fix that makes generic headings neutral (path score replaced by the document mean,
   weighted by 1 − w) helps where common headings carry little meaning (GovReport LLM-written +0.009,
-  NQ +0.008, both significant before correction) but costs −0.012 on QASPER, where common headings
+  NQ +0.008, both significant before Holm correction; NQ also after) but costs −0.012 on QASPER, where common headings
   ("Results", "Datasets") are exactly what questions target. Heading frequency predicts where SA
   loses, but frequency alone cannot tell a boilerplate heading from a functional one.
 - The GovReport-fine-tuned encoder keeps most of the QASPER heading gain (+0.027 vs +0.033).
+
+## 4. Position against the closest work (both read in full)
+
+- Kuehlkamp et al. (arXiv 2610.10170, v1 Oct 2026): placebo-controlled heading-path prefixes for
+  chunk retrieval over whole corpora (QASPER, Wikipedia; bge-small/large). Real paths beat shuffled
+  ones by +0.010 to +0.016 cov-nDCG@10. They analyse depth and query type only: not which headings
+  help, not heading frequency, and they report no case of real headings hurting.
+- STAIR (arXiv 2609.03874, v2 Oct 2026, IBM): fine-tuned LLM that generates the ToC leaf for a query
+  within one book (18 textbooks, LLM-written questions); no public datasets, no study of heading
+  quality.
+- This study adds: within-document section routing on public data with human questions, a case where
+  real headings hurt (NQ), and the target-heading specificity account of when they help.
 
 ## Pending
 

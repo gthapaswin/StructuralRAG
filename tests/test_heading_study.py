@@ -75,12 +75,13 @@ def test_reciprocal_ranks_within_document(ml_doc):
 def test_nq_page_parsing_builds_sections_from_heading_tokens():
     from structuralrag.ingestion.natural_questions import _section_of, parse_page
 
-    toks = ["<H1>", "Page", "</H1>", "Lead", "text", "<H2>", "History", "</H2>", "Old", "<H3>", "Early", "</H3>", "x"]
+    toks = ["<H1>", "Page", "</H1>", "Lead", "text", "<H2>", "History", "(", "edit", ")", "</H2>", "Old"]
+    toks += ["<H3>", "Early", "</H3>", "x", "<H2>", "Contents", "</H2>", "1", "History"]
     html = [t.startswith("<") for t in toks]
     heads, starts = parse_page(toks, html)
     assert [(h.title, h.depth) for h in heads] == [("Introduction", 1), ("History", 1), ("Early", 2)]
     assert heads[0].text == "Page Lead text" and heads[2].text == "x"
-    assert _section_of(9, starts) == 2 and _section_of(3, starts) == 0
+    assert _section_of(12, starts) == 2 and _section_of(3, starts) == 0
 
 
 def test_heading_specificity_and_fallback(ml_doc):

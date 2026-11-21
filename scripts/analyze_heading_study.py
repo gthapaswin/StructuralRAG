@@ -73,6 +73,39 @@ def spearman_ci(x: np.ndarray, y: np.ndarray, n_boot: int = 1000) -> tuple[float
     return float(rho), float(p), float(lo), float(hi)
 
 
+def section_controls() -> dict[str, dict]:
+    """Per-section covariates for the robustness regression."""
+    from structuralrag.utils.io import load_documents
+
+    out = {}
+    for f in DOCFILES.values():
+        for d in load_documents(DATA_DIR / f):
+            n = len(d.sections)
+            for k, x in enumerate(d.sections):
+                out[x.uid] = {
+                    "log_words": np.log1p(len(x.text.split())),
+                    "depth": x.level,
+                    "position": k / max(n - 1, 1),
+                    "log_sections": np.log(n),
+                }
+    return out
+
+
+def clustered_ols(
+    y: np.ndarray, X: np.ndarray, groups: np.ndarray, n_boot: int = 1000
+) -> tuple[np.ndarray, np.ndarray]:
+    """OLS coefficients with a bootstrap over documents (clusters) for 95% CIs."""
+    beta = np.linalg.lstsq(X, y, rcond=None)[0]
+    rng = np.random.default_rng(SEED)
+    ug = np.unique(groups)
+    idx_of = {g: np.flatnonzero(groups == g) for g in ug}
+    boots = []
+    for _ in range(n_boot):
+        pick = np.concatenate([idx_of[g] for g in rng.choice(ug, len(ug))])
+        boots.append(np.linalg.lstsq(X[pick], y[pick], rcond=None)[0])
+    return beta, np.quantile(np.array(boots), [0.025, 0.975], axis=0)
+
+
 def holm(tests: list[dict], key: str = "p_permutation") -> list[dict]:
     """Holm-Bonferroni adjusted p-values within one family of tests (added as p_holm)."""
     order = np.argsort([t[key] for t in tests])
@@ -410,6 +443,56 @@ def main() -> None:
         fmt(rows_h, ["set", "gold heading", "n", "gain_vs_flat", "ci_lo", "ci_hi"]),
     ]
     out["H"] = rows_h
+
+    # ---------- J. Robustness: does specificity survive controls? ----------
+    ctrl = section_controls()
+    cov = ["specificity", "log_words", "depth", "position", "log_sections"]
+    rows_j, pooled_y, pooled_X, pooled_g, pooled_set = [], [], [], [], []
+    for ds, qs in sets:
+        w, meta = per_set[(ds, qs)]
+        y = w[("real", SA)].values - w[("real", "flat")].values
+        feats = pd.DataFrame([ctrl[u] for u in meta.gold_uid])
+        feats.insert(0, "specificity", meta.gold_uid.map(spec).values)
+        Z = (feats - feats.mean()) / feats.std(ddof=0).replace(0, 1)
+        X = np.column_stack([np.ones(len(y)), Z.values])
+        beta, ci = clustered_ols(y, X, meta.document_id.values)
+        for k, name in enumerate(cov, start=1):
+            rows_j.append(
+                {
+                    "set": LABEL[(ds, qs)],
+                    "covariate (standardized)": name,
+                    "coef": float(beta[k]),
+                    "ci_lo": float(ci[0, k]),
+                    "ci_hi": float(ci[1, k]),
+                }
+            )
+        if (ds, qs) != ("govreport", "llm"):
+            pooled_y.append(y)
+            pooled_X.append(Z.values)
+            pooled_g.append(np.char.add(f"{ds}:", meta.document_id.values.astype(str)))
+            pooled_set += [LABEL[(ds, qs)]] * len(y)
+    y = np.concatenate(pooled_y)
+    Z = np.concatenate(pooled_X)
+    fe = pd.get_dummies(pd.Series(pooled_set), drop_first=True).values.astype(float)
+    X = np.column_stack([np.ones(len(y)), Z, fe])
+    beta, ci = clustered_ols(y, X, np.concatenate(pooled_g))
+    for k, name in enumerate(cov, start=1):
+        rows_j.append(
+            {
+                "set": "Pooled (3 datasets, dataset fixed effects)",
+                "covariate (standardized)": name,
+                "coef": float(beta[k]),
+                "ci_lo": float(ci[0, k]),
+                "ci_hi": float(ci[1, k]),
+            }
+        )
+    md += [
+        "\n## J. Robustness: per-question gain regressed on the target's heading specificity and controls\n",
+        "OLS on standardized covariates (target section length, depth, relative position, document size); "
+        "95% CIs from a bootstrap over documents.\n",
+        fmt(rows_j, ["set", "covariate (standardized)", "coef", "ci_lo", "ci_hi"]),
+    ]
+    out["J"] = rows_j
 
     # ---------- I. Specificity fallback ----------
     # safbm = the method (generic headings become neutral: document-mean path score);
