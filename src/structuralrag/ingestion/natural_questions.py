@@ -1,0 +1,106 @@
+"""Adapter for Natural Questions (Kwiatkowski et al., TACL 2019): real Google queries over
+Wikipedia pages. A third domain with human-written questions and very varied headings.
+
+The page's section tree is rebuilt from its HTML heading tokens (<H2> = level 1,
+<H3> = level 2, <H4> = level 3); text before the first <H2> is the lead section. The gold
+section of a question is the section containing the long answer chosen by most of the
+annotators who gave one (the dev split has five annotators; at least two must answer,
+the usual NQ rule for counting a question as answerable).
+"""
+
+from __future__ import annotations
+
+import logging
+import re
+from collections import Counter
+from collections.abc import Iterator
+from pathlib import Path
+
+from structuralrag.preprocessing.hierarchy_builder import FlatHeading, build_document
+from structuralrag.schema import Document, Query
+
+log = logging.getLogger(__name__)
+
+LEAD = "Introduction"
+HEADING = re.compile(r"^<H([2-4])>$", re.IGNORECASE)
+MIN_ANSWERS = 2
+
+
+def parse_page(tokens: list[str], is_html: list[bool]) -> tuple[list[FlatHeading], list[int]]:
+    """Return headings (lead first) and, per heading, the token index where its section starts."""
+    heads = [FlatHeading(title=LEAD, depth=1, text="")]
+    starts, texts = [0], [[]]
+    i, n = 0, len(tokens)
+    while i < n:
+        tok, html = tokens[i], is_html[i]
+        m = HEADING.match(tok) if html else None
+        if m:
+            close = f"</H{m.group(1)}>".upper()
+            j, title = i + 1, []
+            while j < n and not (is_html[j] and tokens[j].upper() == close):
+                if not is_html[j]:
+                    title.append(tokens[j])
+                j += 1
+            heads.append(FlatHeading(title=" ".join(title).strip() or "Untitled", depth=int(m.group(1)) - 1, text=""))
+            starts.append(i)
+            texts.append([])
+            i = j + 1
+            continue
+        if not html:
+            texts[-1].append(tok)
+        i += 1
+    heads = [FlatHeading(title=h.title, depth=h.depth, text=" ".join(t)) for h, t in zip(heads, texts, strict=True)]
+    return heads, starts
+
+
+def _section_of(token: int, starts: list[int]) -> int:
+    k = 0
+    for j, s in enumerate(starts):
+        if s <= token:
+            k = j
+    return k
+
+
+def row_to_example(row: dict, min_sections: int = 4) -> tuple[Document, Query] | None:
+    tok = row["document"]["tokens"]
+    heads, starts = parse_page(tok["token"], tok["is_html"])
+    if sum(1 for h in heads if len(h.text.split()) >= 5) < min_sections:
+        return None
+    answers = [a["start_token"] for a in row["annotations"]["long_answer"] if a["start_token"] >= 0]
+    if len(answers) < MIN_ANSWERS:
+        return None
+    sec = Counter(_section_of(t, starts) for t in answers).most_common(1)[0][0]
+    doc_id = f"nq_{row['id']}"
+    doc = build_document(
+        dataset="nq",
+        document_id=doc_id,
+        title=row["document"]["title"],
+        headings=heads,
+        metadata={"source": "google-research-datasets/natural_questions", "url": row["document"]["url"]},
+    )
+    if len(doc.sections) != len(heads):
+        return None
+    gold = doc.sections[sec]
+    if len(gold.text.split()) < 5:
+        return None
+    query = Query(
+        query_id=f"{doc_id}::q",
+        dataset="nq",
+        document_id=doc_id,
+        question=row["question"]["text"].strip(),
+        target_section_ids=[gold.section_id],
+        split="validation",
+        generator="human",
+        metadata={"target_level": gold.level, "lead": sec == 0},
+    )
+    return doc, query
+
+
+def load_nq(files: list[Path]) -> Iterator[tuple[Document, Query] | None]:
+    import pyarrow.parquet as pq
+
+    for f in files:
+        pf = pq.ParquetFile(f)
+        for g in range(pf.num_row_groups):
+            for row in pf.read_row_group(g, columns=["id", "document", "question", "annotations"]).to_pylist():
+                yield row_to_example(row)

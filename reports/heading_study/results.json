@@ -1,0 +1,1440 @@
+{
+  "alpha_fixed": 0.2,
+  "alphas": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.6,
+    0.8,
+    1.0,
+    1.5,
+    2.0
+  ],
+  "A": {
+    "table": [
+      {
+        "set": "GovReport (ICT)",
+        "n": 1179,
+        "flat": 0.6893940923839142,
+        "SA real": 0.6909662479637034,
+        "SA placebo": 0.690478322136507,
+        "SA generic": 0.6888495092693566,
+        "SA flattened": 0.6931977597372,
+        "SA OCR 0.2": 0.6937164263500141
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "n": 398,
+        "flat": 0.863562853952301,
+        "SA real": 0.8780210576692989,
+        "SA placebo": 0.8660966871394009,
+        "SA generic": 0.8667284836882827,
+        "SA flattened": 0.8832934513839037,
+        "SA OCR 0.2": 0.8552514556911542
+      },
+      {
+        "set": "QASPER (human)",
+        "n": 1256,
+        "flat": 0.5091942801536751,
+        "SA real": 0.5418142124153271,
+        "SA placebo": 0.507074297341017,
+        "SA generic": 0.507452482054393,
+        "SA flattened": 0.5394563239308463,
+        "SA OCR 0.2": 0.5239141012031139
+      },
+      {
+        "set": "NQ (human)",
+        "n": 1744,
+        "flat": 0.639525766346294,
+        "SA real": 0.6162170525702636,
+        "SA placebo": 0.6235016655744867,
+        "SA generic": 0.6291116025921071,
+        "SA flattened": 0.6173929663608563,
+        "SA OCR 0.2": 0.6236834680355321
+      }
+    ],
+    "tests": [
+      {
+        "set": "GovReport (ICT)",
+        "comparison": "SA real vs flat",
+        "mean_diff": 0.0015721555797891678,
+        "p_permutation": 0.7668233176682332,
+        "p_wilcoxon": 0.9344572965358167
+      },
+      {
+        "set": "GovReport (ICT)",
+        "comparison": "SA real vs SA placebo",
+        "mean_diff": 0.000487925827196398,
+        "p_permutation": 0.9114088591140886,
+        "p_wilcoxon": 0.8551881498173788
+      },
+      {
+        "set": "GovReport (ICT)",
+        "comparison": "SA real vs SA generic",
+        "mean_diff": 0.002116738694346837,
+        "p_permutation": 0.6616338366163383,
+        "p_wilcoxon": 0.6273464600905352
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "comparison": "SA real vs flat",
+        "mean_diff": 0.014458203716997686,
+        "p_permutation": 0.1227877212278772,
+        "p_wilcoxon": 0.29167366363646774
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "comparison": "SA real vs SA placebo",
+        "mean_diff": 0.011924370529898169,
+        "p_permutation": 0.11488851114888511,
+        "p_wilcoxon": 0.09936523844923036
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "comparison": "SA real vs SA generic",
+        "mean_diff": 0.011292573981016192,
+        "p_permutation": 0.1698830116988301,
+        "p_wilcoxon": 0.32914126576700387
+      },
+      {
+        "set": "QASPER (human)",
+        "comparison": "SA real vs flat",
+        "mean_diff": 0.03261993226165201,
+        "p_permutation": 9.999000099990002e-05,
+        "p_wilcoxon": 0.00016017439597819833
+      },
+      {
+        "set": "QASPER (human)",
+        "comparison": "SA real vs SA placebo",
+        "mean_diff": 0.034739915074309985,
+        "p_permutation": 9.999000099990002e-05,
+        "p_wilcoxon": 4.4277585230814115e-06
+      },
+      {
+        "set": "QASPER (human)",
+        "comparison": "SA real vs SA generic",
+        "mean_diff": 0.03436173036093418,
+        "p_permutation": 9.999000099990002e-05,
+        "p_wilcoxon": 8.528707522379031e-06
+      },
+      {
+        "set": "NQ (human)",
+        "comparison": "SA real vs flat",
+        "mean_diff": -0.023308713776030294,
+        "p_permutation": 9.999000099990002e-05,
+        "p_wilcoxon": 2.2547476463700616e-10
+      },
+      {
+        "set": "NQ (human)",
+        "comparison": "SA real vs SA placebo",
+        "mean_diff": -0.007284613004223094,
+        "p_permutation": 0.0413958604139586,
+        "p_wilcoxon": 0.4133605521396614
+      },
+      {
+        "set": "NQ (human)",
+        "comparison": "SA real vs SA generic",
+        "mean_diff": -0.012894550021843601,
+        "p_permutation": 0.0013998600139986002,
+        "p_wilcoxon": 0.18421293775065972
+      }
+    ]
+  },
+  "B": [
+    {
+      "set": "GovReport (ICT)",
+      "corruption": "generic",
+      "level": 0.0,
+      "gain_vs_flat": 0.0015721555797891678,
+      "ci_lo": -0.009125511598475976,
+      "ci_hi": 0.012546876893250935
+    },
+    {
+      "set": "GovReport (ICT)",
+      "corruption": "generic",
+      "level": 0.25,
+      "gain_vs_flat": 0.0006529612127576503,
+      "ci_lo": -0.010539433472003448,
+      "ci_hi": 0.011129420951303901
+    },
+    {
+      "set": "GovReport (ICT)",
+      "corruption": "generic",
+      "level": 0.5,
+      "gain_vs_flat": -0.003738371232009908,
+      "ci_lo": -0.014990079365079362,
+      "ci_hi": 0.006274090566393347
+    },
+    {
+      "set": "GovReport (ICT)",
+      "corruption": "generic",
+      "level": 0.75,
+      "gain_vs_flat": -0.004194097769161383,
+      "ci_lo": -0.013499207358940188,
+      "ci_hi": 0.00481412483002813
+    },
+    {
+      "set": "GovReport (ICT)",
+      "corruption": "generic",
+      "level": 1.0,
+      "gain_vs_flat": -0.0005445831145576696,
+      "ci_lo": -0.006829216985069403,
+      "ci_hi": 0.005454834605597963
+    },
+    {
+      "set": "GovReport (ICT)",
+      "corruption": "ocr",
+      "level": 0.0,
+      "gain_vs_flat": 0.0015721555797891678,
+      "ci_lo": -0.009125511598475976,
+      "ci_hi": 0.012546876893250935
+    },
+    {
+      "set": "GovReport (ICT)",
+      "corruption": "ocr",
+      "level": 0.1,
+      "gain_vs_flat": -0.0007505688167265783,
+      "ci_lo": -0.011663788925239308,
+      "ci_hi": 0.009855296727116063
+    },
+    {
+      "set": "GovReport (ICT)",
+      "corruption": "ocr",
+      "level": 0.2,
+      "gain_vs_flat": 0.004322333966099869,
+      "ci_lo": -0.005584997711269976,
+      "ci_hi": 0.014343883369010595
+    },
+    {
+      "set": "GovReport (ICT)",
+      "corruption": "ocr",
+      "level": 0.4,
+      "gain_vs_flat": -0.00010736836436582021,
+      "ci_lo": -0.008644482814330142,
+      "ci_hi": 0.008682297346419482
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "corruption": "generic",
+      "level": 0.0,
+      "gain_vs_flat": 0.014458203716997686,
+      "ci_lo": -0.0031225572305974307,
+      "ci_hi": 0.0326105727047938
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "corruption": "generic",
+      "level": 0.25,
+      "gain_vs_flat": 0.004962311557788946,
+      "ci_lo": -0.013377153625269204,
+      "ci_hi": 0.02248746211214804
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "corruption": "generic",
+      "level": 0.5,
+      "gain_vs_flat": 0.0017348648001914316,
+      "ci_lo": -0.016484156895589054,
+      "ci_hi": 0.018757079046023712
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "corruption": "generic",
+      "level": 0.75,
+      "gain_vs_flat": -0.008870742601898381,
+      "ci_lo": -0.02558289961713328,
+      "ci_hi": 0.007518744516231937
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "corruption": "generic",
+      "level": 1.0,
+      "gain_vs_flat": 0.003165629735981495,
+      "ci_lo": -0.007318960875807609,
+      "ci_hi": 0.013544832296402645
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "corruption": "ocr",
+      "level": 0.0,
+      "gain_vs_flat": 0.014458203716997686,
+      "ci_lo": -0.0031225572305974307,
+      "ci_hi": 0.0326105727047938
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "corruption": "ocr",
+      "level": 0.1,
+      "gain_vs_flat": 0.0012891840153146687,
+      "ci_lo": -0.017453188561856906,
+      "ci_hi": 0.01946398659966499
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "corruption": "ocr",
+      "level": 0.2,
+      "gain_vs_flat": -0.008311398261147004,
+      "ci_lo": -0.02409981454893515,
+      "ci_hi": 0.006911143016670642
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "corruption": "ocr",
+      "level": 0.4,
+      "gain_vs_flat": -0.0012901810640504117,
+      "ci_lo": -0.014611325476589294,
+      "ci_hi": 0.011400978104809754
+    },
+    {
+      "set": "QASPER (human)",
+      "corruption": "generic",
+      "level": 0.0,
+      "gain_vs_flat": 0.03261993226165201,
+      "ci_lo": 0.020781565943787283,
+      "ci_hi": 0.04435562474724497
+    },
+    {
+      "set": "QASPER (human)",
+      "corruption": "generic",
+      "level": 0.25,
+      "gain_vs_flat": 0.020632077140835106,
+      "ci_lo": 0.009510539884743707,
+      "ci_hi": 0.0318398196592862
+    },
+    {
+      "set": "QASPER (human)",
+      "corruption": "generic",
+      "level": 0.5,
+      "gain_vs_flat": 0.010034374684056213,
+      "ci_lo": 0.0002609695682944085,
+      "ci_hi": 0.02022108166515013
+    },
+    {
+      "set": "QASPER (human)",
+      "corruption": "generic",
+      "level": 0.75,
+      "gain_vs_flat": 0.008388939439894853,
+      "ci_lo": -0.0005148540971590324,
+      "ci_hi": 0.017614592811646946
+    },
+    {
+      "set": "QASPER (human)",
+      "corruption": "generic",
+      "level": 1.0,
+      "gain_vs_flat": -0.0017417980992821761,
+      "ci_lo": -0.009708992076129816,
+      "ci_hi": 0.00625333320695581
+    },
+    {
+      "set": "QASPER (human)",
+      "corruption": "ocr",
+      "level": 0.0,
+      "gain_vs_flat": 0.03261993226165201,
+      "ci_lo": 0.020781565943787283,
+      "ci_hi": 0.04435562474724497
+    },
+    {
+      "set": "QASPER (human)",
+      "corruption": "ocr",
+      "level": 0.1,
+      "gain_vs_flat": 0.02066335557577596,
+      "ci_lo": 0.009181302762612475,
+      "ci_hi": 0.030800277714589017
+    },
+    {
+      "set": "QASPER (human)",
+      "corruption": "ocr",
+      "level": 0.2,
+      "gain_vs_flat": 0.014719821049438886,
+      "ci_lo": 0.003931304342331412,
+      "ci_hi": 0.024748461353755937
+    },
+    {
+      "set": "QASPER (human)",
+      "corruption": "ocr",
+      "level": 0.4,
+      "gain_vs_flat": 0.0043394879183095755,
+      "ci_lo": -0.005333747219694672,
+      "ci_hi": 0.01337336341118187
+    },
+    {
+      "set": "NQ (human)",
+      "corruption": "generic",
+      "level": 0.0,
+      "gain_vs_flat": -0.023308713776030294,
+      "ci_lo": -0.032662063583078486,
+      "ci_hi": -0.013739499144459013
+    },
+    {
+      "set": "NQ (human)",
+      "corruption": "generic",
+      "level": 0.25,
+      "gain_vs_flat": -0.016506252730449977,
+      "ci_lo": -0.025738347804718217,
+      "ci_hi": -0.006685523836828312
+    },
+    {
+      "set": "NQ (human)",
+      "corruption": "generic",
+      "level": 0.5,
+      "gain_vs_flat": -0.016031154434250763,
+      "ci_lo": -0.025231894841269843,
+      "ci_hi": -0.007288230850444167
+    },
+    {
+      "set": "NQ (human)",
+      "corruption": "generic",
+      "level": 0.75,
+      "gain_vs_flat": -0.014224051623707585,
+      "ci_lo": -0.022252786196665212,
+      "ci_hi": -0.005975072129386942
+    },
+    {
+      "set": "NQ (human)",
+      "corruption": "generic",
+      "level": 1.0,
+      "gain_vs_flat": -0.010414163754186691,
+      "ci_lo": -0.017586327726809375,
+      "ci_hi": -0.0033991599315567208
+    },
+    {
+      "set": "NQ (human)",
+      "corruption": "ocr",
+      "level": 0.0,
+      "gain_vs_flat": -0.023308713776030294,
+      "ci_lo": -0.032662063583078486,
+      "ci_hi": -0.013739499144459013
+    },
+    {
+      "set": "NQ (human)",
+      "corruption": "ocr",
+      "level": 0.1,
+      "gain_vs_flat": -0.02034572047473424,
+      "ci_lo": -0.02892798551951362,
+      "ci_hi": -0.011529216952453767
+    },
+    {
+      "set": "NQ (human)",
+      "corruption": "ocr",
+      "level": 0.2,
+      "gain_vs_flat": -0.015842298310761612,
+      "ci_lo": -0.02426409253494976,
+      "ci_hi": -0.007230373753094509
+    },
+    {
+      "set": "NQ (human)",
+      "corruption": "ocr",
+      "level": 0.4,
+      "gain_vs_flat": -0.018262614678899083,
+      "ci_lo": -0.026126504022862967,
+      "ci_hi": -0.010141625027304509
+    }
+  ],
+  "C": {
+    "doc": [
+      {
+        "set": "GovReport (ICT)",
+        "feature": "self_nrank",
+        "target": "gain",
+        "docs": 200,
+        "spearman": 0.1304248376471368,
+        "ci_lo": -0.0034727185168879943,
+        "ci_hi": 0.2528090397856442,
+        "p": 0.06565157922117765
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "self_nrank",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": 0.07587794248172196,
+        "ci_lo": -0.05203903171260607,
+        "ci_hi": 0.20841424328485514,
+        "p": 0.28556996751088765
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "self_mrr",
+        "target": "gain",
+        "docs": 200,
+        "spearman": 0.11840783498484357,
+        "ci_lo": -0.016512934655960574,
+        "ci_hi": 0.2427570275298927,
+        "p": 0.09493452130868969
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "self_mrr",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": 0.07455853449427602,
+        "ci_lo": -0.0636947321913232,
+        "ci_hi": 0.21264610736469453,
+        "p": 0.29405434846462436
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "title_mrr",
+        "target": "gain",
+        "docs": 200,
+        "spearman": 0.12681513985315818,
+        "ci_lo": -0.0143006035277454,
+        "ci_hi": 0.26434057749091494,
+        "p": 0.07354606650219386
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "title_mrr",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": 0.07041097454907574,
+        "ci_lo": -0.06383616966646369,
+        "ci_hi": 0.19875771697728642,
+        "p": 0.3218075145460183
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "sibling_sim",
+        "target": "gain",
+        "docs": 200,
+        "spearman": 0.06431900385495798,
+        "ci_lo": -0.07512249504368468,
+        "ci_hi": 0.19391806683507803,
+        "p": 0.36554806817510593
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "sibling_sim",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": 0.028665804633961074,
+        "ci_lo": -0.10658635186026622,
+        "ci_hi": 0.1644395339285163,
+        "p": 0.6869942162348033
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "generic_rate",
+        "target": "gain",
+        "docs": 200,
+        "spearman": -0.02304740088653414,
+        "ci_lo": -0.16192976106453938,
+        "ci_hi": 0.1192852930897609,
+        "p": 0.745983836159823
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "generic_rate",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": -0.08490909614924441,
+        "ci_lo": -0.21885120383989481,
+        "ci_hi": 0.04599939019020194,
+        "p": 0.2319193135270391
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "title_idf",
+        "target": "gain",
+        "docs": 200,
+        "spearman": 0.0228352429171831,
+        "ci_lo": -0.11341063588834326,
+        "ci_hi": 0.15694545799341342,
+        "p": 0.7482431556877768
+      },
+      {
+        "set": "GovReport (ICT)",
+        "feature": "title_idf",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": 0.08779226259660446,
+        "ci_lo": -0.039057118864221585,
+        "ci_hi": 0.21317223134366886,
+        "p": 0.21639308238913751
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "self_nrank",
+        "target": "gain",
+        "docs": 200,
+        "spearman": -0.06553987582261321,
+        "ci_lo": -0.2031944190819088,
+        "ci_hi": 0.07477501083003195,
+        "p": 0.35649939810771136
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "self_nrank",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": -0.09961135329369111,
+        "ci_lo": -0.22840552187812063,
+        "ci_hi": 0.027874322349746235,
+        "p": 0.16050350172921302
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "self_mrr",
+        "target": "gain",
+        "docs": 200,
+        "spearman": -0.0692350359669767,
+        "ci_lo": -0.21295035731662856,
+        "ci_hi": 0.061579586302017965,
+        "p": 0.32997533797994966
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "self_mrr",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": -0.06335341588443727,
+        "ci_lo": -0.2009517975872378,
+        "ci_hi": 0.06548691542182218,
+        "p": 0.3728044979015911
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "title_mrr",
+        "target": "gain",
+        "docs": 200,
+        "spearman": -0.12265704329360498,
+        "ci_lo": -0.24940096815222362,
+        "ci_hi": 0.019533141175098332,
+        "p": 0.08357681753125268
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "title_mrr",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": -0.10472214593981088,
+        "ci_lo": -0.22670034174850567,
+        "ci_hi": 0.038721604384434276,
+        "p": 0.1400049344176905
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "sibling_sim",
+        "target": "gain",
+        "docs": 200,
+        "spearman": 0.057999213773453136,
+        "ci_lo": -0.08206124526488934,
+        "ci_hi": 0.20098601868846525,
+        "p": 0.4146268363054876
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "sibling_sim",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": 0.033036056664068114,
+        "ci_lo": -0.10086246337149903,
+        "ci_hi": 0.1791055628021543,
+        "p": 0.64236208148834
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "generic_rate",
+        "target": "gain",
+        "docs": 200,
+        "spearman": -0.02311739868185434,
+        "ci_lo": -0.18261677489823225,
+        "ci_hi": 0.11405250551916508,
+        "p": 0.7452388875665293
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "generic_rate",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": 0.046688231345869004,
+        "ci_lo": -0.09824805105454723,
+        "ci_hi": 0.18105314429451239,
+        "p": 0.5115083785398343
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "title_idf",
+        "target": "gain",
+        "docs": 200,
+        "spearman": -0.07679101522322926,
+        "ci_lo": -0.22380568439599882,
+        "ci_hi": 0.08915839761241408,
+        "p": 0.27979559736824566
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "feature": "title_idf",
+        "target": "gain_vs_placebo",
+        "docs": 200,
+        "spearman": -0.1667385388509819,
+        "ci_lo": -0.30131289878942824,
+        "ci_hi": -0.020046982249877807,
+        "p": 0.018284674893280103
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "self_nrank",
+        "target": "gain",
+        "docs": 402,
+        "spearman": -0.01134686192741471,
+        "ci_lo": -0.11043453363725851,
+        "ci_hi": 0.07757748819393893,
+        "p": 0.8205771257634853
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "self_nrank",
+        "target": "gain_vs_placebo",
+        "docs": 402,
+        "spearman": 0.008303813814492146,
+        "ci_lo": -0.09842118735363721,
+        "ci_hi": 0.11004438227103158,
+        "p": 0.8681763308815096
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "self_mrr",
+        "target": "gain",
+        "docs": 402,
+        "spearman": -0.000993088555765061,
+        "ci_lo": -0.09648578132621712,
+        "ci_hi": 0.09434849460396941,
+        "p": 0.9841635370192648
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "self_mrr",
+        "target": "gain_vs_placebo",
+        "docs": 402,
+        "spearman": 0.03480607119744108,
+        "ci_lo": -0.062176048434614446,
+        "ci_hi": 0.13020278383957112,
+        "p": 0.48649310677100327
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "title_mrr",
+        "target": "gain",
+        "docs": 402,
+        "spearman": -0.021276722222649227,
+        "ci_lo": -0.11532312693087093,
+        "ci_hi": 0.07281403906319604,
+        "p": 0.670605806334311
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "title_mrr",
+        "target": "gain_vs_placebo",
+        "docs": 402,
+        "spearman": 0.02651137032048413,
+        "ci_lo": -0.06689493385367397,
+        "ci_hi": 0.12143045475524522,
+        "p": 0.5961193614268483
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "sibling_sim",
+        "target": "gain",
+        "docs": 402,
+        "spearman": -0.022889890359328726,
+        "ci_lo": -0.11444087992930932,
+        "ci_hi": 0.0782550430254423,
+        "p": 0.6472601571073313
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "sibling_sim",
+        "target": "gain_vs_placebo",
+        "docs": 402,
+        "spearman": 0.027534965515457054,
+        "ci_lo": -0.06430656044159085,
+        "ci_hi": 0.12072073152833847,
+        "p": 0.5820041711584252
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "generic_rate",
+        "target": "gain",
+        "docs": 402,
+        "spearman": 0.005825589228832101,
+        "ci_lo": -0.09686837579965761,
+        "ci_hi": 0.10844197584711622,
+        "p": 0.9073038548431522
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "generic_rate",
+        "target": "gain_vs_placebo",
+        "docs": 402,
+        "spearman": 0.03569719852952342,
+        "ci_lo": -0.05482106177168299,
+        "ci_hi": 0.13355951930834056,
+        "p": 0.47539699644507544
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "title_idf",
+        "target": "gain",
+        "docs": 402,
+        "spearman": -0.010218336781335975,
+        "ci_lo": -0.11510678250648723,
+        "ci_hi": 0.08970177993871219,
+        "p": 0.8381625326023237
+      },
+      {
+        "set": "QASPER (human)",
+        "feature": "title_idf",
+        "target": "gain_vs_placebo",
+        "docs": 402,
+        "spearman": -0.0458013643573201,
+        "ci_lo": -0.14786029108106988,
+        "ci_hi": 0.04640053892965278,
+        "p": 0.3597006217124343
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "self_nrank",
+        "target": "gain",
+        "docs": 1744,
+        "spearman": -0.0018258577207678134,
+        "ci_lo": -0.049525967203638534,
+        "ci_hi": 0.042109735759403494,
+        "p": 0.9392636019370888
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "self_nrank",
+        "target": "gain_vs_placebo",
+        "docs": 1744,
+        "spearman": -0.06762266855588368,
+        "ci_lo": -0.11095195644711194,
+        "ci_hi": -0.018828767163708796,
+        "p": 0.0047248890012377255
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "self_mrr",
+        "target": "gain",
+        "docs": 1744,
+        "spearman": -0.012242347165944648,
+        "ci_lo": -0.05967296586044793,
+        "ci_hi": 0.032586201973745677,
+        "p": 0.6094154704475779
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "self_mrr",
+        "target": "gain_vs_placebo",
+        "docs": 1744,
+        "spearman": -0.03325606105869323,
+        "ci_lo": -0.08006854857697975,
+        "ci_hi": 0.016027994528575996,
+        "p": 0.16507551302924434
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "title_mrr",
+        "target": "gain",
+        "docs": 1744,
+        "spearman": -0.008650837919470898,
+        "ci_lo": -0.057984278857351405,
+        "ci_hi": 0.03597583869379723,
+        "p": 0.7180864922897447
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "title_mrr",
+        "target": "gain_vs_placebo",
+        "docs": 1744,
+        "spearman": -0.03922560745757086,
+        "ci_lo": -0.08380845594466008,
+        "ci_hi": 0.01059108252239328,
+        "p": 0.10151242943014895
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "sibling_sim",
+        "target": "gain",
+        "docs": 1744,
+        "spearman": 0.03635405350101799,
+        "ci_lo": -0.010466537566704784,
+        "ci_hi": 0.08190518967206827,
+        "p": 0.12911451658045273
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "sibling_sim",
+        "target": "gain_vs_placebo",
+        "docs": 1744,
+        "spearman": 0.05609261257677767,
+        "ci_lo": 0.01025823375796491,
+        "ci_hi": 0.10730276973860697,
+        "p": 0.01914675781137217
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "generic_rate",
+        "target": "gain",
+        "docs": 1744,
+        "spearman": 0.01726183310233295,
+        "ci_lo": -0.029375057312200425,
+        "ci_hi": 0.06366174295939023,
+        "p": 0.4712712813938254
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "generic_rate",
+        "target": "gain_vs_placebo",
+        "docs": 1744,
+        "spearman": 0.11573298971325678,
+        "ci_lo": 0.06826968960870007,
+        "ci_hi": 0.15890684948093461,
+        "p": 1.2598959816996563e-06
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "title_idf",
+        "target": "gain",
+        "docs": 1744,
+        "spearman": -0.016881338780109997,
+        "ci_lo": -0.06172335158126794,
+        "ci_hi": 0.03009447136376086,
+        "p": 0.4811026837456531
+      },
+      {
+        "set": "NQ (human)",
+        "feature": "title_idf",
+        "target": "gain_vs_placebo",
+        "docs": 1744,
+        "spearman": -0.09688504652211238,
+        "ci_lo": -0.1410628867471587,
+        "ci_hi": -0.0491402176392716,
+        "p": 5.063546276454109e-05
+      }
+    ],
+    "question": [
+      {
+        "set": "GovReport (ICT)",
+        "questions": 1179,
+        "spearman": -0.006152108249515005,
+        "ci_lo": -0.06225450753010358,
+        "ci_hi": 0.04673827023877422,
+        "p": 0.8328714963304916
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "questions": 398,
+        "spearman": 0.09215449650993461,
+        "ci_lo": -0.0075178783955720035,
+        "ci_hi": 0.1891481941952674,
+        "p": 0.06626840576007732
+      },
+      {
+        "set": "QASPER (human)",
+        "questions": 1256,
+        "spearman": -0.0023586935896254295,
+        "ci_lo": -0.05753838387268355,
+        "ci_hi": 0.050593260686904395,
+        "p": 0.9334466633235765
+      },
+      {
+        "set": "NQ (human)",
+        "questions": 1744,
+        "spearman": -0.02794314130833019,
+        "ci_lo": -0.07206349901898916,
+        "ci_hi": 0.013933518765084026,
+        "p": 0.243480682774231
+      }
+    ],
+    "variants": [
+      {
+        "set": "GovReport (ICT)",
+        "variant": "flatten",
+        "self_nrank": 0.9022601025513572,
+        "gain_vs_flat": 0.0038036673532856756
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "generic_0.25",
+        "self_nrank": 0.7983642973688978,
+        "gain_vs_flat": 0.0006529612127576503
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "generic_0.5",
+        "self_nrank": 0.7181274947722701,
+        "gain_vs_flat": -0.003738371232009908
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "generic_0.75",
+        "self_nrank": 0.6155092809946142,
+        "gain_vs_flat": -0.004194097769161383
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "generic_1.0",
+        "self_nrank": 0.5044518679934971,
+        "gain_vs_flat": -0.0005445831145576696
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "ocr_0.1",
+        "self_nrank": 0.7898912248751315,
+        "gain_vs_flat": -0.0007505688167265783
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "ocr_0.2",
+        "self_nrank": 0.7058993420723283,
+        "gain_vs_flat": 0.004322333966099869
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "ocr_0.4",
+        "self_nrank": 0.5881548166966959,
+        "gain_vs_flat": -0.00010736836436582021
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "placebo_s0",
+        "self_nrank": 0.506037521389907,
+        "gain_vs_flat": 0.009714985796410735
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "placebo_s1",
+        "self_nrank": 0.4970497862167451,
+        "gain_vs_flat": 0.0010497866095830466
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "placebo_s2",
+        "self_nrank": 0.5018096096458093,
+        "gain_vs_flat": -0.007512083148215464
+      },
+      {
+        "set": "GovReport (ICT)",
+        "variant": "real",
+        "self_nrank": 0.8665331109367551,
+        "gain_vs_flat": 0.0015721555797891678
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "flatten",
+        "self_nrank": 0.9022601025513572,
+        "gain_vs_flat": 0.019730597431602458
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "generic_0.25",
+        "self_nrank": 0.7983642973688978,
+        "gain_vs_flat": 0.004962311557788946
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "generic_0.5",
+        "self_nrank": 0.7181274947722701,
+        "gain_vs_flat": 0.0017348648001914316
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "generic_0.75",
+        "self_nrank": 0.6155092809946142,
+        "gain_vs_flat": -0.008870742601898381
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "generic_1.0",
+        "self_nrank": 0.5044518679934971,
+        "gain_vs_flat": 0.003165629735981495
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "ocr_0.1",
+        "self_nrank": 0.7898912248751315,
+        "gain_vs_flat": 0.0012891840153146687
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "ocr_0.2",
+        "self_nrank": 0.7058993420723283,
+        "gain_vs_flat": -0.008311398261147004
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "ocr_0.4",
+        "self_nrank": 0.5881548166966959,
+        "gain_vs_flat": -0.0012901810640504117
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "placebo_s0",
+        "self_nrank": 0.506037521389907,
+        "gain_vs_flat": -0.0014865996649916242
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "placebo_s1",
+        "self_nrank": 0.4970497862167451,
+        "gain_vs_flat": 0.007443965861051289
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "placebo_s2",
+        "self_nrank": 0.5018096096458093,
+        "gain_vs_flat": 0.001644133365238892
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "variant": "real",
+        "self_nrank": 0.8665331109367551,
+        "gain_vs_flat": 0.014458203716997686
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "flatten",
+        "self_nrank": 0.7048336632083307,
+        "gain_vs_flat": 0.030262043777171163
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "generic_0.25",
+        "self_nrank": 0.6563413490839893,
+        "gain_vs_flat": 0.020632077140835106
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "generic_0.5",
+        "self_nrank": 0.6093768849548047,
+        "gain_vs_flat": 0.010034374684056213
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "generic_0.75",
+        "self_nrank": 0.5580723574269008,
+        "gain_vs_flat": 0.008388939439894853
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "generic_1.0",
+        "self_nrank": 0.507002071187557,
+        "gain_vs_flat": -0.0017417980992821761
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "ocr_0.1",
+        "self_nrank": 0.6487977120241574,
+        "gain_vs_flat": 0.02066335557577596
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "ocr_0.2",
+        "self_nrank": 0.6090957709045427,
+        "gain_vs_flat": 0.014719821049438886
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "ocr_0.4",
+        "self_nrank": 0.5472211512719531,
+        "gain_vs_flat": 0.0043394879183095755
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "placebo_s0",
+        "self_nrank": 0.5009051319263145,
+        "gain_vs_flat": 0.0015146345162268724
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "placebo_s1",
+        "self_nrank": 0.5003168064998214,
+        "gain_vs_flat": -0.0011323425336164194
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "placebo_s2",
+        "self_nrank": 0.506571455152338,
+        "gain_vs_flat": -0.006742240420584373
+      },
+      {
+        "set": "QASPER (human)",
+        "variant": "real",
+        "self_nrank": 0.6961104632751988,
+        "gain_vs_flat": 0.03261993226165201
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "flatten",
+        "self_nrank": 0.7508637575521396,
+        "gain_vs_flat": -0.0221327999854376
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "generic_0.25",
+        "self_nrank": 0.688055924335868,
+        "gain_vs_flat": -0.016506252730449977
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "generic_0.5",
+        "self_nrank": 0.6293666510851442,
+        "gain_vs_flat": -0.016031154434250763
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "generic_0.75",
+        "self_nrank": 0.5698716040124331,
+        "gain_vs_flat": -0.014224051623707585
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "generic_1.0",
+        "self_nrank": 0.5040436384562605,
+        "gain_vs_flat": -0.010414163754186691
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "ocr_0.1",
+        "self_nrank": 0.6638106399038848,
+        "gain_vs_flat": -0.02034572047473424
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "ocr_0.2",
+        "self_nrank": 0.6092240075257469,
+        "gain_vs_flat": -0.015842298310761612
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "ocr_0.4",
+        "self_nrank": 0.5433345591624482,
+        "gain_vs_flat": -0.018262614678899083
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "placebo_s0",
+        "self_nrank": 0.49998710282716774,
+        "gain_vs_flat": -0.014080702999854375
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "placebo_s1",
+        "self_nrank": 0.5012408445944231,
+        "gain_vs_flat": -0.01738272717343818
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "placebo_s2",
+        "self_nrank": 0.49942362133970813,
+        "gain_vs_flat": -0.016608872142129024
+      },
+      {
+        "set": "NQ (human)",
+        "variant": "real",
+        "self_nrank": 0.7421752564515608,
+        "gain_vs_flat": -0.023308713776030294
+      }
+    ],
+    "variant_spearman": [
+      0.19942448663799084,
+      0.17416920301781288
+    ]
+  },
+  "D": [
+    {
+      "set": "GovReport (ICT)",
+      "fixed alpha=0.2": 0.6909662479637044,
+      "best fixed alpha": "0.1 (0.696)",
+      "alpha=0": 0.6933296982915309,
+      "per-document oracle": 0.7325857937181093,
+      "per-question oracle": 0.7542190045370706
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "fixed alpha=0.2": 0.8780210576692987,
+      "best fixed alpha": "0.1 (0.879)",
+      "alpha=0": 0.8749780649278137,
+      "per-document oracle": 0.9180585467017628,
+      "per-question oracle": 0.9200267209061179
+    },
+    {
+      "set": "QASPER (human)",
+      "fixed alpha=0.2": 0.5418142124153273,
+      "best fixed alpha": "0.4 (0.546)",
+      "alpha=0": 0.5154464917601863,
+      "per-document oracle": 0.6161393564856941,
+      "per-question oracle": 0.6388933121019109
+    },
+    {
+      "set": "NQ (human)",
+      "fixed alpha=0.2": 0.6162170525702648,
+      "best fixed alpha": "0.1 (0.624)",
+      "alpha=0": 0.6236245358235045,
+      "per-document oracle": 0.6960567751565456,
+      "per-question oracle": 0.6960567751565456
+    },
+    {
+      "set": "Pooled (3 datasets)",
+      "fixed alpha=0.2": 0.6149438614083266,
+      "best fixed alpha": "0.1 (0.616)",
+      "alpha=0": 0.610777147263149,
+      "per-document oracle": 0.6823433114172525,
+      "per-question oracle": 0.6952852888782536
+    }
+  ],
+  "E": {
+    "results": [
+      {
+        "set": "GovReport (ICT)",
+        "n": 1179,
+        "fixed alpha=0.2": 0.6909662479637034,
+        "fixed, tuned": 0.693085679281608,
+        "informativeness gate": 0.6932167427332822,
+        "query gate (ridge)": 0.6891374853588593
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "n": 398,
+        "fixed alpha=0.2": 0.8780210576692989,
+        "fixed, tuned": 0.8702963228842626,
+        "informativeness gate": 0.8742651750817579,
+        "query gate (ridge)": 0.87510209779054
+      },
+      {
+        "set": "QASPER (human)",
+        "n": 1256,
+        "fixed alpha=0.2": 0.541814212415327,
+        "fixed, tuned": 0.542943711454858,
+        "informativeness gate": 0.5395324031948235,
+        "query gate (ridge)": 0.5421244060256799
+      },
+      {
+        "set": "NQ (human)",
+        "n": 1744,
+        "fixed alpha=0.2": 0.6162170525702636,
+        "fixed, tuned": 0.6223671636085626,
+        "informativeness gate": 0.6232777686762779,
+        "query gate (ridge)": 0.6231285040774721
+      },
+      {
+        "set": "Pooled (3 datasets)",
+        "n": 4179,
+        "fixed alpha=0.2": 0.6149438614083266,
+        "fixed, tuned": 0.6149084234475477,
+        "informativeness gate": 0.6166350079953813,
+        "query gate (ridge)": 0.6149124116424907
+      }
+    ],
+    "tests": [
+      {
+        "set": "GovReport (ICT)",
+        "comparison": "fixed, tuned vs fixed alpha=0.2",
+        "mean_diff": 0.0021194313179045987,
+        "p_permutation": 0.43545645435456454,
+        "p_wilcoxon": 0.9989488878224956
+      },
+      {
+        "set": "GovReport (ICT)",
+        "comparison": "informativeness gate vs fixed alpha=0.2",
+        "mean_diff": 0.002250494769578737,
+        "p_permutation": 0.40205979402059794,
+        "p_wilcoxon": 0.8646659632713195
+      },
+      {
+        "set": "GovReport (ICT)",
+        "comparison": "query gate (ridge) vs fixed alpha=0.2",
+        "mean_diff": -0.0018287626048440332,
+        "p_permutation": 0.4901509849015098,
+        "p_wilcoxon": 0.2542609467937056
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "comparison": "fixed, tuned vs fixed alpha=0.2",
+        "mean_diff": -0.007724734785036294,
+        "p_permutation": 0.07839216078392161,
+        "p_wilcoxon": 0.5618788517745898
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "comparison": "informativeness gate vs fixed alpha=0.2",
+        "mean_diff": -0.003755882587540881,
+        "p_permutation": 0.38316168383161686,
+        "p_wilcoxon": 0.6454033300169724
+      },
+      {
+        "set": "GovReport (LLM-written)",
+        "comparison": "query gate (ridge) vs fixed alpha=0.2",
+        "mean_diff": -0.0029189598787588743,
+        "p_permutation": 0.413958604139586,
+        "p_wilcoxon": 0.6423176273523787
+      },
+      {
+        "set": "QASPER (human)",
+        "comparison": "fixed, tuned vs fixed alpha=0.2",
+        "mean_diff": 0.001129499039530883,
+        "p_permutation": 0.7348265173482652,
+        "p_wilcoxon": 0.8604609186759877
+      },
+      {
+        "set": "QASPER (human)",
+        "comparison": "informativeness gate vs fixed alpha=0.2",
+        "mean_diff": -0.002281809220503491,
+        "p_permutation": 0.4370562943705629,
+        "p_wilcoxon": 0.2757516497511199
+      },
+      {
+        "set": "QASPER (human)",
+        "comparison": "query gate (ridge) vs fixed alpha=0.2",
+        "mean_diff": 0.00031019361035284276,
+        "p_permutation": 0.929007099290071,
+        "p_wilcoxon": 0.21700908607388292
+      },
+      {
+        "set": "NQ (human)",
+        "comparison": "fixed, tuned vs fixed alpha=0.2",
+        "mean_diff": 0.006150111038299112,
+        "p_permutation": 0.041195880411958805,
+        "p_wilcoxon": 0.8296399862669074
+      },
+      {
+        "set": "NQ (human)",
+        "comparison": "informativeness gate vs fixed alpha=0.2",
+        "mean_diff": 0.007060716106014271,
+        "p_permutation": 0.0136986301369863,
+        "p_wilcoxon": 0.619324099403711
+      },
+      {
+        "set": "NQ (human)",
+        "comparison": "query gate (ridge) vs fixed alpha=0.2",
+        "mean_diff": 0.006911451507208386,
+        "p_permutation": 0.012398760123987601,
+        "p_wilcoxon": 0.5517246359117302
+      },
+      {
+        "set": "Pooled (3 datasets)",
+        "comparison": "fixed, tuned vs fixed alpha=0.2",
+        "mean_diff": -3.543796077895266e-05,
+        "p_permutation": 0.9752024797520248,
+        "p_wilcoxon": 0.6069786364223635
+      },
+      {
+        "set": "Pooled (3 datasets)",
+        "comparison": "informativeness gate vs fixed alpha=0.2",
+        "mean_diff": 0.001691146587054698,
+        "p_permutation": 0.12068793120687932,
+        "p_wilcoxon": 0.1168045937496264
+      },
+      {
+        "set": "Pooled (3 datasets)",
+        "comparison": "query gate (ridge) vs fixed alpha=0.2",
+        "mean_diff": -3.1449765835984604e-05,
+        "p_permutation": 0.9848015198480152,
+        "p_wilcoxon": 0.05219713380596447
+      }
+    ]
+  }
+}

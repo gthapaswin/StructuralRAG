@@ -16,3 +16,6 @@ reports/answer_per_query.csv
 reports/finetune_per_query.csv
 reports/generative_ft_per_query.csv
 reports/crossdomain_per_query.csv
+literature/
+reports/heading_study/per_query*.csv.gz
+reports/heading_study/*_features*.csv
