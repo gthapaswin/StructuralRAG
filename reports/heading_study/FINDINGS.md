@@ -8,7 +8,8 @@ Setup: within-document section retrieval on four question sets: GovReport ICT (1
 Wikipedia (1,744). Structure-aware (SA) = RRF(BM25 over the structural view, cos(content) +
 0.2·cos(heading path)); flat = RRF(BM25, dense) over section text only. Only headings change
 between conditions. Settings come from GovReport dev; nothing is tuned on the test sets. Tests are
-paired permutation tests with Holm correction within each question set.
+paired sign-flip tests with documents as the independent units (questions from the same document
+are not independent), Holm-corrected within each question set.
 
 ## 1. Headings help, do nothing, or hurt, depending on the collection
 
@@ -47,6 +48,12 @@ section length, depth, relative position and the document's size (standardized; 
 bootstrap over documents), specificity stays positive with a CI above zero in every question set
 (pooled +0.030 per standard deviation, CI 0.023–0.037; `results.md` section J). Real examples:
 [`examples.md`](examples.md).
+
+Replication with a 3× larger encoder (bge-base-en-v1.5, same settings): the same pattern in all four
+sets. Gain for generic vs unique target headings: GovReport ICT −0.072 / +0.013, LLM-written
+−0.096 / +0.036, QASPER −0.004 / +0.053, NQ −0.058 / +0.041 (Spearman 0.18–0.28, all p < 0.001).
+Real headings beat the placebo only on QASPER (p < 0.001), and still hurt on NQ (−0.025 vs flat).
+Paper figures: `figures/paper/`.
 
 ## 3. Negative results (reported, not hidden)
 

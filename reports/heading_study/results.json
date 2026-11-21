@@ -1974,6 +1974,60 @@
       "ci_hi": -0.005622408342401872
     }
   ],
+  "K": [
+    {
+      "set": "GovReport (ICT)",
+      "n": 1179,
+      "flat": 0.6953633022335313,
+      "SA real": 0.6932172812579938,
+      "SA placebo": 0.6942286979818786,
+      "SA generic": 0.6971256243520874,
+      "gain, generic target": -0.07191609977324262,
+      "gain, unique target": 0.013362420011634669,
+      "spearman(w, gain)": 0.20559649479270278,
+      "p": 1.0163554915290335e-12,
+      "p real vs placebo (cluster)": 0.8376162383761624
+    },
+    {
+      "set": "GovReport (LLM-written)",
+      "n": 398,
+      "flat": 0.8577919358698254,
+      "SA real": 0.8728503629257398,
+      "SA placebo": 0.865033500837521,
+      "SA generic": 0.8575675999042833,
+      "gain, generic target": -0.09636752136752137,
+      "gain, unique target": 0.03585077343039126,
+      "spearman(w, gain)": 0.2813219208819148,
+      "p": 1.1268760645914223e-08,
+      "p real vs placebo (cluster)": 0.37666233376662334
+    },
+    {
+      "set": "QASPER (human)",
+      "n": 1256,
+      "flat": 0.5160745880093015,
+      "SA real": 0.5397011803659894,
+      "SA placebo": 0.514256331513497,
+      "SA generic": 0.515711568597715,
+      "gain, generic target": -0.004392532694419488,
+      "gain, unique target": 0.052555398396982554,
+      "spearman(w, gain)": 0.18500673259964842,
+      "p": 3.9154276753558625e-11,
+      "p real vs placebo (cluster)": 9.999000099990002e-05
+    },
+    {
+      "set": "NQ (human)",
+      "n": 1744,
+      "flat": 0.63673001310616,
+      "SA real": 0.6117864424057085,
+      "SA placebo": 0.6175151539973787,
+      "SA generic": 0.6222103902723168,
+      "gain, generic target": -0.05834122678607308,
+      "gain, unique target": 0.04131944444444445,
+      "spearman(w, gain)": 0.17856960467795868,
+      "p": 5.805502829738502e-14,
+      "p real vs placebo (cluster)": 0.1553844615538446
+    }
+  ],
   "I_dev_alpha": {
     "structure-aware": 0.2,
     "fallback (mean)": 0.2,

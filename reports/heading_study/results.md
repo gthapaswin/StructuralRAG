@@ -262,6 +262,16 @@ OLS on standardized covariates (target section length, depth, relative position,
 | Pooled (3 datasets, dataset fixed effects) | log_sections | -0.012 | -0.018 | -0.006 |
 
 
+## K. Replication with bge-base-en-v1.5 (110M parameters; same settings, alpha = 0.2)
+
+| set | n | flat | SA real | SA placebo | SA generic | gain, generic target | gain, unique target | spearman(w, gain) | p | p real vs placebo (cluster) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| GovReport (ICT) | 1179 | 0.695 | 0.693 | 0.694 | 0.697 | -0.072 | 0.013 | 0.206 | 0.000 | 0.838 |
+| GovReport (LLM-written) | 398 | 0.858 | 0.873 | 0.865 | 0.858 | -0.096 | 0.036 | 0.281 | 0.000 | 0.377 |
+| QASPER (human) | 1256 | 0.516 | 0.540 | 0.514 | 0.516 | -0.004 | 0.053 | 0.185 | 0.000 | 0.000 |
+| NQ (human) | 1744 | 0.637 | 0.612 | 0.618 | 0.622 | -0.058 | 0.041 | 0.179 | 0.000 | 0.155 |
+
+
 ## I. Specificity fallback (alpha tuned on GovReport dev: SA 0.2, neutral 0.2, content 0.2; MRR@10)
 
 | set | n | flat | SA (a=0.2) | + fallback, neutral (a=0.2) | + fallback, content (a=0.2) |
