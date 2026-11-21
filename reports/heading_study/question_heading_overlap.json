@@ -1,0 +1,157 @@
+{
+  "GovReport (ICT)": {
+    "n": 1179,
+    "share_any_heading_word": 0.5843935538592027,
+    "mean_lexical": 0.22698316657216205,
+    "share_heading_points_to_target": 0.27905004240882103,
+    "spearman_lexical_gain": 0.1821197166625605,
+    "p": 2.986342177305366e-10,
+    "spearman_lexical_gain_unique_targets": 0.12037818844826177,
+    "p_unique": 0.00019243121274204898,
+    "gain_by_lexical": {
+      "with": 0.027006588799041633,
+      "without": -0.034191771946873985,
+      "n_with": 689
+    },
+    "gain_by_points": {
+      "with": 0.043320306846142714,
+      "without": -0.014586834733893559,
+      "n_with": 329
+    },
+    "gain_unique_by_lexical": {
+      "with": 0.029589824612972764,
+      "without": -0.0027157334160591504,
+      "n_with": 648
+    },
+    "mean_gain": 0.0015721555797891685,
+    "mean_gain_ci": [
+      -0.008779088748872465,
+      0.012514683212838412
+    ],
+    "p_gain": 0.7707229277072293
+  },
+  "GovReport (LLM-written)": {
+    "n": 398,
+    "share_any_heading_word": 0.7512562814070352,
+    "mean_lexical": 0.4091181195155984,
+    "share_heading_points_to_target": 0.4824120603015075,
+    "spearman_lexical_gain": 0.21662549124482905,
+    "p": 1.3009168151915877e-05,
+    "spearman_lexical_gain_unique_targets": 0.010516407202890363,
+    "p_unique": 0.8527481507806188,
+    "gain_by_lexical": {
+      "with": 0.04447364229972926,
+      "without": -0.07619448452781788,
+      "n_with": 299
+    },
+    "gain_by_points": {
+      "with": 0.03970734126984127,
+      "without": -0.009074973031283714,
+      "n_with": 192
+    },
+    "gain_unique_by_lexical": {
+      "with": 0.043324829931972786,
+      "without": 0.0049019607843137246,
+      "n_with": 280
+    },
+    "mean_gain": 0.014458203716997686,
+    "mean_gain_ci": [
+      -0.003257283441014596,
+      0.03153869546143416
+    ],
+    "p_gain": 0.11608839116088392
+  },
+  "QASPER (human)": {
+    "n": 1256,
+    "share_any_heading_word": 0.19028662420382167,
+    "mean_lexical": 0.11565817409766453,
+    "share_heading_points_to_target": 0.2906050955414013,
+    "spearman_lexical_gain": 0.1932259705868648,
+    "p": 4.974146659352656e-12,
+    "spearman_lexical_gain_unique_targets": 0.1867032416528581,
+    "p_unique": 2.4169292775665377e-05,
+    "gain_by_lexical": {
+      "with": 0.11203094906023778,
+      "without": 0.013957952896005994,
+      "n_with": 239
+    },
+    "gain_by_points": {
+      "with": 0.10636007827788649,
+      "without": 0.002412128338054264,
+      "n_with": 365
+    },
+    "gain_unique_by_lexical": {
+      "with": 0.10910364145658263,
+      "without": 0.03498714826839827,
+      "n_with": 153
+    },
+    "mean_gain": 0.03261993226165201,
+    "mean_gain_ci": [
+      0.02070250101102012,
+      0.04392658098271155
+    ],
+    "p_gain": 9.999000099990002e-05
+  },
+  "NQ (human)": {
+    "n": 1744,
+    "share_any_heading_word": 0.09747706422018348,
+    "mean_lexical": 0.05759429153924567,
+    "share_heading_points_to_target": 0.1915137614678899,
+    "spearman_lexical_gain": 0.14517861231723553,
+    "p": 1.1235863328403474e-09,
+    "spearman_lexical_gain_unique_targets": 0.1063197481586376,
+    "p_unique": 0.030148831380997144,
+    "gain_by_lexical": {
+      "with": 0.06808590102707751,
+      "without": -0.03568857021843045,
+      "n_with": 170
+    },
+    "gain_by_points": {
+      "with": 0.04457632354338941,
+      "without": -0.042189857030282565,
+      "n_with": 334
+    },
+    "gain_unique_by_lexical": {
+      "with": 0.055921855921855924,
+      "without": 0.02427849927849928,
+      "n_with": 130
+    },
+    "mean_gain": -0.025572939420416482,
+    "mean_gain_ci": [
+      -0.03557727969819426,
+      -0.015786557312145042
+    ],
+    "p_gain": 9.999000099990002e-05
+  },
+  "ConditionalQA (human)": {
+    "n": 2422,
+    "share_any_heading_word": 0.37943848059454993,
+    "mean_lexical": 0.24736640320868233,
+    "share_heading_points_to_target": 0.24071015689512798,
+    "spearman_lexical_gain": 0.18919127776128936,
+    "p": 5.946168779439051e-21,
+    "spearman_lexical_gain_unique_targets": 0.1439248294656365,
+    "p_unique": 3.914965960940393e-07,
+    "gain_by_lexical": {
+      "with": 0.056514154446689814,
+      "without": -0.042729620124829705,
+      "n_with": 919
+    },
+    "gain_by_points": {
+      "with": 0.091295706390046,
+      "without": -0.03562344096601845,
+      "n_with": 583
+    },
+    "gain_unique_by_lexical": {
+      "with": 0.05198797343385389,
+      "without": -0.01827662549522256,
+      "n_with": 619
+    },
+    "mean_gain": -0.005072713092944307,
+    "mean_gain_ci": [
+      -0.015597974257140235,
+      0.0055760562895678465
+    ],
+    "p_gain": 0.38576142385761425
+  }
+}
