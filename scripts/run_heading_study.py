@@ -53,12 +53,19 @@ def boilerplate_headings(ds: str) -> set[str] | None:
     return set(lab.heading)
 
 
-def llm_rewritten(ds, docs):
+def llm_rewritten(ds, docs, summary_only=False):
+    """LLM-written headings; summary_only keeps the authors' headings except on summary sections."""
     path = DATA_DIR / f"{ds}_llm_headings.json"
     if not path.exists():
         return None
     new = json.loads(path.read_text())
-    return [hd.retitle(d, new[d.document_id]) if d.document_id in new else d for d in docs]
+    out = []
+    for d in docs:
+        titles = new.get(d.document_id)
+        if titles and summary_only:
+            titles = {s.section_id: titles[s.section_id] for s in d.sections if hd.is_summary_heading(s.title)}
+        out.append(hd.retitle(d, titles) if titles else d)
+    return out
 
 
 def variants(ds, docs, only=None):
@@ -71,6 +78,7 @@ def variants(ds, docs, only=None):
         out[f"ocr_{rate}"] = lambda rate=rate: hd.ocr_noise(docs, rate, seed=0)
     out["flatten"] = lambda: hd.flatten(docs)
     out["llm"] = lambda: llm_rewritten(ds, docs)
+    out["llm_summary"] = lambda: llm_rewritten(ds, docs, summary_only=True)
     for name, make in out.items():
         if only and name not in only:
             continue

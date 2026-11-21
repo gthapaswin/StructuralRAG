@@ -102,8 +102,33 @@ section gap (−0.020). Single-gold labels are strict for both methods, but the 
 - This study adds: within-document section routing on public data with human questions, a case where
   real headings hurt (NQ), and the target-heading specificity account of when they help.
 
+## 6. LLM-written headings: a test of the summary-section account
+
+A local LLM (qwen3:8b) wrote a short, specific heading for every section of a fixed random sample of
+documents (197 GovReport, 199 QASPER, 245 NQ), seeing only each section's first 60 words, never the
+questions (`results.md` section G; rewritten documents only):
+
+| SA gain over flat | summary-section targets: authors' headings | LLM headings everywhere | LLM headings on summary sections only | other targets: authors' | LLM everywhere | LLM on summary only |
+|---|---|---|---|---|---|---|
+| GovReport ICT | −0.118 | −0.030 | −0.042 | +0.011 | +0.003 | +0.010 |
+| GovReport LLM-written | −0.113 | +0.015 | −0.013 | +0.025 | +0.016 | +0.022 |
+| QASPER | −0.044 | −0.023 | −0.010 | +0.052 | +0.019 | +0.017 |
+| NQ | −0.060 | −0.029 | +0.013 | −0.009 | −0.026 | −0.023 |
+
+- Giving summary sections (Introduction / lead / Abstract / Conclusions / Background) a heading that
+  names their content shrinks or removes their losses in every set, as the account predicts.
+- The LLM's headings are worse than the authors' specific headings for other sections (QASPER
+  +0.052 → +0.019 with LLM headings everywhere).
+- Rewriting only the summary headings (exploratory: chosen after seeing the results above) removes
+  NQ's loss (+0.032 over the authors' headings, p = 0.001; now level with flat, −0.004, n.s.) and
+  helps GovReport slightly (+0.004 to +0.006, n.s.), but costs QASPER −0.021 (p < 0.001): once the
+  Abstract and Introduction carry specific headings, they pull questions away from body sections,
+  even though the body sections' headings did not change.
+- Sections compete for a question. A heading change helps its own section and hurts its neighbours,
+  so whether a repair pays off depends on where a collection's questions point: at summaries (NQ's
+  lead) or at body sections (QASPER).
+
 ## Pending
 
-- LLM-rewritten headings (in progress): does replacing headings with specific, model-written ones
-  recover the gain on documents with generic headings? (A natural test of the summary-section
-  account: a rewritten lead heading that names its content should stop losing to body sections.)
+- A second, independent labeller for `data/annotations/heading_labels.csv` (agreement).
+- Pre-register the summary-only rewrite on a held-out collection before claiming it as a method.

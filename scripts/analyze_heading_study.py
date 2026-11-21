@@ -27,6 +27,7 @@ import pandas as pd  # noqa: E402
 from scipy import stats  # noqa: E402
 from sklearn.linear_model import Ridge  # noqa: E402
 
+from structuralrag.analysis.headings import SUMMARY_HEADING  # noqa: E402
 from structuralrag.evaluation.statistical_tests import bootstrap_ci, clustered_paired_test, paired_test  # noqa: E402
 from structuralrag.retrieval.dense import Encoder  # noqa: E402
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, REPORTS_DIR, load_config  # noqa: E402
@@ -71,6 +72,15 @@ def spearman_ci(x: np.ndarray, y: np.ndarray, n_boot: int = 1000) -> tuple[float
         boots.append(stats.spearmanr(x[i], y[i])[0])
     lo, hi = np.nanquantile(boots, [0.025, 0.975])
     return float(rho), float(p), float(lo), float(hi)
+
+
+SUMMARY = SUMMARY_HEADING
+
+
+def section_titles() -> dict[str, str]:
+    from structuralrag.utils.io import load_documents
+
+    return {x.uid: x.title.strip() for f in DOCFILES.values() for d in load_documents(DATA_DIR / f) for x in d.sections}
 
 
 def section_controls() -> dict[str, dict]:
@@ -626,11 +636,13 @@ def main() -> None:
         out["I"] = {"table": rows_i, "tests": tests_i, "by_specificity": split_i}
 
     # ---------- G. LLM-rewritten headings ----------
-    rows_g, tests_g = [], []
+    rows_g, tests_g, split_g = [], [], []
+    original_title = section_titles()
     for ds, qs in sets:
         w, meta = per_set[(ds, qs)]
         if ("llm", SA) not in w:
             continue
+        has_ls = ("llm_summary", SA) in w
         path = DATA_DIR / f"{ds}_llm_headings.json"
         rewritten = set(json.loads(path.read_text())) if path.exists() else set()
         m = meta.document_id.isin(rewritten).values
@@ -646,6 +658,7 @@ def main() -> None:
             "SA generic": w[("generic_1.0", SA)].values[m].mean(),
             "SA real": w[("real", SA)].values[m].mean(),
             "SA LLM-written": w[("llm", SA)].values[m].mean(),
+            "SA LLM, summary sections only": w[("llm_summary", SA)].values[m].mean() if has_ls else float("nan"),
             "informativeness real": float(his.reindex(docs_m).mean()),
             "informativeness LLM": float(his_llm.reindex(docs_m).mean()),
         }
@@ -660,6 +673,41 @@ def main() -> None:
         tests_g.append(
             {
                 "set": LABEL[(ds, qs)],
+                "comparison": "LLM-written vs flat",
+                **ptest(w[("llm", SA)].values[m], w[("real", "flat")].values[m], meta.document_id.values[m]),
+            }
+        )
+        if has_ls:
+            ls = w[("llm_summary", SA)].values[m]
+            for ref, refname in ((w[("real", SA)].values[m], "real"), (w[("real", "flat")].values[m], "flat")):
+                tests_g.append(
+                    {
+                        "set": LABEL[(ds, qs)],
+                        "comparison": f"LLM summary-only vs {refname}",
+                        **ptest(ls, ref, meta.document_id.values[m]),
+                    }
+                )
+        # summary-section account: do rewritten headings stop summary sections from losing?
+        is_sum = np.array([bool(SUMMARY.match(original_title.get(u, ""))) for u in meta.gold_uid])
+        for name, mm in (("summary-section targets", m & is_sum), ("other targets", m & ~is_sum)):
+            if mm.sum():
+                split_g.append(
+                    {
+                        "set": LABEL[(ds, qs)],
+                        "targets": name,
+                        "n": int(mm.sum()),
+                        "SA real - flat": float((w[("real", SA)].values - w[("real", "flat")].values)[mm].mean()),
+                        "SA LLM - flat": float((w[("llm", SA)].values - w[("real", "flat")].values)[mm].mean()),
+                        "SA LLM summary-only - flat": float(
+                            (w[("llm_summary", SA)].values - w[("real", "flat")].values)[mm].mean()
+                        )
+                        if has_ls
+                        else float("nan"),
+                    }
+                )
+        tests_g.append(
+            {
+                "set": LABEL[(ds, qs)],
                 "comparison": "LLM-written vs generic",
                 **ptest(w[("llm", SA)].values[m], w[("generic_1.0", SA)].values[m], meta.document_id.values[m]),
             }
@@ -670,8 +718,11 @@ def main() -> None:
             fmt(rows_g, list(rows_g[0])),
             "\n",
             fmt(tests_g, ["set", "comparison", "mean_diff", "p_permutation", "p_cluster"]),
+            "\nBy target type (summary sections = Introduction / lead / Abstract / Overview / Summary / "
+            "Conclusion(s) / Background, by their original heading):\n",
+            fmt(split_g, ["set", "targets", "n", "SA real - flat", "SA LLM - flat", "SA LLM summary-only - flat"]),
         ]
-        out["G"] = {"table": rows_g, "tests": tests_g}
+        out["G"] = {"table": rows_g, "tests": tests_g, "by_target": split_g}
 
     (DIR / "results.json").write_text(json.dumps(out, indent=2, default=float))
     (DIR / "results.md").write_text("\n".join(md))

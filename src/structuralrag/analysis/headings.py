@@ -7,6 +7,7 @@ so any retriever that reads headings sees the change while content-only retrieve
 from __future__ import annotations
 
 import random
+import re
 import string
 from collections import defaultdict
 
@@ -25,6 +26,15 @@ def retitle(doc: Document, titles: dict[str, str]) -> Document:
             cur = by_id.get(cur.parent_section_id) if cur.parent_section_id else None
         sections.append(s.model_copy(update={"title": new[s.section_id], "path": chain[::-1]}))
     return doc.model_copy(update={"sections": sections})
+
+
+# Sections that summarise the document; their headings are generic and they lose to body sections
+# (see reports/heading_study/FINDINGS.md). Matched on the original heading.
+SUMMARY_HEADING = re.compile(r"^(introduction|abstract|overview|summary|conclusions?|concluding|background)\b", re.I)
+
+
+def is_summary_heading(title: str) -> bool:
+    return bool(SUMMARY_HEADING.match(title.strip()))
 
 
 def generic_title(section_id: str) -> str:

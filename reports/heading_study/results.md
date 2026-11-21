@@ -130,7 +130,7 @@ Per question: does the gold section's own heading path rank it first among its d
 | NQ (human) | 1744 | 0.103 | 0.057 | 0.146 | 0.000 |
 
 
-Across all heading variants and datasets (48 points): Spearman between mean informativeness and mean gain = 0.151 (p = 0.31).
+Across all heading variants and datasets (56 points): Spearman between mean informativeness and mean gain = 0.198 (p = 0.14).
 
 
 ## D. Headroom from choosing the path weight per document or per question (MRR@10, in-sample)
@@ -327,3 +327,52 @@ By the target section's heading specificity:
 | NQ (human) | generic (w < 0.5) | 1106 | -0.056 | -0.041 | -0.006 | -0.064 |
 | NQ (human) | shared (0.5-0.9) | 222 | 0.012 | 0.006 | -0.025 | 0.009 |
 | NQ (human) | unique (w >= 0.9) | 416 | 0.034 | 0.032 | -0.022 | 0.032 |
+
+
+## G. LLM-written headings (rewritten documents only, MRR@10)
+
+| set | n | flat | SA generic | SA real | SA LLM-written | SA LLM, summary sections only | informativeness real | informativeness LLM |
+|---|---|---|---|---|---|---|---|---|
+| GovReport (ICT) | 1161 | 0.690 | 0.690 | 0.692 | 0.691 | 0.696 | 0.867 | 0.903 |
+| GovReport (LLM-written) | 392 | 0.863 | 0.866 | 0.876 | 0.879 | 0.882 | 0.866 | 0.902 |
+| QASPER (human) | 621 | 0.513 | 0.508 | 0.545 | 0.524 | 0.524 | 0.700 | 0.880 |
+| NQ (human) | 245 | 0.628 | 0.613 | 0.592 | 0.601 | 0.624 | 0.780 | 0.891 |
+
+
+
+| set | comparison | mean_diff | p_permutation | p_cluster |
+|---|---|---|---|---|
+| GovReport (ICT) | LLM-written vs real | -0.001 | 0.867 | 0.867 |
+| GovReport (ICT) | LLM-written vs flat | 0.001 | 0.895 | 0.888 |
+| GovReport (ICT) | LLM summary-only vs real | 0.004 | 0.089 | 0.079 |
+| GovReport (ICT) | LLM summary-only vs flat | 0.006 | 0.273 | 0.288 |
+| GovReport (ICT) | LLM-written vs generic | 0.001 | 0.780 | 0.769 |
+| GovReport (LLM-written) | LLM-written vs real | 0.003 | 0.709 | 0.697 |
+| GovReport (LLM-written) | LLM-written vs flat | 0.016 | 0.024 | 0.021 |
+| GovReport (LLM-written) | LLM summary-only vs real | 0.006 | 0.193 | 0.128 |
+| GovReport (LLM-written) | LLM summary-only vs flat | 0.019 | 0.027 | 0.027 |
+| GovReport (LLM-written) | LLM-written vs generic | 0.013 | 0.035 | 0.033 |
+| QASPER (human) | LLM-written vs real | -0.021 | 0.005 | 0.008 |
+| QASPER (human) | LLM-written vs flat | 0.011 | 0.161 | 0.177 |
+| QASPER (human) | LLM summary-only vs real | -0.021 | 0.000 | 0.000 |
+| QASPER (human) | LLM summary-only vs flat | 0.011 | 0.176 | 0.214 |
+| QASPER (human) | LLM-written vs generic | 0.015 | 0.024 | 0.027 |
+| NQ (human) | LLM-written vs real | 0.009 | 0.449 | 0.449 |
+| NQ (human) | LLM-written vs flat | -0.027 | 0.020 | 0.020 |
+| NQ (human) | LLM summary-only vs real | 0.032 | 0.001 | 0.001 |
+| NQ (human) | LLM summary-only vs flat | -0.004 | 0.734 | 0.734 |
+| NQ (human) | LLM-written vs generic | -0.012 | 0.313 | 0.313 |
+
+
+By target type (summary sections = Introduction / lead / Abstract / Overview / Summary / Conclusion(s) / Background, by their original heading):
+
+| set | targets | n | SA real - flat | SA LLM - flat | SA LLM summary-only - flat |
+|---|---|---|---|---|---|
+| GovReport (ICT) | summary-section targets | 88 | -0.118 | -0.030 | -0.042 |
+| GovReport (ICT) | other targets | 1073 | 0.011 | 0.003 | 0.010 |
+| GovReport (LLM-written) | summary-section targets | 33 | -0.113 | 0.015 | -0.013 |
+| GovReport (LLM-written) | other targets | 359 | 0.025 | 0.016 | 0.022 |
+| QASPER (human) | summary-section targets | 127 | -0.044 | -0.023 | -0.010 |
+| QASPER (human) | other targets | 494 | 0.052 | 0.019 | 0.017 |
+| NQ (human) | summary-section targets | 130 | -0.060 | -0.029 | 0.013 |
+| NQ (human) | other targets | 115 | -0.009 | -0.026 | -0.023 |
