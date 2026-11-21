@@ -236,6 +236,14 @@ documents as the independent units.
 - **Negative results.** A document-level informativeness score and learned per-query weights do not
   beat a fixed weight; making common headings neutral helps GovReport and NQ but hurts QASPER,
   where common headings ("Results", "Datasets") are what questions target.
+- **The losses come from summary sections** (the lead or Introduction, Conclusions, Background),
+  which restate what body sections cover under specific headings; in NQ the lead accounts for −59
+  of the −61.5 total MRR lost. NQ's short answers show the loss is real, not a grading artifact.
+- **Sections compete for a question.** Having a local LLM rewrite only the summary headings so they
+  name their content removes NQ's loss (+0.032 over the authors' headings, p = 0.001) but costs QASPER
+  −0.021, because the rewritten Abstract and Introduction then pull questions away from body
+  sections. Whether a heading repair pays off depends on where a collection's questions point.
+  (Exploratory: this variant was chosen after seeing the results.)
 
 Details: [`reports/heading_study/FINDINGS.md`](reports/heading_study/FINDINGS.md); full tables in
 [`results.md`](reports/heading_study/results.md); examples in
