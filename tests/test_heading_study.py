@@ -165,3 +165,26 @@ def test_conditionalqa_page_and_evidence_mapping():
     query = question_to_query(q, doc, owner)
     assert query.target_section_ids == ["2.1"] and query.metadata["target_level"] == 2
     assert question_to_query({**q, "evidences": ["<p>missing</p>"]}, doc, owner) is None
+
+
+def test_position_weights_mark_first_and_last_top_level_sections(ml_doc):
+    from structuralrag.analysis.informativeness import position_weights
+
+    corpus = SectionCorpus([ml_doc])
+    titles = [s.title for s in corpus.sections]
+    first = dict(zip(titles, position_weights(corpus), strict=True))
+    both = dict(zip(titles, position_weights(corpus, last=True), strict=True))
+    assert first["Introduction"] == 0.0 and first["Model Evaluation"] == 1.0 and first["Accuracy"] == 1.0
+    assert both["Introduction"] == 0.0 and both["Model Evaluation"] == 0.0
+    assert sum(v == 0 for v in both.values()) == 2
+
+
+def test_centrality_weights_mark_the_most_typical_section(ml_doc):
+    from structuralrag.analysis.informativeness import centrality_weights
+
+    corpus = SectionCorpus([ml_doc])
+    emb = np.eye(len(corpus))
+    emb[0] = 1.0  # section 0 resembles every other section
+    emb /= np.linalg.norm(emb, axis=1, keepdims=True)
+    w = centrality_weights(corpus, emb)
+    assert w[0] == 0.0 and w[1:].min() == 1.0

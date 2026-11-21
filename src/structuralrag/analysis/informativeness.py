@@ -150,3 +150,33 @@ def document_features(
             }
         )
     return pd.DataFrame(rows)
+
+
+def position_weights(corpus: SectionCorpus, first: bool = True, last: bool = False) -> np.ndarray:
+    """Label-free summary roles from position: 0 for the document's first (and optionally last)
+    top-level section, 1 otherwise. Introductions and leads open a document, conclusions close it."""
+    w = np.ones(len(corpus))
+    for doc in {s.document_id for s in corpus.sections}:
+        idx = corpus.doc_indices(doc)
+        top = [i for i in idx if corpus.sections[i].level == min(corpus.sections[j].level for j in idx)]
+        if len(idx) < 2 or not top:
+            continue
+        if first:
+            w[top[0]] = 0.0
+        if last and len(top) > 1:
+            w[top[-1]] = 0.0
+    return w
+
+
+def centrality_weights(corpus: SectionCorpus, content_emb: np.ndarray) -> np.ndarray:
+    """Label-free summary role from content: 0 for the section whose text is most similar on
+    average to the document's other sections (a summary restates the rest), 1 otherwise."""
+    w = np.ones(len(corpus))
+    for doc in {s.document_id for s in corpus.sections}:
+        idx = corpus.doc_indices(doc)
+        if len(idx) < 3:
+            continue
+        sim = content_emb[idx] @ content_emb[idx].T
+        np.fill_diagonal(sim, np.nan)
+        w[idx[int(np.nanargmax(np.nanmean(sim, axis=1)))]] = 0.0
+    return w

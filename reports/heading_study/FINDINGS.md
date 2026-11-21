@@ -155,11 +155,11 @@ written, approved and pushed before any retrieval was run on it
 
 - **The harm side generalizes; the benefit side does not.** Summary sections lose heavily on the
   new domain, as predicted, and the gap between generic and unique targets reappears. But specific
-  headings gave no gain here (unique targets −0.004), so the predicted overall benefit failed. A
-  likely reason, not tested: ConditionalQA questions describe a personal situation ("my brother is
-  in prison…, how long before I hear back?") rather than using the vocabulary of section headings,
-  so headings have little to match. The specificity account explains where structure-aware
-  retrieval loses, not on its own whether it wins.
+  headings gave no gain here (unique targets −0.004), so the predicted overall benefit failed. The
+  explanation first offered (questions describe personal situations and do not use heading words)
+  was tested afterwards and is **not supported** (section 10: ConditionalQA questions use their
+  target heading's words more often than QASPER's). The specificity account explains where
+  structure-aware retrieval loses, not on its own whether it wins.
 - **A definitional note on P3 (reported, not used to rescue it).** The pre-registration scored each
   question by its *most* specific gold section, because half of ConditionalQA's questions have
   several. The analyses of the other four sets use the first gold section. Under that definition
@@ -191,6 +191,87 @@ Reading the top 3 sections absorbs most of the top-1 differences, and 400 questi
 effects of about ±0.03. Honest reading: the method's retrieval gains are real but small, and at
 this sample size they do not show up as a measurable change in final answers. Also, on NQ the
 retrieval loss of SA (MRR −0.026) does not turn into worse answers when 3 sections are read.
+
+## 9. Finding summary sections without reading their headings
+
+The role-neutral method finds summary sections with a fixed English list of heading words. Two
+label-free rules that never read heading text were compared, the rule chosen on GovReport dev only
+(`label_free_roles.md`): **position** (the document's first and last top-level sections) and
+**centrality** (the section most similar to the rest of its document).
+
+| MRR@10 | flat | SA | heading list | position (first + last) | centrality |
+|---|---|---|---|---|---|
+| GovReport ICT | 0.689 | 0.691 | 0.692 | 0.693 | 0.692 |
+| GovReport LLM-written | 0.864 | 0.878 | 0.886 | 0.881 | 0.872 |
+| QASPER | 0.509 | 0.542 | 0.537 | 0.534 | 0.539 |
+| NQ | 0.642 | 0.616 | 0.627 | 0.627 | 0.619 |
+| ConditionalQA | 0.700 | 0.695 | 0.706 | 0.705 | 0.700 |
+
+- The position rule does as well as the heading list in every set (differences −0.005 to +0.001,
+  all p ≥ 0.1) and, like it, beats SA on NQ (+0.011) and ConditionalQA (+0.009, both p < 0.001),
+  with a cost on QASPER (−0.008 vs SA, p < 0.001; the list: −0.005, p = 0.08). So the method does
+  not depend on English heading words: summary roles can be read from document position.
+- Centrality is a poor detector (it picks a list heading 7–52% of the time; on NQ worse than
+  chance) and does not help.
+- Caveats: GovReport dev barely separates the rules (position+last 0.704, position-first and the
+  list 0.703), and ConditionalQA had been used before, so this is a development result, not a
+  pre-registered test.
+
+## 10. Do headings help only when the question uses their words?
+
+For each question, does at least one content word of the target section's heading occur in the
+question, and is the target's heading path the closest one in the document to the question
+(`question_heading_overlap.md`)?
+
+| | heading word in question | heading points to target | SA gain: with / without a heading word | Spearman(overlap, gain) |
+|---|---|---|---|---|
+| GovReport ICT | 58% | 28% | +0.027 / −0.034 | 0.18 |
+| GovReport LLM-written | 75% | 48% | +0.044 / −0.076 | 0.22 |
+| QASPER | 19% | 29% | +0.112 / +0.014 | 0.19 |
+| NQ | 10% | 19% | +0.068 / −0.036 | 0.15 |
+| ConditionalQA | 38% | 24% | +0.057 / −0.043 | 0.19 |
+
+- In every set, structure-aware retrieval gains when the question shares a word with the target's
+  heading and mostly loses when it does not (all correlations p < 0.001). Among unique target
+  headings only, the correlation stays in four of five sets (0.11–0.19; not on GovReport
+  LLM-written), so word match adds to specificity rather than repeating it.
+- The ConditionalQA explanation in section 7 is refuted: its questions use heading words more
+  often than QASPER's (38% vs 19%). What differs is the cost when they do not match (−0.043 vs
+  +0.014 on QASPER): a non-matching question is pulled to a neighbour whose heading sounds related.
+
+## 11. Does a cross-encoder reranker show the same summary-section loss?
+
+bge-reranker-base (zero-shot) rescores the top 20 sections of flat retrieval, reading each section
+in 200-word windows, once as text only and once with its heading path in front
+(`reranker_headings.md`). Role-neutral here means summary-role sections are read without their
+heading path.
+
+| | flat | rerank: text only | rerank: path + text | role-neutral (list) | role-neutral (position) | heading gain: summary targets / others |
+|---|---|---|---|---|---|---|
+| GovReport ICT | 0.689 | 0.638 | 0.683 | 0.678 | 0.677 | +0.032 / +0.046 |
+| GovReport LLM-written | 0.864 | 0.848 | 0.916 | 0.912 | 0.914 | +0.010 / +0.074 |
+| QASPER | 0.509 | 0.460 | 0.522 | 0.570 | 0.575 | −0.045 / +0.082 |
+| NQ | 0.642 | 0.680 | 0.704 | 0.704 | 0.705 | +0.019 / +0.029 |
+| ConditionalQA | 0.700 | 0.732 | 0.783 | 0.776 | 0.766 | +0.059 / +0.051 |
+
+- In the cross-encoder, headings help on every set, including NQ and ConditionalQA (+0.024 to
+  +0.068, all p < 0.001), where they hurt the bi-encoder ranking. Reading the question and the
+  heading together seems to let the model judge whether the heading is relevant instead of being
+  pulled by any similar-sounding heading.
+- The summary-section loss largely disappears: headings help summary-section targets too on NQ
+  (+0.019, p = 0.004) and ConditionalQA (+0.059, p = 0.07). The exception is QASPER (−0.045,
+  p = 0.08), where summary targets are the abstract and introduction.
+- Role-neutral reading therefore helps only on QASPER (+0.048 list, +0.053 position, p < 0.001); it
+  makes no difference on NQ and GovReport LLM-written and costs a little on GovReport ICT (−0.005)
+  and ConditionalQA (−0.007 list, −0.017 position, p < 0.001).
+- The QASPER gain is larger than the summary-target loss can explain (198 of 1,256 questions), so
+  most of it comes from other targets: reading abstracts and introductions without their heading
+  makes them weaker competitors. Caveat: the role-neutral variant mixes scores from two inputs
+  (with and without path), which the model may not score on the same scale.
+- Conclusion: the summary-section problem belongs to similarity-based (bi-encoder and BM25)
+  retrieval, not to headings as such. A cross-encoder mostly handles heading roles itself, and the
+  role-neutral rule should be applied in the first stage, not in the reranker. Zero-shot only; a
+  reranker fine-tuned with heading paths was not tested here.
 
 ## Pending
 
