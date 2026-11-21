@@ -1,9 +1,21 @@
-# Heading labels (to fill in)
+# Heading labels (LLM pre-labelled, to review)
 
 `heading_labels.csv` lists the 70 most common headings in each dataset (GovReport, QASPER,
 Natural Questions), with how many documents contain each one and an example of its text.
 
-Fill the `label` column with one of:
+**Review workflow.** `scripts/prelabel_headings.py` had the local LLM (qwen3:8b) label every row;
+its choice is in `llm_label` (with `llm_reason`) and has been copied into `label`. Open the CSV in
+Numbers or Excel, read down the `label` column, and change only the rows you disagree with. Never
+edit `llm_label`: the share of rows you change is reported in the paper ("LLM-labelled,
+human-verified; the reviewer changed k of 210 labels").
+
+Rows most likely to be wrong (check these first):
+- NQ "References", "See also", "Notes", "Further reading", "Bibliography", "Sources": the model
+  called these functional; by the rule below they are boilerplate.
+- GovReport "Untitled 1" (a placeholder: boilerplate) and "Related GAO Products".
+- NQ "United states", "Languages", "Gallery": check against the example text.
+
+Labels (use exactly these words):
 
 - `functional`: the heading tells you what *kind* of content the section holds, in a way a
   question could target, even though many documents share it. Examples: "Results", "Datasets",
