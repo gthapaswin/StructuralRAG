@@ -19,3 +19,4 @@ reports/crossdomain_per_query.csv
 literature/
 reports/heading_study/per_query*.csv.gz
 reports/heading_study/*_features*.csv
+reports/heading_study/answers_per_query.csv

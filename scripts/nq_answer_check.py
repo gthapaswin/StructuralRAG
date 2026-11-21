@@ -13,41 +13,17 @@ Output: reports/heading_study/nq_answer_check.json (+ printed table)
 from __future__ import annotations
 
 import json
-import re
-from pathlib import Path
 
 import numpy as np
-import pyarrow.parquet as pq
 
 from structuralrag.analysis import experiment as ex
 from structuralrag.evaluation.statistical_tests import paired_test
+from structuralrag.ingestion.natural_questions import norm_answer as norm
+from structuralrag.ingestion.natural_questions import short_answers
 from structuralrag.retrieval.corpus import SectionCorpus
 from structuralrag.retrieval.dense import Encoder
 from structuralrag.utils.config import CACHE_DIR, DATA_DIR, REPORTS_DIR, load_config
 from structuralrag.utils.io import PROJECT_ROOT, load_documents, load_queries
-
-
-def norm(t: str) -> str:
-    return re.sub(r"\s+", " ", re.sub(r"[^\w\s]", " ", t.lower())).strip()
-
-
-def short_answers(files: list[Path], wanted: set[str]) -> dict[str, list[str]]:
-    out: dict[str, list[str]] = {}
-    for f in files:
-        pf = pq.ParquetFile(f)
-        for g in range(pf.num_row_groups):
-            for row in pf.read_row_group(g, columns=["id", "document", "annotations"]).to_pylist():
-                if row["id"] not in wanted:
-                    continue
-                toks, html = row["document"]["tokens"]["token"], row["document"]["tokens"]["is_html"]
-                answers = set()
-                for sa in row["annotations"]["short_answers"]:
-                    for s, e in zip(sa["start_token"], sa["end_token"], strict=True):
-                        text = " ".join(t for t, h in zip(toks[s:e], html[s:e], strict=True) if not h)
-                        if norm(text):
-                            answers.add(norm(text))
-                out[row["id"]] = sorted(answers)
-    return out
 
 
 def main() -> None:

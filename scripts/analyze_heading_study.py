@@ -83,6 +83,18 @@ def section_titles() -> dict[str, str]:
     return {x.uid: x.title.strip() for f in DOCFILES.values() for d in load_documents(DATA_DIR / f) for x in d.sections}
 
 
+def specificity_for(docfile: str) -> dict[str, float]:
+    from structuralrag.analysis.informativeness import heading_specificity
+    from structuralrag.retrieval.corpus import SectionCorpus
+    from structuralrag.utils.io import load_documents
+
+    path = DATA_DIR / docfile
+    if not path.exists():
+        return {}
+    corpus = SectionCorpus(load_documents(path))
+    return dict(zip([x.uid for x in corpus.sections], heading_specificity(corpus), strict=True))
+
+
 def section_controls() -> dict[str, dict]:
     """Per-section covariates for the robustness regression."""
     from structuralrag.utils.io import load_documents
@@ -509,41 +521,44 @@ def main() -> None:
     ]
     out["J"] = rows_j
 
-    # ---------- K. Replication with a larger encoder ----------
-    rep_path = DIR / "per_query_bgebase.csv.gz"
-    if rep_path.exists():
+    # ---------- K. Replication with larger encoders ----------
+    spec_all = {**spec, **specificity_for("conditionalqa_documents.jsonl")}
+    rows_k = []
+    for tag, enc_name in (("", "bge-small (main)"), ("bgebase", "bge-base"), ("bgelarge", "bge-large")):
+        rep_path = DIR / (f"per_query_{tag}.csv.gz" if tag else "per_query.csv.gz")
+        if not rep_path.exists():
+            continue
         rep = pd.read_csv(rep_path)
-        rows_k = []
-        for ds, qs in sets:
+        for ds, qs in [*sets, ("conditionalqa", "human")]:
             if not ((rep.dataset == ds) & (rep.query_set == qs)).any():
                 continue
             wk, mk = wide(rep, ds, qs)
             flat_k, real_k = wk[("real", "flat")].values, wk[("real", SA)].values
             gain_k = real_k - flat_k
-            sp = mk.gold_uid.map(spec).values
+            sp = mk.gold_uid.map(spec_all).values
             rho, p, lo_, hi_ = spearman_ci(sp, gain_k)
-            row = {
-                "set": LABEL[(ds, qs)],
-                "n": len(wk),
-                "flat": flat_k.mean(),
-                "SA real": real_k.mean(),
-                "SA placebo": wk[("placebo_s0", SA)].mean(),
-                "SA generic": wk[("generic_1.0", SA)].mean(),
-                "gain, generic target": float(gain_k[sp < 0.5].mean()),
-                "gain, unique target": float(gain_k[sp >= 0.9].mean()),
-                "spearman(w, gain)": rho,
-                "p": p,
-                "p real vs placebo (cluster)": clustered_paired_test(
-                    real_k, wk[("placebo_s0", SA)].values, mk.document_id.values
-                )["p_cluster"],
-            }
-            rows_k.append(row)
-        if rows_k:
-            md += [
-                "\n## K. Replication with bge-base-en-v1.5 (110M parameters; same settings, alpha = 0.2)\n",
-                fmt(rows_k, list(rows_k[0])),
-            ]
-            out["K"] = rows_k
+            role_k = wk[("real", "sasum_a0.2")].values if ("real", "sasum_a0.2") in wk else np.full(len(wk), np.nan)
+            rows_k.append(
+                {
+                    "encoder": enc_name,
+                    "set": LABEL.get((ds, qs), "ConditionalQA (held-out)"),
+                    "n": len(wk),
+                    "flat": flat_k.mean(),
+                    "SA real": real_k.mean(),
+                    "SA placebo": wk[("placebo_s0", SA)].mean(),
+                    "role-neutral": float(np.mean(role_k)),
+                    "gain, generic target": float(gain_k[sp < 0.5].mean()),
+                    "gain, unique target": float(gain_k[sp >= 0.9].mean()),
+                    "spearman(w, gain)": rho,
+                    "p": p,
+                }
+            )
+    if rows_k:
+        md += [
+            "\n## K. Replication across encoders (same settings, alpha = 0.2; ConditionalQA is the held-out domain)\n",
+            fmt(rows_k, list(rows_k[0])),
+        ]
+        out["K"] = rows_k
 
     # ---------- I. Specificity fallback ----------
     # safbm = the method (generic headings become neutral: document-mean path score);

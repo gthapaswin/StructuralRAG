@@ -109,3 +109,29 @@ def load_nq(files: list[Path]) -> Iterator[tuple[Document, Query] | None]:
         for g in range(pf.num_row_groups):
             for row in pf.read_row_group(g, columns=["id", "document", "question", "annotations"]).to_pylist():
                 yield row_to_example(row)
+
+
+def norm_answer(t: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"[^\w\s]", " ", t.lower())).strip()
+
+
+def short_answers(files: list[Path], wanted: set[str]) -> dict[str, list[str]]:
+    """Normalized short-answer strings per NQ example id (only for `wanted` ids)."""
+    import pyarrow.parquet as pq
+
+    out: dict[str, list[str]] = {}
+    for f in files:
+        pf = pq.ParquetFile(f)
+        for g in range(pf.num_row_groups):
+            for row in pf.read_row_group(g, columns=["id", "document", "annotations"]).to_pylist():
+                if row["id"] not in wanted:
+                    continue
+                toks, html = row["document"]["tokens"]["token"], row["document"]["tokens"]["is_html"]
+                answers = set()
+                for sa in row["annotations"]["short_answers"]:
+                    for s, e in zip(sa["start_token"], sa["end_token"], strict=True):
+                        text = " ".join(t for t, h in zip(toks[s:e], html[s:e], strict=True) if not h)
+                        if norm_answer(text):
+                            answers.add(norm_answer(text))
+                out[row["id"]] = sorted(answers)
+    return out

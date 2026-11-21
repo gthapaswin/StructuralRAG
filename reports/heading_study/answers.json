@@ -1,0 +1,96 @@
+{
+  "results": {
+    "nq/flat": {
+      "gold_in_top3": 0.75,
+      "correct": 0.6125,
+      "abstained": 0.0975
+    },
+    "nq/structure-aware": {
+      "gold_in_top3": 0.7375,
+      "correct": 0.615,
+      "abstained": 0.1025
+    },
+    "nq/role-neutral": {
+      "gold_in_top3": 0.7475,
+      "correct": 0.6175,
+      "abstained": 0.1
+    },
+    "conditionalqa/flat": {
+      "gold_in_top3": 0.7775,
+      "correct": 0.4875,
+      "abstained": 0.1975
+    },
+    "conditionalqa/structure-aware": {
+      "gold_in_top3": 0.795,
+      "correct": 0.5,
+      "abstained": 0.2025
+    },
+    "conditionalqa/role-neutral": {
+      "gold_in_top3": 0.8,
+      "correct": 0.5125,
+      "abstained": 0.1975
+    }
+  },
+  "tests": [
+    {
+      "dataset": "nq",
+      "comparison": "role-neutral vs structure-aware",
+      "diff": 0.0025,
+      "ci": [
+        -0.01,
+        0.015
+      ],
+      "p_cluster": 1.0
+    },
+    {
+      "dataset": "nq",
+      "comparison": "flat vs structure-aware",
+      "diff": -0.0025,
+      "ci": [
+        -0.03,
+        0.025
+      ],
+      "p_cluster": 1.0
+    },
+    {
+      "dataset": "nq",
+      "comparison": "role-neutral vs flat",
+      "diff": 0.005,
+      "ci": [
+        -0.02,
+        0.03
+      ],
+      "p_cluster": 0.8478152184781522
+    },
+    {
+      "dataset": "conditionalqa",
+      "comparison": "role-neutral vs structure-aware",
+      "diff": 0.0125,
+      "ci": [
+        0.0,
+        0.0275
+      ],
+      "p_cluster": 0.1232876712328767
+    },
+    {
+      "dataset": "conditionalqa",
+      "comparison": "flat vs structure-aware",
+      "diff": -0.0125,
+      "ci": [
+        -0.0525,
+        0.0275
+      ],
+      "p_cluster": 0.6417358264173583
+    },
+    {
+      "dataset": "conditionalqa",
+      "comparison": "role-neutral vs flat",
+      "diff": 0.025,
+      "ci": [
+        -0.01,
+        0.0625
+      ],
+      "p_cluster": 0.2893710628937106
+    }
+  ]
+}

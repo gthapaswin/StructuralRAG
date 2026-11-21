@@ -262,14 +262,24 @@ OLS on standardized covariates (target section length, depth, relative position,
 | Pooled (3 datasets, dataset fixed effects) | log_sections | -0.012 | -0.018 | -0.006 |
 
 
-## K. Replication with bge-base-en-v1.5 (110M parameters; same settings, alpha = 0.2)
+## K. Replication across encoders (same settings, alpha = 0.2; ConditionalQA is the held-out domain)
 
-| set | n | flat | SA real | SA placebo | SA generic | gain, generic target | gain, unique target | spearman(w, gain) | p | p real vs placebo (cluster) |
+| encoder | set | n | flat | SA real | SA placebo | role-neutral | gain, generic target | gain, unique target | spearman(w, gain) | p |
 |---|---|---|---|---|---|---|---|---|---|---|
-| GovReport (ICT) | 1179 | 0.695 | 0.693 | 0.694 | 0.697 | -0.072 | 0.013 | 0.206 | 0.000 | 0.838 |
-| GovReport (LLM-written) | 398 | 0.858 | 0.873 | 0.865 | 0.858 | -0.096 | 0.036 | 0.281 | 0.000 | 0.377 |
-| QASPER (human) | 1256 | 0.516 | 0.540 | 0.514 | 0.516 | -0.004 | 0.053 | 0.185 | 0.000 | 0.000 |
-| NQ (human) | 1744 | 0.637 | 0.612 | 0.618 | 0.622 | -0.058 | 0.041 | 0.179 | 0.000 | 0.155 |
+| bge-small (main) | GovReport (ICT) | 1179 | 0.689 | 0.691 | 0.699 | 0.692 | -0.076 | 0.019 | 0.224 | 0.000 |
+| bge-small (main) | GovReport (LLM-written) | 398 | 0.864 | 0.878 | 0.862 | 0.886 | -0.103 | 0.039 | 0.309 | 0.000 |
+| bge-small (main) | QASPER (human) | 1256 | 0.509 | 0.542 | 0.511 | 0.537 | 0.003 | 0.057 | 0.184 | 0.000 |
+| bge-small (main) | NQ (human) | 1744 | 0.642 | 0.616 | 0.623 | 0.627 | -0.056 | 0.034 | 0.153 | 0.000 |
+| bge-small (main) | ConditionalQA (held-out) | 2422 | 0.700 | 0.695 | 0.692 | 0.706 | -0.080 | 0.017 | 0.146 | 0.000 |
+| bge-base | GovReport (ICT) | 1179 | 0.695 | 0.693 | 0.694 | nan | -0.072 | 0.013 | 0.206 | 0.000 |
+| bge-base | GovReport (LLM-written) | 398 | 0.858 | 0.873 | 0.865 | nan | -0.096 | 0.036 | 0.281 | 0.000 |
+| bge-base | QASPER (human) | 1256 | 0.516 | 0.540 | 0.514 | nan | -0.004 | 0.053 | 0.185 | 0.000 |
+| bge-base | NQ (human) | 1744 | 0.637 | 0.612 | 0.618 | nan | -0.058 | 0.041 | 0.179 | 0.000 |
+| bge-large | GovReport (ICT) | 1179 | 0.702 | 0.698 | 0.696 | 0.701 | -0.076 | 0.011 | 0.206 | 0.000 |
+| bge-large | GovReport (LLM-written) | 398 | 0.854 | 0.873 | 0.861 | 0.875 | -0.119 | 0.045 | 0.306 | 0.000 |
+| bge-large | QASPER (human) | 1256 | 0.513 | 0.535 | 0.508 | 0.540 | -0.012 | 0.049 | 0.160 | 0.000 |
+| bge-large | NQ (human) | 1744 | 0.642 | 0.608 | 0.623 | 0.616 | -0.067 | 0.023 | 0.177 | 0.000 |
+| bge-large | ConditionalQA (held-out) | 2422 | 0.705 | 0.701 | 0.697 | 0.709 | -0.063 | 0.015 | 0.140 | 0.000 |
 
 
 ## I. Specificity fallback (alpha tuned on GovReport dev: SA 0.2, neutral 0.2, content 0.2; MRR@10)

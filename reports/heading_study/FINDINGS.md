@@ -53,6 +53,14 @@ Replication with a 3× larger encoder (bge-base-en-v1.5, same settings): the sam
 sets. Gain for generic vs unique target headings: GovReport ICT −0.072 / +0.013, LLM-written
 −0.096 / +0.036, QASPER −0.004 / +0.053, NQ −0.058 / +0.041 (Spearman 0.18–0.28, all p < 0.001).
 Real headings beat the placebo only on QASPER (p < 0.001), and still hurt on NQ (−0.025 vs flat).
+
+Replication with a 10× larger encoder (bge-large-en-v1.5, all five question sets including the
+held-out ConditionalQA): the same pattern again. Generic vs unique target headings: GovReport ICT
+−0.076 / +0.011, LLM-written −0.119 / +0.045, QASPER −0.012 / +0.049, NQ −0.067 / +0.023,
+ConditionalQA −0.063 / +0.015 (Spearman 0.14–0.31, all p < 0.001). SA vs flat: QASPER +0.022
+(p < 0.001), NQ −0.034 (p < 0.001), the rest not significant. The role-neutral method again beats
+SA on ConditionalQA (+0.008, p < 0.001) and NQ (+0.007, p < 0.001), and is level elsewhere. So the
+effects are not an artefact of a small encoder (section K of `results.md`).
 Paper figures: `figures/paper/`.
 
 ## 3. Negative results (reported, not hidden)
@@ -152,11 +160,37 @@ written, approved and pushed before any retrieval was run on it
   in prison…, how long before I hear back?") rather than using the vocabulary of section headings,
   so headings have little to match. The specificity account explains where structure-aware
   retrieval loses, not on its own whether it wins.
+- **A definitional note on P3 (reported, not used to rescue it).** The pre-registration scored each
+  question by its *most* specific gold section, because half of ConditionalQA's questions have
+  several. The analyses of the other four sets use the first gold section. Under that definition
+  ConditionalQA does show the predicted correlation (Spearman 0.146, p < 0.001; generic targets
+  −0.080, unique +0.017). This was computed after the test and is post hoc; P3 as registered fails.
 - **The role-neutral method works out of sample.** Frozen before the test, it is the best system on
   ConditionalQA (MRR@10 0.706 vs SA 0.695 and flat 0.700); +0.011 over SA (p < 0.001), level with
   flat (+0.005, n.s.). Against flat across all five question sets: QASPER +0.028 and GovReport
   LLM-written +0.022 (both p < 0.05), ConditionalQA and GovReport ICT level, NQ −0.015 (the keyword
   side still uses headings there).
+
+## 8. Does the retrieval difference change the final answer?
+
+400 random questions each from NQ (short answers) and ConditionalQA (span answers; yes/no
+excluded). Each system's top-3 sections go to the same LLM (qwen3:8b), which writes a cited answer;
+correct = the answer contains a reference string (`answers.md`).
+
+| | flat | SA | role-neutral |
+|---|---|---|---|
+| NQ: gold section in top-3 | 0.750 | 0.738 | 0.748 |
+| NQ: answer correct | 0.613 | 0.615 | 0.618 |
+| ConditionalQA: gold section in top-3 | 0.777 | 0.795 | 0.800 |
+| ConditionalQA: answer correct | 0.487 | 0.500 | 0.512 |
+
+The order of the systems is the same as in retrieval (role-neutral ≥ SA, flat; on ConditionalQA
+role-neutral − flat = +0.025), but no difference in answer correctness is significant (all
+document-clustered p ≥ 0.12; role-neutral vs SA on ConditionalQA +0.013, 95% CI [0.000, +0.028]).
+Reading the top 3 sections absorbs most of the top-1 differences, and 400 questions can only detect
+effects of about ±0.03. Honest reading: the method's retrieval gains are real but small, and at
+this sample size they do not show up as a measurable change in final answers. Also, on NQ the
+retrieval loss of SA (MRR −0.026) does not turn into worse answers when 3 sections are read.
 
 ## Pending
 
