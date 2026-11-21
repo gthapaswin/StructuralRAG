@@ -128,6 +128,36 @@ questions (`results.md` section G; rewritten documents only):
   so whether a repair pays off depends on where a collection's questions point: at summaries (NQ's
   lead) or at body sections (QASPER).
 
+## 7. Held-out test on a fourth domain (pre-registered)
+
+Predictions for ConditionalQA (495 gov.uk guidance pages, 2,422 crowd-written questions) were
+written, approved and pushed before any retrieval was run on it
+([`heldout_predictions.md`](heldout_predictions.md), commit 6f8637c). Results
+([`heldout_results.md`](heldout_results.md)), document-clustered tests:
+
+| | Prediction | Result | Verdict |
+|---|---|---|---|
+| P1 | SA beats flat (+0.02 to +0.03) | −0.005 [−0.015, +0.005] | fails |
+| P2 | Real beats shuffled headings | +0.003 [−0.005, +0.011] | fails |
+| P3 | Gain rises with target specificity | Spearman 0.03, p = 0.12 | fails |
+| P4 | Summary-only targets lose | −0.207 (n = 74) | holds |
+| P5 | Unique targets gain more than generic ones | −0.004 vs −0.082 | holds |
+| P6 | Role-neutral method not worse than SA | +0.011 [+0.007, +0.014], p < 0.001 | holds |
+| P7 | Role-neutral beats SA on summary-only targets | +0.125, p < 0.001 | holds |
+
+- **The harm side generalizes; the benefit side does not.** Summary sections lose heavily on the
+  new domain, as predicted, and the gap between generic and unique targets reappears. But specific
+  headings gave no gain here (unique targets −0.004), so the predicted overall benefit failed. A
+  likely reason, not tested: ConditionalQA questions describe a personal situation ("my brother is
+  in prison…, how long before I hear back?") rather than using the vocabulary of section headings,
+  so headings have little to match. The specificity account explains where structure-aware
+  retrieval loses, not on its own whether it wins.
+- **The role-neutral method works out of sample.** Frozen before the test, it is the best system on
+  ConditionalQA (MRR@10 0.706 vs SA 0.695 and flat 0.700); +0.011 over SA (p < 0.001), level with
+  flat (+0.005, n.s.). Against flat across all five question sets: QASPER +0.028 and GovReport
+  LLM-written +0.022 (both p < 0.05), ConditionalQA and GovReport ICT level, NQ −0.015 (the keyword
+  side still uses headings there).
+
 ## Pending
 
 - A second, independent labeller for `data/annotations/heading_labels.csv` (agreement).
